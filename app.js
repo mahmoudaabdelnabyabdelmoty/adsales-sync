@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ADSALES SYNC ENTERPRISE - USERNAME & PASSWORD AUTHENTICATION ENGINE (app.js)
+   ADSALES SYNC ENTERPRISE - STREAMLINED CORE ENGINE (app.js)
    ========================================================================== */
 
 window.openRoleModal = function() {
@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const defaultUsers = [
-        { id: 'u-1', name: 'المدير العام (Admin Desk)', username: 'admin', password: 'admin123', dept: 'general', role: 'admin', active: true },
-        { id: 'u-2', name: 'أحمد محمود (Media Buyer)', username: 'media', password: 'media123', dept: 'clinics', role: 'mediabuyer', active: true },
-        { id: 'u-3', name: 'سارة علي (Sales Rep)', username: 'sales', password: 'sales123', dept: 'realestate', role: 'sales', active: true }
+        { id: 'u-1', name: 'المدير العام (Admin Desk)', username: 'admin', password: 'admin123', role: 'admin', active: true },
+        { id: 'u-2', name: 'أحمد محمود (Media Buyer)', username: 'media', password: 'media123', role: 'mediabuyer', active: true },
+        { id: 'u-3', name: 'سارة علي (Sales Rep)', username: 'sales', password: 'sales123', role: 'sales', active: true }
     ];
 
     if (!localStorage.getItem('adsales_registered_users')) {
@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'ad-101',
             name: 'Ad 01 - Fire Extinguisher Carousel',
-            dept: 'clinics',
             campaign: 'Campaign_FireSafety_Cairo',
             adset: 'AdSet_Business_Owners',
             salesRep: 'أحمد محمود',
@@ -50,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'ad-102',
             name: 'Ad 02 - Safety Alarm Systems Video',
-            dept: 'realestate',
             campaign: 'Campaign_FireSafety_Cairo',
             adset: 'AdSet_Factory_Managers',
             salesRep: 'سارة علي',
@@ -62,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'ad-103',
             name: 'Ad 03 - Emergency Smoke Detector Offer',
-            dept: 'ecommerce',
             campaign: 'Campaign_Emergency_Offers',
             adset: 'AdSet_RealEstate_Devs',
             salesRep: 'محمود حسن',
@@ -74,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'ad-104',
             name: 'Ad 04 - VIP Maintenance Package',
-            dept: 'general',
             campaign: 'Campaign_Emergency_Offers',
             adset: 'AdSet_Hotel_Managers',
             salesRep: 'أحمد محمود',
@@ -110,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const statTesting = document.getElementById('stat-testing-ads');
 
     const searchInput = document.getElementById('search-input');
-    const filterDept = document.getElementById('filter-dept');
     const filterStatus = document.getElementById('filter-status');
     const filterSales = document.getElementById('filter-sales');
     const resetFiltersBtn = document.getElementById('reset-filters-btn');
@@ -131,15 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
-    }
-
-    function getDeptLabel(deptKey) {
-        switch(deptKey) {
-            case 'realestate': return 'عقارات';
-            case 'clinics': return 'عيادات وخدمات طبية';
-            case 'ecommerce': return 'تجارة إلكترونية';
-            case 'general': default: return 'مبيعات عامة';
-        }
     }
 
     async function initCloudSync() {
@@ -290,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getFilteredAds() {
         const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
-        const deptVal = filterDept ? filterDept.value : 'all';
         const statusVal = filterStatus ? filterStatus.value : 'all';
         const salesVal = filterSales ? filterSales.value : 'all';
 
@@ -299,11 +284,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                  ad.campaign.toLowerCase().includes(query) ||
                                  ad.adset.toLowerCase().includes(query) ||
                                  ad.salesRep.toLowerCase().includes(query);
-            const matchesDept = (deptVal === 'all') || (ad.dept === deptVal);
             const matchesStatus = (statusVal === 'all') || (ad.status === statusVal);
             const matchesSales = (salesVal === 'all') || (ad.salesRep === salesVal);
 
-            return matchesQuery && matchesDept && matchesStatus && matchesSales;
+            return matchesQuery && matchesStatus && matchesSales;
         });
     }
 
@@ -311,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         switch(status) {
             case 'winning': return `<span class="status-badge badge-winning"><i class="fa-solid fa-circle-check"></i> شغال تمام (Scale)</span>`;
             case 'pause': return `<span class="status-badge badge-pause"><i class="fa-solid fa-circle-xmark"></i> أوقف الإعلان (Pause)</span>`;
-            case 'testing': default: return `<span class="status-badge badge-testing"><i class="fa-solid fa-vial"></i> قيد الاختبار</span>`;
+            case 'testing': default: return `<span class="status-badge badge-testing"><i class="fa-solid fa-vial"></i> قيد الاختبار (Testing)</span>`;
         }
     }
 
@@ -330,10 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="ad-card-header">
                     <div class="ad-card-top-bar">
-                        <div class="tags-wrapper">
-                            <span class="dept-tag"><i class="fa-solid fa-building"></i> ${getDeptLabel(ad.dept)}</span>
-                            <span class="campaign-tag"><i class="fa-solid fa-layer-group"></i> ${ad.campaign}</span>
-                        </div>
+                        <span class="campaign-tag"><i class="fa-solid fa-layer-group"></i> ${ad.campaign}</span>
                         ${getStatusBadgeHTML(ad.status)}
                     </div>
                     <div class="ad-title-area"><h4>${ad.name}</h4></div>
@@ -370,7 +351,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${ad.name}</strong></td>
-                <td><span class="dept-tag">${getDeptLabel(ad.dept)}</span></td>
                 <td>${ad.campaign}</td>
                 <td>${ad.adset}</td>
                 <td><i class="fa-solid fa-user-tag"></i> ${ad.salesRep}</td>
@@ -400,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mCard.innerHTML = `
                 <div>
                     <h4>${ad.name}</h4>
-                    <span class="meta-sub">${getDeptLabel(ad.dept)} | ${ad.campaign} | ${ad.salesRep}</span>
+                    <span class="meta-sub">${ad.campaign} | ${ad.salesRep}</span>
                 </div>
                 <div class="form-group">
                     <label>جودة الـ Leads:</label>
@@ -438,7 +418,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.innerHTML = `
                 <td><i class="fa-solid fa-image" style="font-size: 1.3rem; color: var(--primary-color);"></i></td>
                 <td><strong>${ad.name}</strong></td>
-                <td><span class="dept-tag">${getDeptLabel(ad.dept)}</span></td>
                 <td>${ad.adset}</td>
                 <td>${ad.campaign}</td>
                 <td>${ad.salesRep}</td>
@@ -506,7 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ad) {
             adIdInput.value = ad.id;
             document.getElementById('ad-name').value = ad.name;
-            document.getElementById('ad-dept').value = ad.dept || 'general';
             document.getElementById('ad-campaign').value = ad.campaign;
             document.getElementById('ad-adset').value = ad.adset;
             document.getElementById('ad-sales').value = ad.salesRep;
@@ -535,7 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const id = adIdInput.value;
             const name = document.getElementById('ad-name').value.trim();
-            const dept = document.getElementById('ad-dept').value;
             const campaign = document.getElementById('ad-campaign').value.trim();
             const adset = document.getElementById('ad-adset').value.trim();
             const salesRep = document.getElementById('ad-sales').value.trim();
@@ -545,13 +522,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (id) {
                 const ad = adsState.find(a => a.id === id);
                 if (ad) {
-                    ad.name = name; ad.dept = dept; ad.campaign = campaign; ad.adset = adset;
+                    ad.name = name; ad.campaign = campaign; ad.adset = adset;
                     ad.salesRep = salesRep; ad.status = status; ad.salesNotes = salesNotes;
                     ad.updatedAt = new Date().toLocaleString('ar-EG');
                 }
             } else {
                 const newAd = {
-                    id: 'ad-' + Date.now(), name, dept, campaign, adset, salesRep, status,
+                    id: 'ad-' + Date.now(), name, campaign, adset, salesRep, status,
                     quality: 'mixed', salesNotes, updatedAt: new Date().toLocaleString('ar-EG')
                 };
                 adsState.unshift(newAd);
@@ -563,14 +540,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (searchInput) searchInput.addEventListener('input', renderAll);
-    if (filterDept) filterDept.addEventListener('change', renderAll);
     if (filterStatus) filterStatus.addEventListener('change', renderAll);
     if (filterSales) filterSales.addEventListener('change', renderAll);
 
     if (resetFiltersBtn) {
         resetFiltersBtn.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
-            if (filterDept) filterDept.value = 'all';
             if (filterStatus) filterStatus.value = 'all';
             if (filterSales) filterSales.value = 'all';
             renderAll();
