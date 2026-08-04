@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Ad 01 - Fire Extinguisher Carousel',
             platform: 'meta',
             objective: 'رسائل واتساب مباشرة',
+            clientAccount: 'شركة الفارس للأمن والسلامة',
             campaign: 'Campaign_FireSafety_Cairo',
             adset: 'AdSet_Business_Owners',
             salesRep: 'أحمد محمود',
@@ -90,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Ad 02 - Safety Alarm Systems Video',
             platform: 'tiktok',
             objective: 'صفحة هبوط + زر واتساب',
+            clientAccount: 'شركة الفارس للأمن والسلامة',
             campaign: 'Campaign_FireSafety_Cairo',
             adset: 'AdSet_Factory_Managers',
             salesRep: 'سارة علي',
@@ -110,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Ad 03 - Emergency Smoke Detector Offer',
             platform: 'google',
             objective: 'مكالمات هاتفية مباشرة',
+            clientAccount: 'مستشفى السلام الدولي',
             campaign: 'Campaign_Emergency_Offers',
             adset: 'AdSet_RealEstate_Devs',
             salesRep: 'محمود حسن',
@@ -130,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Ad 04 - VIP Maintenance Package',
             platform: 'snapchat',
             objective: 'نموذج تسجيل بيانات (Lead Form)',
+            clientAccount: 'مستشفى السلام الدولي',
             campaign: 'Campaign_Emergency_Offers',
             adset: 'AdSet_Hotel_Managers',
             salesRep: 'أحمد محمود',
@@ -149,13 +153,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let adsState = JSON.parse(localStorage.getItem('adsales_sync_data')) || initialAds;
 
-    // Ensure all ads have default metricsConfig and dailyResults
+    // Ensure all ads have default metricsConfig, dailyResults, and clientAccount
     adsState.forEach(ad => {
         if (!ad.metricsConfig || !Array.isArray(ad.metricsConfig) || ad.metricsConfig.length === 0) {
             ad.metricsConfig = JSON.parse(JSON.stringify(defaultMetricsConfig));
         }
         if (!ad.dailyResults || typeof ad.dailyResults !== 'object') {
             ad.dailyResults = {};
+        }
+        if (!ad.clientAccount) {
+            ad.clientAccount = 'عميل عام';
         }
     });
 
@@ -186,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterPlatform = document.getElementById('filter-platform');
     const filterStatus = document.getElementById('filter-status');
     const filterSales = document.getElementById('filter-sales');
+    const filterClient = document.getElementById('filter-client');
     const resetFiltersBtn = document.getElementById('reset-filters-btn');
     const resultsDatePicker = document.getElementById('results-date-picker');
 
@@ -288,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     adsState.forEach(ad => {
                         if (!ad.metricsConfig || !Array.isArray(ad.metricsConfig)) ad.metricsConfig = JSON.parse(JSON.stringify(defaultMetricsConfig));
                         if (!ad.dailyResults || typeof ad.dailyResults !== 'object') ad.dailyResults = {};
+                        if (!ad.clientAccount) ad.clientAccount = 'عميل عام';
                     });
                     localStorage.setItem('adsales_sync_data', JSON.stringify(adsState));
                     renderAll();
@@ -615,17 +624,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSalesFilterOptions() {
-        if (!filterSales) return;
-        const salesReps = [...new Set(adsState.map(ad => ad.salesRep))];
-        const currentVal = filterSales.value;
-        filterSales.innerHTML = '<option value="all">الجميع</option>';
-        salesReps.forEach(rep => {
-            const opt = document.createElement('option');
-            opt.value = rep;
-            opt.textContent = rep;
-            if (rep === currentVal) opt.selected = true;
-            filterSales.appendChild(opt);
-        });
+        if (filterSales) {
+            const salesReps = [...new Set(adsState.map(ad => ad.salesRep).filter(Boolean))];
+            const currentVal = filterSales.value;
+            filterSales.innerHTML = '<option value="all">جميع المبيعات</option>';
+            salesReps.forEach(rep => {
+                const opt = document.createElement('option');
+                opt.value = rep;
+                opt.textContent = rep;
+                if (rep === currentVal) opt.selected = true;
+                filterSales.appendChild(opt);
+            });
+        }
+        if (filterClient) {
+            const clients = [...new Set(adsState.map(ad => ad.clientAccount || 'عميل عام').filter(Boolean))];
+            const currentClientVal = filterClient.value;
+            filterClient.innerHTML = '<option value="all">جميع العملاء</option>';
+            clients.forEach(cli => {
+                const opt = document.createElement('option');
+                opt.value = cli;
+                opt.textContent = cli;
+                if (cli === currentClientVal) opt.selected = true;
+                filterClient.appendChild(opt);
+            });
+        }
     }
 
     function updateMetrics() {
@@ -649,12 +671,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const platformVal = filterPlatform ? filterPlatform.value : 'all';
         const statusVal = filterStatus ? filterStatus.value : 'all';
         const salesVal = filterSales ? filterSales.value : 'all';
+        const clientVal = filterClient ? filterClient.value : 'all';
 
         return adsState.filter(ad => {
+            const clientName = ad.clientAccount || 'عميل عام';
             const matchesQuery = ad.name.toLowerCase().includes(query) ||
                                  ad.campaign.toLowerCase().includes(query) ||
                                  ad.adset.toLowerCase().includes(query) ||
                                  ad.salesRep.toLowerCase().includes(query) ||
+                                 clientName.toLowerCase().includes(query) ||
                                  (ad.objective || '').toLowerCase().includes(query) ||
                                  (ad.platform || '').toLowerCase().includes(query);
             
@@ -664,8 +689,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                   (statusVal === 'active' && isAdActive) || 
                                   (statusVal === 'pause' && ad.status === 'pause');
             const matchesSales = (salesVal === 'all') || (ad.salesRep === salesVal);
+            const matchesClient = (clientVal === 'all') || (clientName === clientVal);
 
-            return matchesQuery && matchesPlatform && matchesStatus && matchesSales;
+            return matchesQuery && matchesPlatform && matchesStatus && matchesSales && matchesClient;
         });
     }
 
@@ -694,6 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     platform: ad.platform,
                     objective: ad.objective,
                     salesRep: ad.salesRep,
+                    clientAccount: ad.clientAccount || 'عميل عام',
                     adsetsMap: {},
                     totalAdsCount: 0,
                     activeAdsCount: 0,
@@ -784,6 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div class="campaign-header-title">' +
                 getPlatformBadgeHTML(cGroup.platform) +
                 '<h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); display:inline-block;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
+                '<span style="font-size:0.78rem; color:var(--accent-amber); background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:12px; font-weight:700;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); background:rgba(99,102,241,0.12); padding:2px 8px; border-radius:12px;"><i class="fa-solid fa-bullseye"></i> ' + cGroup.objective + '</span>' : '') +
                 '</div>' +
                 '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
@@ -811,7 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cTr.className = 'table-campaign-row';
             cTr.innerHTML = '<td colspan="8" style="padding: 0.65rem 1rem !important;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
-                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
+                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong> <span style="font-size:0.75rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:10px; font-weight:700; margin-right:6px;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
                 '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
                 '</div></td>';
@@ -872,7 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cTr.className = 'table-campaign-row';
             cTr.innerHTML = '<td colspan="8" style="padding: 0.65rem 1rem !important;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
-                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
+                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong> <span style="font-size:0.75rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:10px; font-weight:700; margin-right:6px;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
                 '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
                 '</div></td>';
@@ -957,7 +985,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cTr.className = 'table-campaign-row';
             cTr.innerHTML = '<td colspan="8" style="padding: 0.65rem 1rem !important;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
-                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
+                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong> <span style="font-size:0.75rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:10px; font-weight:700; margin-right:6px;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
                 '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
                 '</div></td>';
@@ -1197,6 +1225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (adPlatformSelect) adPlatformSelect.value = ad.platform || 'meta';
             if (adObjectiveInput) adObjectiveInput.value = ad.objective || '';
             document.getElementById('ad-campaign').value = ad.campaign;
+            if (document.getElementById('ad-client')) document.getElementById('ad-client').value = ad.clientAccount || 'عميل عام';
             document.getElementById('ad-adset').value = ad.adset;
             populateAdSalesSelect(ad.salesRep);
             document.getElementById('ad-notes').value = ad.salesNotes || '';
@@ -1224,6 +1253,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const platform = adPlatformSelect ? adPlatformSelect.value : 'meta';
             const objective = adObjectiveInput ? adObjectiveInput.value.trim() : '';
             const campaign = document.getElementById('ad-campaign').value.trim();
+            const clientAccount = document.getElementById('ad-client') ? (document.getElementById('ad-client').value.trim() || 'عميل عام') : 'عميل عام';
             const salesRep = document.getElementById('ad-sales').value;
             const salesNotes = document.getElementById('ad-notes').value.trim();
 
@@ -1238,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ad = adsState.find(a => a.id === id);
                 if (ad) {
                     ad.name = name; ad.platform = platform; ad.objective = objective;
-                    ad.campaign = campaign; ad.adset = adset;
+                    ad.campaign = campaign; ad.clientAccount = clientAccount; ad.adset = adset;
                     ad.salesRep = salesRep; ad.salesNotes = salesNotes;
                     ad.updatedAt = new Date().toLocaleString('ar-EG');
                 }
@@ -1254,6 +1284,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             platform: platform,
                             objective: objective,
                             campaign: campaign,
+                            clientAccount: clientAccount,
                             adset: adsetName,
                             salesRep: salesRep,
                             status: 'active',
@@ -1270,7 +1301,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
-                alert('🚀 تم بنجاح إنشاء حملة (' + campaign + ') وتحتوي على (' + builderAdSets.length + ') مجموعات إعلانية و إجمالي (' + totalCreated + ') إعلانات!');
+                alert('🚀 تم بنجاح إنشاء حملة (' + campaign + ') للعميل (' + clientAccount + ') وتحتوي على (' + builderAdSets.length + ') مجموعات إعلانية و إجمالي (' + totalCreated + ') إعلانات!');
             }
 
             adModal.classList.add('hidden');
@@ -1282,12 +1313,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filterPlatform) filterPlatform.addEventListener('change', renderAll);
     if (filterStatus) filterStatus.addEventListener('change', renderAll);
     if (filterSales) filterSales.addEventListener('change', renderAll);
+    if (filterClient) filterClient.addEventListener('change', renderAll);
     if (resetFiltersBtn) {
         resetFiltersBtn.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
             if (filterPlatform) filterPlatform.value = 'all';
             if (filterStatus) filterStatus.value = 'all';
             if (filterSales) filterSales.value = 'all';
+            if (filterClient) filterClient.value = 'all';
             if (resultsDatePicker) resultsDatePicker.value = todayStr;
             renderAll();
         });
