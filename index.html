@@ -18,7 +18,7 @@
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
                         <h1>AdSales Sync <span class="version-tag">v5.0 Enterprise</span></h1>
-                        <p>نظام التنسيق المباشر وإدارة الصلاحيات والأقسام</p>
+                        <p>نظام التنسيق المباشر وإدارة صلاحيات الإعلانات والمبيعات</p>
                     </div>
                 </div>
 
@@ -37,47 +37,56 @@
             </div>
 
             <nav class="view-switcher">
-                <button class="nav-btn active" data-view="live-board"><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية</button>
-                <button class="nav-btn" data-view="sales-view"><i class="fa-solid fa-headset"></i> شاشة الـ Sales</button>
-                <button class="nav-btn" data-view="media-buyer-view"><i class="fa-solid fa-sliders"></i> إدارة الحملات</button>
+                <button class="nav-btn active" data-view="live-board">
+                    <i class="fa-solid fa-border-all"></i> اللوحة التفاعلية
+                </button>
+                <button class="nav-btn" data-view="sales-view">
+                    <i class="fa-solid fa-headset"></i> شاشة الـ Sales
+                </button>
+                <button class="nav-btn" data-view="media-buyer-view">
+                    <i class="fa-solid fa-sliders"></i> إدارة الحملات
+                </button>
             </nav>
         </header>
 
         <section class="metrics-bar">
             <div class="metric-card card-total">
                 <div class="metric-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
-                <div class="metric-info"><span class="metric-label">إجمالي الإعلانات</span><h3 id="stat-total-ads">0</h3></div>
+                <div class="metric-info">
+                    <span class="metric-label">إجمالي الإعلانات</span>
+                    <h3 id="stat-total-ads">0</h3>
+                </div>
             </div>
             <div class="metric-card card-winning">
                 <div class="metric-icon"><i class="fa-solid fa-circle-check"></i></div>
-                <div class="metric-info"><span class="metric-label">إعلانات شغال تمام 🟢</span><h3 id="stat-winning-ads">0</h3></div>
+                <div class="metric-info">
+                    <span class="metric-label">إعلانات شغال تمام 🟢</span>
+                    <h3 id="stat-winning-ads">0</h3>
+                </div>
             </div>
             <div class="metric-card card-pause">
                 <div class="metric-icon"><i class="fa-solid fa-circle-xmark"></i></div>
-                <div class="metric-info"><span class="metric-label">مطلوبة إيقافها 🔴</span><h3 id="stat-pause-ads">0</h3></div>
+                <div class="metric-info">
+                    <span class="metric-label">مطلوبة إيقافها 🔴</span>
+                    <h3 id="stat-pause-ads">0</h3>
+                </div>
             </div>
             <div class="metric-card card-testing">
                 <div class="metric-icon"><i class="fa-solid fa-vial"></i></div>
-                <div class="metric-info"><span class="metric-label">قيد الاختبار 🟡</span><h3 id="stat-testing-ads">0</h3></div>
+                <div class="metric-info">
+                    <span class="metric-label">قيد الاختبار 🟡</span>
+                    <h3 id="stat-testing-ads">0</h3>
+                </div>
             </div>
         </section>
 
         <section class="controls-bar">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="ابحث باسم الإعلان، الحملة، القسم، أو Sales...">
+                <input type="text" id="search-input" placeholder="ابحث باسم الإعلان، الحملة، أو Sales...">
             </div>
+
             <div class="filter-group">
-                <div class="filter-item">
-                    <label for="filter-dept"><i class="fa-solid fa-building"></i> القسم:</label>
-                    <select id="filter-dept">
-                        <option value="all">جميع الأقسام</option>
-                        <option value="realestate">قسم العقارات</option>
-                        <option value="clinics">قسم العيادات والخدمات الطبية</option>
-                        <option value="ecommerce">قسم التجارة الإلكترونية</option>
-                        <option value="general">قسم المبيعات العامة</option>
-                    </select>
-                </div>
                 <div class="filter-item">
                     <label for="filter-status"><i class="fa-solid fa-filter"></i> الحالة:</label>
                     <select id="filter-status">
@@ -87,10 +96,14 @@
                         <option value="testing">🟡 قيد الاختبار (Testing)</option>
                     </select>
                 </div>
+
                 <div class="filter-item">
                     <label for="filter-sales"><i class="fa-solid fa-user-tag"></i> Sales:</label>
-                    <select id="filter-sales"><option value="all">الجميع</option></select>
+                    <select id="filter-sales">
+                        <option value="all">الجميع</option>
+                    </select>
                 </div>
+
                 <button id="reset-filters-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-rotate-left"></i> إعادة ضبط</button>
             </div>
         </section>
@@ -103,33 +116,51 @@
                 </div>
                 <div id="live-ads-grid" class="ads-grid"></div>
             </section>
+
             <section id="view-sales-view" class="view-panel">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تحديث الجودة والملاحظات)</h2>
                     <p>قم بتحديث حالة الإعلانات مباشرة (يتطلب تسجيل الدخول بحساب Sales أو Admin).</p>
                 </div>
+
                 <div class="table-responsive desktop-only">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>الإعلان</th><th>القسم</th><th>الحملة</th><th>المجموعة</th><th>الـ Sales</th><th>جودة الـ Leads</th><th>حالة الإعلان</th><th>الملاحظات</th><th>التحديث</th>
+                                <th>الإعلان</th>
+                                <th>الحملة</th>
+                                <th>المجموعة</th>
+                                <th>الـ Sales</th>
+                                <th>جودة الـ Leads</th>
+                                <th>حالة الإعلان</th>
+                                <th>الملاحظات</th>
+                                <th>التحديث</th>
                             </tr>
                         </thead>
                         <tbody id="sales-table-body"></tbody>
                     </table>
                 </div>
+
                 <div id="sales-mobile-cards" class="sales-mobile-grid mobile-only"></div>
             </section>
+
             <section id="view-media-buyer-view" class="view-panel">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
-                    <p>إضافة وتعديل بيانات الإعلانات وتعيين الأقسام والـ Sales.</p>
+                    <p>إضافة وتعديل بيانات الإعلانات وتعيين الـ Sales.</p>
                 </div>
+
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>نوع</th><th>اسم الإعلان</th><th>القسم</th><th>المجموعة الإعلانية</th><th>الحملة</th><th>الـ Sales</th><th>الحالة الحالية</th><th>إجراءات</th>
+                                <th>نوع</th>
+                                <th>اسم الإعلان</th>
+                                <th>المجموعة الإعلانية</th>
+                                <th>الحملة</th>
+                                <th>الـ Sales</th>
+                                <th>الحالة الحالية</th>
+                                <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="media-buyer-table-body"></tbody>
@@ -149,10 +180,12 @@
                         <label for="login-username">اسم المستخدم (Username) <span class="required">*</span></label>
                         <input type="text" id="login-username" placeholder="أدخل اسم المستخدم الخاص بك" required autofocus>
                     </div>
+
                     <div class="form-group">
                         <label for="login-password">كلمة المرور (Password) <span class="required">*</span></label>
                         <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" id="cancel-role-modal-btn" class="btn btn-secondary" onclick="document.getElementById('role-modal').classList.add('hidden');">إلغاء</button>
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
@@ -169,25 +202,17 @@
                 </div>
                 <form id="ad-form">
                     <input type="hidden" id="ad-id">
+                    
                     <div class="form-group">
                         <label for="ad-name">اسم الإعلان / الكود <span class="required">*</span></label>
                         <input type="text" id="ad-name" placeholder="مثال: Ad 01 - Carousel - Fire Safety System" required>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="ad-dept">القسم التابع له <span class="required">*</span></label>
-                            <select id="ad-dept" required>
-                                <option value="realestate">قسم العقارات</option>
-                                <option value="clinics">قسم العيادات والخدمات الطبية</option>
-                                <option value="ecommerce">قسم التجارة الإلكترونية</option>
-                                <option value="general">قسم المبيعات العامة</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="ad-sales">مسؤول المبيعات (Sales Rep) <span class="required">*</span></label>
-                            <input type="text" id="ad-sales" placeholder="مثال: أحمد محمود" required>
-                        </div>
+
+                    <div class="form-group">
+                        <label for="ad-sales">مسؤول المبيعات (Sales Rep) <span class="required">*</span></label>
+                        <input type="text" id="ad-sales" placeholder="مثال: أحمد محمود" required>
                     </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="ad-campaign">اسم الحملة (Campaign) <span class="required">*</span></label>
@@ -198,6 +223,7 @@
                             <input type="text" id="ad-adset" placeholder="مثال: AdSet_Target_BusinessOwners" required>
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label for="ad-status">الحالة الأولية</label>
                         <select id="ad-status">
@@ -206,10 +232,12 @@
                             <option value="pause">🔴 أوقف الإعلان (Pause)</option>
                         </select>
                     </div>
+
                     <div class="form-group">
                         <label for="ad-notes">ملاحظات أولية (اختياري)</label>
                         <textarea id="ad-notes" rows="3" placeholder="أضف أي تفاصيل تهم الـ Sales أو الـ Media Buyer..."></textarea>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" id="cancel-modal-btn" class="btn btn-secondary" onclick="document.getElementById('ad-modal').classList.add('hidden');">إلغاء</button>
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعلان</button>
@@ -219,9 +247,10 @@
         </div>
 
         <footer class="app-footer">
-            <p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة الصلاحيات والأقسام الموحد</p>
+            <p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة صلاحيات الإعلانات والمبيعات الموحد</p>
         </footer>
     </div>
+
     <script src="app.js?v=5.0"></script>
 </body>
 </html>
