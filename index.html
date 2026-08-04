@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=4.5">
+    <link rel="stylesheet" href="style.css?v=5.0">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
@@ -17,7 +17,7 @@
                 <div class="brand-section">
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
-                        <h1>AdSales Sync <span class="version-tag">v4.5 Enterprise</span></h1>
+                        <h1>AdSales Sync <span class="version-tag">v5.0 Enterprise</span></h1>
                         <p>نظام التنسيق المباشر وإدارة الصلاحيات والأقسام</p>
                     </div>
                 </div>
@@ -28,15 +28,12 @@
                         <span id="role-text">زائر (عرض فقط)</span>
                     </div>
 
-                    <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-key"></i> تغيير الصلاحية</button>
+                    <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
+                    <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> خروج</button>
                     <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
-            </div>
-
-            <div id="read-only-banner" class="read-only-banner" onclick="document.getElementById('role-modal').classList.remove('hidden');">
-                <i class="fa-solid fa-lock"></i> أنت تتصفح النظام بوضع <strong>"مشاهد فقط (Read-Only)"</strong>. للتعديل، يرجى <a href="javascript:void(0)" id="banner-login-link" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;">تسجيل الدخول بصلاحية (Media Buyer / Sales / Admin)</a>.
             </div>
 
             <nav class="view-switcher">
@@ -109,7 +106,7 @@
             <section id="view-sales-view" class="view-panel">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تحديث الجودة والملاحظات)</h2>
-                    <p>قم بتحديث حالة الإعلانات مباشرة (يتطلب صلاحية Sales أو Admin للتعديل).</p>
+                    <p>قم بتحديث حالة الإعلانات مباشرة (يتطلب تسجيل الدخول بحساب Sales أو Admin).</p>
                 </div>
                 <div class="table-responsive desktop-only">
                     <table class="data-table">
@@ -142,35 +139,23 @@
         </main>
 
         <div id="role-modal" class="modal-overlay hidden">
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 440px;">
                 <div class="modal-header">
-                    <h3><i class="fa-solid fa-user-lock"></i> تسجيل الدخول وتغيير الصلاحية</h3>
+                    <h3><i class="fa-solid fa-user-lock"></i> تسجيل دخول الأعضاء</h3>
                     <button id="close-role-modal-btn" class="close-btn" onclick="document.getElementById('role-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="role-form">
                     <div class="form-group">
-                        <label for="role-select">اختر الصلاحية المطلوب تسجيل الدخول بها <span class="required">*</span></label>
-                        <select id="role-select" required>
-                            <option value="viewer">👁️ زائر / مشاهد (عرض فقط - Read Only)</option>
-                            <option value="sales">🎧 مسؤول مبيعات (Sales Rep - تحديث الجودة والملاحظات)</option>
-                            <option value="mediabuyer">📊 Media Buyer (إضافة وتعديل وقفل الإعلانات)</option>
-                            <option value="admin">👑 المدير العام (Admin - صلاحيات كاملة والتحكم بالإعدادات)</option>
-                        </select>
+                        <label for="login-username">اسم المستخدم (Username) <span class="required">*</span></label>
+                        <input type="text" id="login-username" placeholder="أدخل اسم المستخدم الخاص بك" required autofocus>
                     </div>
-                    <div class="form-group" id="pin-group">
-                        <label for="role-pin">أدخل رمز الدخول (PIN Code) <span class="required">*</span></label>
-                        <input type="password" id="role-pin" placeholder="رمز الدخول الخاص بالصلاحية">
-                        <small class="pin-hint">
-                            💡 <strong>رموز التجربة الافتراضية:</strong><br>
-                            - المبيعات (Sales): <code>2222</code><br>
-                            - Media Buyer: <code>1111</code><br>
-                            - Admin: <code>1234</code><br>
-                            - زائر (عرض فقط): لا يحتاج رمز PIN
-                        </small>
+                    <div class="form-group">
+                        <label for="login-password">كلمة المرور (Password) <span class="required">*</span></label>
+                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="cancel-role-modal-btn" class="btn btn-secondary" onclick="document.getElementById('role-modal').classList.add('hidden');">إلغاء</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> دخول والتفعيل</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
                     </div>
                 </form>
             </div>
@@ -237,6 +222,6 @@
             <p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة الصلاحيات والأقسام الموحد</p>
         </footer>
     </div>
-    <script src="app.js?v=4.5"></script>
+    <script src="app.js?v=5.0"></script>
 </body>
 </html>
