@@ -64,7 +64,7 @@
                     <div class="logo-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);"><i class="fa-solid fa-sliders"></i></div>
                     <div class="brand-text">
                         <h1>AdSales Sync <span class="version-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">Admin Desk</span></h1>
-                        <p>إدارة أسماء المستخدمين وكلمات المرور والأقسام</p>
+                        <p>إدارة أسماء المستخدمين وكلمات المرور والصلاحيات</p>
                     </div>
                 </div>
 
@@ -79,19 +79,24 @@
         <section class="metrics-bar">
             <div class="metric-card card-total">
                 <div class="metric-icon" style="color: #c084fc;"><i class="fa-solid fa-users"></i></div>
-                <div class="metric-info"><span class="metric-label">إجمالي الأعضاء</span><h3 id="stat-users-count">0</h3></div>
+                <div class="metric-info">
+                    <span class="metric-label">إجمالي الأعضاء</span>
+                    <h3 id="stat-users-count">0</h3>
+                </div>
             </div>
             <div class="metric-card card-winning">
                 <div class="metric-icon" style="color: #60a5fa;"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="metric-info"><span class="metric-label">Media Buyers</span><h3 id="stat-mb-count">0</h3></div>
+                <div class="metric-info">
+                    <span class="metric-label">Media Buyers</span>
+                    <h3 id="stat-mb-count">0</h3>
+                </div>
             </div>
             <div class="metric-card card-testing">
                 <div class="metric-icon" style="color: #34d399;"><i class="fa-solid fa-headset"></i></div>
-                <div class="metric-info"><span class="metric-label">فريق المبيعات (Sales)</span><h3 id="stat-sales-count">0</h3></div>
-            </div>
-            <div class="metric-card card-pause">
-                <div class="metric-icon" style="color: #f472b6;"><i class="fa-solid fa-building"></i></div>
-                <div class="metric-info"><span class="metric-label">الأقسام المفعّلة</span><h3 id="stat-depts-count">4</h3></div>
+                <div class="metric-info">
+                    <span class="metric-label">فريق المبيعات (Sales)</span>
+                    <h3 id="stat-sales-count">0</h3>
+                </div>
             </div>
         </section>
 
@@ -100,7 +105,7 @@
                 <div class="admin-card-header">
                     <div>
                         <h2><i class="fa-solid fa-users-gear"></i> دليل الحسابات وكلمات المرور (User Directory)</h2>
-                        <p style="color: var(--text-muted);">تحكم في اسم المستخدم وكلمة المرور والأقسام لكل موظف في الشركة.</p>
+                        <p style="color: var(--text-muted);">تحكم في اسم المستخدم وكلمة المرور والصلاحية لكل موظف في الشركة.</p>
                     </div>
                 </div>
 
@@ -108,7 +113,12 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>اسم الموظف</th><th>اسم المستخدم (Username)</th><th>كلمة المرور (Password)</th><th>القسم المخصص</th><th>الصلاحية (Role)</th><th>الحالة</th><th>إجراءات</th>
+                                <th>اسم الموظف</th>
+                                <th>اسم المستخدم (Username)</th>
+                                <th>كلمة المرور (Password)</th>
+                                <th>الصلاحية (Role)</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="users-table-body"></tbody>
@@ -133,7 +143,7 @@
 
                 <div class="form-group">
                     <label for="user-name">اسم الموظف / العضو <span class="required">*</span></label>
-                    <input type="text" id="user-name" placeholder="مثال: أحمد محمود (مبيعات العقارات)" required>
+                    <input type="text" id="user-name" placeholder="مثال: أحمد محمود" required>
                 </div>
 
                 <div class="form-row">
@@ -147,24 +157,13 @@
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="user-dept">القسم التابع له <span class="required">*</span></label>
-                        <select id="user-dept" required>
-                            <option value="realestate">قسم العقارات</option>
-                            <option value="clinics">قسم العيادات والخدمات الطبية</option>
-                            <option value="ecommerce">قسم التجارة الإلكترونية</option>
-                            <option value="general">قسم المبيعات العامة</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="user-role">الصلاحية (Role) <span class="required">*</span></label>
-                        <select id="user-role" required>
-                            <option value="sales">🎧 مسؤول مبيعات (Sales Rep)</option>
-                            <option value="mediabuyer">📊 Media Buyer (إدارة الحملات)</option>
-                            <option value="admin">👑 المدير العام (Admin)</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label for="user-role">الصلاحية (Role) <span class="required">*</span></label>
+                    <select id="user-role" required>
+                        <option value="sales">🎧 مسؤول مبيعات (Sales Rep)</option>
+                        <option value="mediabuyer">📊 Media Buyer (إدارة الحملات)</option>
+                        <option value="admin">👑 المدير العام (Admin)</option>
+                    </select>
                 </div>
 
                 <div class="modal-footer">
