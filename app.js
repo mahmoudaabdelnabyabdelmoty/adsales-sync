@@ -137,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const salesMobileCards = document.getElementById('sales-mobile-cards');
     const mediaBuyerTableBody = document.getElementById('media-buyer-table-body');
 
-    const addAdBtn = document.getElementById('add-ad-btn');
     const adModal = document.getElementById('ad-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const cancelModalBtn = document.getElementById('cancel-modal-btn');
@@ -239,36 +238,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyRolePermissions() {
         currentRole = normalizeRole(currentRole);
         const config = ROLES_CONFIG[currentRole] || ROLES_CONFIG.viewer;
-        document.body.className = document.body.className.replace(/role-w+/g, '');
+        document.body.className = document.body.className.replace(/role-\w+/g, '');
         document.body.classList.add('role-' + currentRole);
 
-        // Update Live Board Panel Header dynamically based on role
         const liveBoardHeader = document.querySelector('#view-live-board .panel-header');
         if (liveBoardHeader) {
             if (currentRole === 'sales') {
-                liveBoardHeader.innerHTML = `
-                    <h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2>
-                    <p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>
-                `;
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2><p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>';
             } else if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                liveBoardHeader.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;">
-                        <div>
-                            <h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2>
-                            <p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p>
-                        </div>
-                        <button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button>
-                    </div>
-                `;
+                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button></div>';
             } else {
-                liveBoardHeader.innerHTML = `
-                    <h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2>
-                    <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>
-                `;
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2><p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>';
             }
         }
 
-        // Control Campaign Management Tab and Add Ad Buttons Visibility strictly across all views
         const adminMbElements = document.querySelectorAll('.admin-mb-only');
 
         if (currentRole === 'mediabuyer' || currentRole === 'admin') {
@@ -283,21 +266,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.classList.add('hidden');
             });
 
-            // Redirect away from media-buyer-view if active for non-admin/non-mediabuyer roles
             const mbPanel = document.getElementById('view-media-buyer-view');
             if (mbPanel && mbPanel.classList.contains('active')) {
                 const targetView = currentRole === 'sales' ? 'sales-view' : 'live-board';
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
 
-                const targetBtn = document.querySelector(`.nav-btn[data-view="${targetView}"]`);
-                const targetPanel = document.getElementById(`view-${targetView}`);
+                const targetBtn = document.querySelector('.nav-btn[data-view="' + targetView + '"]');
+                const targetPanel = document.getElementById('view-' + targetView);
                 if (targetBtn) targetBtn.classList.add('active');
                 if (targetPanel) targetPanel.classList.add('active');
             }
         }
 
-        // Re-bind all open-add-ad-modal-btn handlers dynamically
         document.querySelectorAll('.open-add-ad-modal-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.preventDefault();
@@ -305,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 adForm.reset();
                 adIdInput.value = '';
                 populateAdSalesSelect();
-                modalTitle.innerHTML = `<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد`;
+                modalTitle.innerHTML = '<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد';
                 adModal.classList.remove('hidden');
             };
         });
@@ -348,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const match = registeredUsers.find(u => u.username.toLowerCase() === uInput && u.password === pInput && u.active);
 
             if (!match) {
-                alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة! يرجى التأكد من اسم المستخدم وكلمة المرور المسجلة في لوحة التحكم.');
+                alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة!');
                 return;
             }
 
@@ -370,9 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shareLinkBtn.addEventListener('click', () => {
             const finalUrl = window.location.href;
             navigator.clipboard.writeText(finalUrl).then(() => {
-                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:
-
-' + finalUrl);
+                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:\n\n' + finalUrl);
             }).catch(() => {
                 prompt('رابط AdSales Sync الرسمي:', finalUrl);
             });
@@ -463,24 +442,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!liveAdsGrid) return;
         liveAdsGrid.innerHTML = '';
 
-        // Dynamic Header Title based on active role
         const liveBoardHeader = document.querySelector('#view-live-board .panel-header');
         if (liveBoardHeader) {
             if (currentRole === 'sales') {
-                liveBoardHeader.innerHTML = `
-                    <h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2>
-                    <p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>
-                `;
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2><p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>';
             } else if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                liveBoardHeader.innerHTML = `
-                    <h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2>
-                    <p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p>
-                `;
+                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button></div>';
             } else {
-                liveBoardHeader.innerHTML = `
-                    <h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2>
-                    <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>
-                `;
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2><p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>';
             }
         }
 
@@ -498,79 +467,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let cardActionHTML = '';
             if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                // Media Buyer / Admin Actions: Pause/Play & Edit
-                cardActionHTML = `
-                    <div class="ad-card-actions">
-                        ${!isPaused ? 
-                            `<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus('${ad.id}', 'pause')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان (Pause)</button>` : 
-                            `<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus('${ad.id}', 'active')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال (Active)</button>`
-                        }
-                        <button class="btn btn-secondary ad-action-btn" onclick="editAdModal('${ad.id}')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
-                    </div>
-                `;
+                cardActionHTML = '<div class="ad-card-actions">' + 
+                    (!isPaused ? 
+                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان (Pause)</button>' : 
+                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال (Active)</button>'
+                    ) + 
+                    '<button class="btn btn-secondary ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button></div>';
             } else if (currentRole === 'sales') {
-                // Sales Actions: Quality Rating & Note directly on card
-                cardActionHTML = `
-                    <div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 12px; padding: 12px; margin-top: 10px;">
-                        <label style="font-size:0.8rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:6px;">
-                            <i class="fa-solid fa-headset"></i> حدد تقييمك لجودة المحادثات:
-                        </label>
-                        <select class="quality-select" onchange="updateAdQuality('${ad.id}', this.value)" style="width:100%; font-size:0.85rem; padding:6px 10px; margin-bottom:8px;">
-                            <option value="qualified" ${ad.quality === 'qualified' ? 'selected' : ''}>🟢 عملاء ممتازين (Qualified)</option>
-                            <option value="mixed" ${ad.quality === 'mixed' ? 'selected' : ''}>🟡 عملاء متوسطين / متابعة</option>
-                            <option value="unqualified" ${ad.quality === 'unqualified' ? 'selected' : ''}>🔴 غير مهتمين / سيء (طلب إيقاف)</option>
-                        </select>
-                        <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">
-                            <i class="fa-solid fa-comment-dots"></i> ملاحظاتك للميديا باير:
-                        </label>
-                        <input type="text" class="note-input" value="${ad.salesNotes || ''}" placeholder="أضف أي ملاحظة تهم الميديا باير..." onchange="updateAdNote('${ad.id}', this.value)" style="width:100%; font-size:0.8rem; padding:6px 10px;">
-                    </div>
-                `;
+                cardActionHTML = '<div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 12px; padding: 12px; margin-top: 10px;">' +
+                    '<label style="font-size:0.8rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:6px;"><i class="fa-solid fa-headset"></i> حدد تقييمك لجودة المحادثات:</label>' +
+                    '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.85rem; padding:6px 10px; margin-bottom:8px;">' +
+                    '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
+                    '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
+                    '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' +
+                    '<label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;"><i class="fa-solid fa-comment-dots"></i> ملاحظاتك للميديا باير:</label>' +
+                    '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف أي ملاحظة تهم الميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:6px 10px;"></div>';
             } else {
-                // Visitor (Read Only)
-                cardActionHTML = `
-                    <div style="text-align:center; padding:6px; font-size:0.8rem; color:var(--text-muted);">
-                        <i class="fa-solid fa-lock"></i> كارت للعرض فقط (سجّل دخول للتقييم)
-                    </div>
-                `;
+                cardActionHTML = '<div style="text-align:center; padding:6px; font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> كارت للعرض فقط (سجّل دخول للتقييم)</div>';
             }
 
-            card.innerHTML = `
-                <div class="ad-card-header">
-                    <div class="ad-card-top-bar">
-                        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-                            ${getPlatformBadgeHTML(ad.platform)}
-                            <span class="campaign-tag"><i class="fa-solid fa-layer-group"></i> ${ad.campaign}</span>
-                        </div>
-                        ${getStatusBadgeHTML(ad.status)}
-                    </div>
-                    <div class="ad-title-area">
-                        <h4>${ad.name}</h4>
-                        ${ad.objective ? `<span style="font-size:0.8rem; color:var(--primary-color); display:block; margin-top:3px;"><i class="fa-solid fa-bullseye"></i> الهدف: ${ad.objective}</span>` : ''}
-                    </div>
-                </div>
-                <div class="ad-meta-list">
-                    <div class="meta-item"><span class="meta-label">المجموعة الإعلانية:</span><span class="meta-val">${ad.adset}</span></div>
-                    <div class="meta-item"><span class="meta-label">مسؤول الـ Sales:</span><span class="meta-val"><i class="fa-solid fa-user-tag"></i> ${ad.salesRep}</span></div>
-                    <div class="meta-item"><span class="meta-label">تقييم الـ Sales للجودة:</span><span class="meta-val">${getQualityBadgeHTML(ad.quality)}</span></div>
-                    <div class="meta-item"><span class="meta-label">التحديث:</span><span class="meta-val" style="font-size:0.78rem;">${ad.updatedAt}</span></div>
-                </div>
-
-                ${(currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? `
-                    <div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; color: #fca5a5; font-size: 0.85rem; font-weight: 700;">
-                        <i class="fa-solid fa-triangle-exclamation"></i> تنبيه: المبيعات تقيم هذا الإعلان بـ (غير مهتمين/سيء) وتطلب إيقافه!
-                    </div>
-                ` : ''}
-
-                ${currentRole !== 'sales' ? `
-                    <div class="sales-note-box">
-                        <strong><i class="fa-solid fa-comment-dots"></i> ملاحظات الـ Sales للميديا باير:</strong>
-                        ${ad.salesNotes ? ad.salesNotes : 'لا توجد ملاحظات مدونة بعد.'}
-                    </div>
-                ` : ''}
-
-                ${cardActionHTML}
-            `;
+            card.innerHTML = '<div class="ad-card-header"><div class="ad-card-top-bar"><div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">' +
+                getPlatformBadgeHTML(ad.platform) +
+                '<span class="campaign-tag"><i class="fa-solid fa-layer-group"></i> ' + ad.campaign + '</span></div>' +
+                getStatusBadgeHTML(ad.status) + '</div><div class="ad-title-area"><h4>' + ad.name + '</h4>' +
+                (ad.objective ? '<span style="font-size:0.8rem; color:var(--primary-color); display:block; margin-top:3px;"><i class="fa-solid fa-bullseye"></i> الهدف: ' + ad.objective + '</span>' : '') +
+                '</div></div><div class="ad-meta-list"><div class="meta-item"><span class="meta-label">المجموعة الإعلانية:</span><span class="meta-val">' + ad.adset + '</span></div>' +
+                '<div class="meta-item"><span class="meta-label">مسؤول الـ Sales:</span><span class="meta-val"><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</span></div>' +
+                '<div class="meta-item"><span class="meta-label">تقييم الـ Sales للجودة:</span><span class="meta-val">' + getQualityBadgeHTML(ad.quality) + '</span></div>' +
+                '<div class="meta-item"><span class="meta-label">التحديث:</span><span class="meta-val" style="font-size:0.78rem;">' + ad.updatedAt + '</span></div></div>' +
+                ((currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? '<div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; color: #fca5a5; font-size: 0.85rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: المبيعات تقيم هذا الإعلان بـ (غير مهتمين/سيء) وتطلب إيقافه!</div>' : '') +
+                (currentRole !== 'sales' ? '<div class="sales-note-box"><strong><i class="fa-solid fa-comment-dots"></i> ملاحظات الـ Sales للميديا باير:</strong> ' + (ad.salesNotes ? ad.salesNotes : 'لا توجد ملاحظات مدونة بعد.') + '</div>' : '') +
+                cardActionHTML;
             liveAdsGrid.appendChild(card);
         });
     }
@@ -585,57 +512,28 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredAds.forEach(ad => {
             const tr = document.createElement('tr');
             
-            const qualityCellHTML = canEditQuality ? `
-                <select class="quality-select" onchange="updateAdQuality('${ad.id}', this.value)">
-                    <option value="qualified" ${ad.quality === 'qualified' ? 'selected' : ''}>🟢 عملاء ممتازين (Qualified)</option>
-                    <option value="mixed" ${ad.quality === 'mixed' ? 'selected' : ''}>🟡 عملاء متوسطين / متابعة</option>
-                    <option value="unqualified" ${ad.quality === 'unqualified' ? 'selected' : ''}>🔴 غير مهتمين / سيء (طلب إيقاف)</option>
-                </select>
-            ` : `
-                ${getQualityBadgeHTML(ad.quality)}
-                <small style="display:block; color:var(--text-muted); font-size:0.75rem; margin-top:2px;"><i class="fa-solid fa-lock"></i> تقييم خاص بالمبيعات والمدير</small>
-            `;
+            const qualityCellHTML = canEditQuality ? 
+                '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)">' +
+                '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
+                '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
+                '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' :
+                getQualityBadgeHTML(ad.quality) + '<small style="display:block; color:var(--text-muted); font-size:0.75rem; margin-top:2px;"><i class="fa-solid fa-lock"></i> تقييم خاص بالمبيعات والمدير</small>';
 
-            tr.innerHTML = `
-                <td>${getPlatformBadgeHTML(ad.platform)}</td>
-                <td>
-                    <strong>${ad.name}</strong>
-                    ${ad.objective ? `<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ${ad.objective}</small>` : ''}
-                </td>
-                <td>${ad.campaign}<br><small style="color:var(--text-muted);">${ad.adset}</small></td>
-                <td><i class="fa-solid fa-user-tag"></i> ${ad.salesRep}</td>
-                <td>${qualityCellHTML}</td>
-                <td>${getStatusBadgeHTML(ad.status)}</td>
-                <td>
-                    <input type="text" class="note-input" value="${ad.salesNotes || ''}" placeholder="${canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط'}" onchange="updateAdNote('${ad.id}', this.value)" ${!canEditNotes ? 'disabled' : ''}>
-                </td>
-                <td style="font-size:0.78rem; color: var(--text-muted);">${ad.updatedAt}</td>
-            `;
+            tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td><td><strong>' + ad.name + '</strong>' +
+                (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') +
+                '</td><td>' + ad.campaign + '<br><small style="color:var(--text-muted);">' + ad.adset + '</small></td>' +
+                '<td><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</td><td>' + qualityCellHTML + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
+                '<td><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></td>' +
+                '<td style="font-size:0.78rem; color: var(--text-muted);">' + ad.updatedAt + '</td>';
             salesTableBody.appendChild(tr);
 
             const mCard = document.createElement('div');
             mCard.className = 'sales-mobile-card';
-            mCard.innerHTML = `
-                <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-                        <div>
-                            ${getPlatformBadgeHTML(ad.platform)}
-                            <h4 style="display:inline-block; margin-right:6px;">${ad.name}</h4>
-                        </div>
-                        ${getStatusBadgeHTML(ad.status)}
-                    </div>
-                    ${ad.objective ? `<span style="font-size:0.78rem; color:var(--primary-color); display:block; margin-bottom:4px;"><i class="fa-solid fa-bullseye"></i> ${ad.objective}</span>` : ''}
-                    <span class="meta-sub">${ad.campaign} | ${ad.salesRep}</span>
-                </div>
-                <div class="form-group" style="margin-top: 10px;">
-                    <label>تقييم جودة الـ Leads:</label>
-                    ${qualityCellHTML}
-                </div>
-                <div class="form-group">
-                    <label>ملاحظة للميديا باير:</label>
-                    <input type="text" class="note-input" value="${ad.salesNotes || ''}" placeholder="${canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط'}" onchange="updateAdNote('${ad.id}', this.value)" ${!canEditNotes ? 'disabled' : ''}>
-                </div>
-            `;
+            mCard.innerHTML = '<div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;"><div>' +
+                getPlatformBadgeHTML(ad.platform) + '<h4 style="display:inline-block; margin-right:6px;">' + ad.name + '</h4></div>' +
+                getStatusBadgeHTML(ad.status) + '</div>' + (ad.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); display:block; margin-bottom:4px;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</span>' : '') +
+                '<span class="meta-sub">' + ad.campaign + ' | ' + ad.salesRep + '</span></div><div class="form-group" style="margin-top: 10px;"><label>تقييم جودة الـ Leads:</label>' + qualityCellHTML +
+                '</div><div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></div>';
             salesMobileCards.appendChild(mCard);
         });
     }
@@ -650,26 +548,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
             const isPaused = ad.status === 'pause';
 
-            tr.innerHTML = `
-                <td>${getPlatformBadgeHTML(ad.platform)}</td>
-                <td>
-                    <strong>${ad.name}</strong>
-                    ${ad.objective ? `<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ${ad.objective}</small>` : ''}
-                </td>
-                <td>${ad.adset}</td>
-                <td>${ad.campaign}</td>
-                <td>${ad.salesRep}</td>
-                <td>${getQualityBadgeHTML(ad.quality)}</td>
-                <td>${getStatusBadgeHTML(ad.status)}</td>
-                <td>
-                    ${!isPaused ? 
-                        `<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus('${ad.id}', 'pause')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ${!canEditStructure ? 'disabled' : ''}><i class="fa-solid fa-pause"></i> تعطيل الإعلان</button>` : 
-                        `<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus('${ad.id}', 'active')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ${!canEditStructure ? 'disabled' : ''}><i class="fa-solid fa-play"></i> تشغيل الإعلان</button>`
-                    }
-                    <button class="btn btn-secondary btn-sm" onclick="editAdModal('${ad.id}')" ${!canEditStructure ? 'disabled' : ''}><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn btn-secondary btn-sm" onclick="deleteAd('${ad.id}')" style="color:#ef4444;" ${!canDelete ? 'disabled' : ''}><i class="fa-solid fa-trash"></i></button>
-                </td>
-            `;
+            tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td><td><strong>' + ad.name + '</strong>' +
+                (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') +
+                '</td><td>' + ad.adset + '</td><td>' + ad.campaign + '</td><td>' + ad.salesRep + '</td><td>' + getQualityBadgeHTML(ad.quality) + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
+                '<td>' + (!isPaused ? 
+                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل الإعلان</button>' : 
+                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل الإعلان</button>'
+                ) +
+                '<button class="btn btn-secondary btn-sm" onclick="editAdModal(\'' + ad.id + '\')" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
+                '<button class="btn btn-secondary btn-sm" onclick="deleteAd(\'' + ad.id + '\')" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></td>';
             mediaBuyerTableBody.appendChild(tr);
         });
     }
@@ -736,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ad-adset').value = ad.adset;
             populateAdSalesSelect(ad.salesRep);
             document.getElementById('ad-notes').value = ad.salesNotes || '';
-            modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات الإعلان`;
+            modalTitle.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات الإعلان';
             adModal.classList.remove('hidden');
         }
     };
@@ -747,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
             adForm.reset();
             adIdInput.value = '';
             populateAdSalesSelect();
-            modalTitle.innerHTML = `<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد`;
+            modalTitle.innerHTML = '<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد';
             adModal.classList.remove('hidden');
         });
     });
