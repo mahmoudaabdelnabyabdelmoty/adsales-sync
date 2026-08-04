@@ -21,26 +21,31 @@
                         <p>نظام التنسيق المباشر وإدارة الصلاحيات والأقسام</p>
                     </div>
                 </div>
+
                 <div class="header-actions-row">
-                    <div class="role-indicator-badge" id="role-badge" title="انقر لتغيير الصلاحية أو تسجيل الدخول">
+                    <div class="role-indicator-badge" id="role-badge" onclick="window.openRoleModal && window.openRoleModal(); return false;" title="انقر لتغيير الصلاحية أو تسجيل الدخول">
                         <i class="fa-solid fa-eye"></i>
                         <span id="role-text">زائر (عرض فقط)</span>
                     </div>
-                    <button id="login-role-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-key"></i> تغيير الصلاحية</button>
+
+                    <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="window.openRoleModal && window.openRoleModal(); return false;"><i class="fa-solid fa-key"></i> تغيير الصلاحية</button>
                     <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
             </div>
-            <div id="read-only-banner" class="read-only-banner">
-                <i class="fa-solid fa-lock"></i> أنت تتصفح النظام بوضع <strong>"مشاهد فقط (Read-Only)"</strong>. للتعديل، يرجى <a href="#" id="banner-login-link">تسجيل الدخول بصلاحية (Media Buyer / Sales / Admin)</a>.
+
+            <div id="read-only-banner" class="read-only-banner" onclick="window.openRoleModal && window.openRoleModal();">
+                <i class="fa-solid fa-lock"></i> أنت تتصفح النظام بوضع <strong>"مشاهد فقط (Read-Only)"</strong>. للتعديل، يرجى <a href="javascript:void(0)" id="banner-login-link" onclick="window.openRoleModal && window.openRoleModal(); return false;">تسجيل الدخول بصلاحية (Media Buyer / Sales / Admin)</a>.
             </div>
+
             <nav class="view-switcher">
                 <button class="nav-btn active" data-view="live-board"><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية</button>
                 <button class="nav-btn" data-view="sales-view"><i class="fa-solid fa-headset"></i> شاشة الـ Sales</button>
                 <button class="nav-btn" data-view="media-buyer-view"><i class="fa-solid fa-sliders"></i> إدارة الحملات</button>
             </nav>
         </header>
+
         <section class="metrics-bar">
             <div class="metric-card card-total">
                 <div class="metric-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
@@ -59,6 +64,7 @@
                 <div class="metric-info"><span class="metric-label">قيد الاختبار 🟡</span><h3 id="stat-testing-ads">0</h3></div>
             </div>
         </section>
+
         <section class="controls-bar">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -91,6 +97,7 @@
                 <button id="reset-filters-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-rotate-left"></i> إعادة ضبط</button>
             </div>
         </section>
+
         <main class="main-content">
             <section id="view-live-board" class="view-panel active">
                 <div class="panel-header">
@@ -133,6 +140,7 @@
                 </div>
             </section>
         </main>
+
         <div id="role-modal" class="modal-overlay hidden">
             <div class="modal-content">
                 <div class="modal-header">
@@ -167,6 +175,7 @@
                 </form>
             </div>
         </div>
+
         <div id="ad-modal" class="modal-overlay hidden">
             <div class="modal-content">
                 <div class="modal-header">
@@ -223,6 +232,7 @@
                 </form>
             </div>
         </div>
+
         <footer class="app-footer">
             <p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة الصلاحيات والأقسام الموحد</p>
         </footer>
