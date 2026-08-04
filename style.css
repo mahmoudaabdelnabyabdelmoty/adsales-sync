@@ -545,7 +545,7 @@ body {
 .data-table td:last-child {
     white-space: nowrap !important;
     min-width: 280px !important;
-    padding-left: 3rem !important;
+    padding-left: 3.5rem !important;
     padding-right: 1rem !important;
 }
 
@@ -828,7 +828,11 @@ tr.table-campaign-row {
 }
 
 tr.table-campaign-row td {
-    padding: 0.85rem 2rem !important;
+    padding: 0.85rem 2.5rem 0.85rem 1.5rem !important;
+}
+
+tr.table-campaign-row div:last-child {
+    padding-left: 2rem !important;
 }
 
 tr.table-campaign-row .campaign-tag {
@@ -868,6 +872,25 @@ td.tree-indented-cell::before {
     color: var(--primary-color);
     font-weight: 900;
     font-size: 1.1rem;
+}
+
+/* FINAL EDGE CLIPPING DEFENSE */
+tr.table-campaign-row td {
+    padding-left: 2.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+tr.table-campaign-row div:last-child {
+    padding-left: 2rem !important;
+}
+
+.table-responsive {
+    padding: 0 1.5rem 1.5rem 1.5rem !important;
+}
+
+.data-table td:last-child,
+.data-table th:last-child {
+    padding-left: 3.5rem !important;
 }
 
 /* FOOTER */
