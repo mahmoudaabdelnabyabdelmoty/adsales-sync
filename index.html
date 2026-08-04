@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=5.1">
+    <link rel="stylesheet" href="style.css?v=5.0">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
@@ -17,8 +17,8 @@
                 <div class="brand-section">
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
-                        <h1>AdSales Sync <span class="version-tag">v5.1 Live Workflow</span></h1>
-                        <p>نظام قرار المبيعات الفوري للـ Media Buyer</p>
+                        <h1>AdSales Sync <span class="version-tag">v5.0 Enterprise</span></h1>
+                        <p>نظام التنسيق المباشر وإدارة صلاحيات الإعلانات والمبيعات</p>
                     </div>
                 </div>
 
@@ -30,7 +30,7 @@
 
                     <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
                     <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> خروج</button>
-                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only"><i class="fa-solid fa-plus"></i> إضافة إعلان جديد</button>
+                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
@@ -38,13 +38,13 @@
 
             <nav class="view-switcher">
                 <button class="nav-btn active" data-view="live-board">
-                    <i class="fa-solid fa-border-all"></i> قرارات المبيعات للميديا باير
+                    <i class="fa-solid fa-border-all"></i> اللوحة التفاعلية
                 </button>
                 <button class="nav-btn" data-view="sales-view">
-                    <i class="fa-solid fa-headset"></i> شاشة تحديد قرار الـ Sales
+                    <i class="fa-solid fa-headset"></i> شاشة الـ Sales
                 </button>
                 <button class="nav-btn" data-view="media-buyer-view">
-                    <i class="fa-solid fa-sliders"></i> جدول الحملات والمجموعات
+                    <i class="fa-solid fa-sliders"></i> إدارة الحملات
                 </button>
             </nav>
         </header>
@@ -60,21 +60,21 @@
             <div class="metric-card card-winning">
                 <div class="metric-icon"><i class="fa-solid fa-circle-check"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">شغال تمام (Scale) 🟢</span>
+                    <span class="metric-label">إعلانات شغال تمام 🟢</span>
                     <h3 id="stat-winning-ads">0</h3>
                 </div>
             </div>
             <div class="metric-card card-pause">
                 <div class="metric-icon"><i class="fa-solid fa-circle-xmark"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">أوقف الإعلان (Pause) 🔴</span>
+                    <span class="metric-label">مطلوبة إيقافها 🔴</span>
                     <h3 id="stat-pause-ads">0</h3>
                 </div>
             </div>
             <div class="metric-card card-testing">
-                <div class="metric-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                <div class="metric-icon"><i class="fa-solid fa-vial"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">استنى شوية / نص نص 🟡</span>
+                    <span class="metric-label">قيد الاختبار 🟡</span>
                     <h3 id="stat-testing-ads">0</h3>
                 </div>
             </div>
@@ -83,24 +83,24 @@
         <section class="controls-bar">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="ابحث باسم الإعلان، المجموعة الإعلانية، أو Sales...">
+                <input type="text" id="search-input" placeholder="ابحث باسم الإعلان، الحملة، أو Sales...">
             </div>
 
             <div class="filter-group">
                 <div class="filter-item">
-                    <label for="filter-status"><i class="fa-solid fa-filter"></i> قرار الـ Sales:</label>
+                    <label for="filter-status"><i class="fa-solid fa-filter"></i> الحالة:</label>
                     <select id="filter-status">
-                        <option value="all">جميع قرارات المبيعات</option>
-                        <option value="winning">🟢 شغال تمام (Scale)</option>
+                        <option value="all">جميع الحالات</option>
                         <option value="pause">🔴 أوقف الإعلان (Pause)</option>
-                        <option value="testing">🟡 استنى شوية / نص نص (Wait)</option>
+                        <option value="winning">🟢 شغال تمام (Scale)</option>
+                        <option value="testing">🟡 قيد الاختبار (Testing)</option>
                     </select>
                 </div>
 
                 <div class="filter-item">
-                    <label for="filter-sales"><i class="fa-solid fa-user-tag"></i> مسؤول المبيعات:</label>
+                    <label for="filter-sales"><i class="fa-solid fa-user-tag"></i> Sales:</label>
                     <select id="filter-sales">
-                        <option value="all">جميع الموظفين</option>
+                        <option value="all">الجميع</option>
                     </select>
                 </div>
 
@@ -111,29 +111,29 @@
         <main class="main-content">
             <section id="view-live-board" class="view-panel active">
                 <div class="panel-header">
-                    <h2><i class="fa-solid fa-fire-flame-curved"></i> شاشة الـ Media Buyer الفورية (توجيهات الـ Sales لكل إعلان)</h2>
-                    <p>الميديا باير يقدر يشوف كل إعلان جوه المجموعة وشاشة المبيعات مدية قرار إيه (شغال 🟢 / اوقف 🔴 / استنى شوية 🟡).</p>
+                    <h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2>
+                    <p>عرض تفاعلي مباشر لحالة الإعلانات المحدثة فورياً من المبيعات.</p>
                 </div>
                 <div id="live-ads-grid" class="ads-grid"></div>
             </section>
 
             <section id="view-sales-view" class="view-panel">
                 <div class="panel-header">
-                    <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تحديد القرار والملاحظة للميديا باير)</h2>
-                    <p>مسؤول المبيعات بيحدد هل النتائج ممتازة، أو نص نص محتاجة ننتظر، أو الإعلان فاشل ويطلب إيقافه فوراً.</p>
+                    <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تحديث الجودة والملاحظات)</h2>
+                    <p>قم بتحديث حالة الإعلانات مباشرة (يتطلب تسجيل الدخول بحساب Sales أو Admin).</p>
                 </div>
 
                 <div class="table-responsive desktop-only">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>اسم الإعلان</th>
-                                <th>المجموعة الإعلانية</th>
+                                <th>الإعلان</th>
                                 <th>الحملة</th>
+                                <th>المجموعة</th>
                                 <th>الـ Sales</th>
-                                <th>جودة العملاء</th>
-                                <th>قرار الـ Sales للـ Media Buyer</th>
-                                <th>رسالة/توجيه خاص للميديا باير</th>
+                                <th>جودة الـ Leads</th>
+                                <th>حالة الإعلان</th>
+                                <th>الملاحظات</th>
                                 <th>التحديث</th>
                             </tr>
                         </thead>
@@ -146,8 +146,8 @@
 
             <section id="view-media-buyer-view" class="view-panel">
                 <div class="panel-header">
-                    <h2><i class="fa-solid fa-sliders"></i> هيكل الحملات والمجموعات الإعلانية</h2>
-                    <p>إضافة إعلانات جديدة داخل المجموعات وتعيين مسؤول المبيعات المتابع.</p>
+                    <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
+                    <p>إضافة وتعديل بيانات الإعلانات وتعيين الـ Sales.</p>
                 </div>
 
                 <div class="table-responsive">
@@ -156,10 +156,10 @@
                             <tr>
                                 <th>نوع</th>
                                 <th>اسم الإعلان</th>
-                                <th>المجموعة الإعلانية (Ad Set)</th>
-                                <th>الحملة (Campaign)</th>
-                                <th>الـ Sales المتابع</th>
-                                <th>القرار الحالي</th>
+                                <th>المجموعة الإعلانية</th>
+                                <th>الحملة</th>
+                                <th>الـ Sales</th>
+                                <th>الحالة الحالية</th>
                                 <th>إجراءات</th>
                             </tr>
                         </thead>
@@ -197,7 +197,7 @@
         <div id="ad-modal" class="modal-overlay hidden">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 id="modal-title"><i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد للمجموعة</h3>
+                    <h3 id="modal-title"><i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد</h3>
                     <button id="close-modal-btn" class="close-btn" onclick="document.getElementById('ad-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="ad-form">
@@ -205,37 +205,37 @@
                     
                     <div class="form-group">
                         <label for="ad-name">اسم الإعلان / الكود <span class="required">*</span></label>
-                        <input type="text" id="ad-name" placeholder="مثال: Ad 02 - Fire Alarm Video Offer" required>
+                        <input type="text" id="ad-name" placeholder="مثال: Ad 01 - Carousel - Fire Safety System" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="ad-sales">مسؤول المبيعات المتابع (Sales Rep) <span class="required">*</span></label>
-                        <input type="text" id="ad-sales" placeholder="مثال: سارة علي" required>
+                        <label for="ad-sales">مسؤول المبيعات (Sales Rep) <span class="required">*</span></label>
+                        <input type="text" id="ad-sales" placeholder="مثال: أحمد محمود" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="ad-adset">المجموعة الإعلانية (Ad Set) <span class="required">*</span></label>
-                            <input type="text" id="ad-adset" placeholder="مثال: AdSet_Cairo_RealEstate" required>
-                        </div>
-                        <div class="form-group">
                             <label for="ad-campaign">اسم الحملة (Campaign) <span class="required">*</span></label>
                             <input type="text" id="ad-campaign" placeholder="مثال: Campaign_Leads_Cairo_Aug" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ad-adset">المجموعة الإعلانية (Ad Set) <span class="required">*</span></label>
+                            <input type="text" id="ad-adset" placeholder="مثال: AdSet_Target_BusinessOwners" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="ad-status">القرار المبدئي</label>
+                        <label for="ad-status">الحالة الأولية</label>
                         <select id="ad-status">
-                            <option value="testing">🟡 استنى شوية / نص نص (تحت المتابعة)</option>
+                            <option value="testing">🟡 قيد الاختبار (Testing)</option>
                             <option value="winning">🟢 شغال تمام (Scale)</option>
                             <option value="pause">🔴 أوقف الإعلان (Pause)</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="ad-notes">ملاحظات / توجيهات للميديا باير (اختياري)</label>
-                        <textarea id="ad-notes" rows="3" placeholder="أكتب للميديا باير مثلاً: استنى شوية لشوف بقية محادثات بكره..."></textarea>
+                        <label for="ad-notes">ملاحظات أولية (اختياري)</label>
+                        <textarea id="ad-notes" rows="3" placeholder="أضف أي تفاصيل تهم الـ Sales أو الـ Media Buyer..."></textarea>
                     </div>
 
                     <div class="modal-footer">
@@ -247,10 +247,10 @@
         </div>
 
         <footer class="app-footer">
-            <p>AdSales Sync Enterprise &copy; 2026 - نظام مزامنة قرارات المبيعات والميديا باير الفوري</p>
+            <p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة صلاحيات الإعلانات والمبيعات الموحد</p>
         </footer>
     </div>
 
-    <script src="app.js?v=5.1"></script>
+    <script src="app.js?v=5.0"></script>
 </body>
 </html>
