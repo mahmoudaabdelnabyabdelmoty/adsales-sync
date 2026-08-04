@@ -555,7 +555,7 @@ body {
     gap: 6px !important;
     white-space: nowrap !important;
     flex-wrap: nowrap !important;
-    margin-left: 1rem !important;
+    margin-left: 3.5rem !important;
 }
 
 .quality-select,
@@ -832,7 +832,8 @@ tr.table-campaign-row td {
 }
 
 tr.table-campaign-row div:last-child {
-    padding-left: 2rem !important;
+    padding-left: 0 !important;
+    margin-left: 3.5rem !important;
 }
 
 tr.table-campaign-row .campaign-tag {
@@ -860,6 +861,7 @@ tr.table-ad-child-row:hover {
 
 td.tree-indented-cell {
     padding-right: 2.5rem !important;
+    padding-left: 1rem !important;
     position: relative;
 }
 
@@ -880,10 +882,6 @@ tr.table-campaign-row td {
     padding-right: 1.5rem !important;
 }
 
-tr.table-campaign-row div:last-child {
-    padding-left: 2rem !important;
-}
-
 .table-responsive {
     padding: 0 1.5rem 1.5rem 1.5rem !important;
 }
@@ -891,6 +889,11 @@ tr.table-campaign-row div:last-child {
 .data-table td:last-child,
 .data-table th:last-child {
     padding-left: 3.5rem !important;
+}
+
+/* ABSOLUTE MARGIN-LEFT SAFETY BUFFER (NEVER TOUCHES LEFT CONTAINER WALL) */
+.action-btn-group {
+    margin-left: 3.5rem !important;
 }
 
 /* FOOTER */
