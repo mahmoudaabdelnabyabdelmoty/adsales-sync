@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const userIdInput = document.getElementById('user-id');
 
     const defaultUsers = [
-        { id: 'u-1', name: 'المدير العام (Admin Desk)', username: 'admin', password: 'admin123', dept: 'general', role: 'admin', active: true },
-        { id: 'u-2', name: 'أحمد محمود (Media Buyer)', username: 'media', password: 'media123', dept: 'clinics', role: 'mediabuyer', active: true },
-        { id: 'u-3', name: 'سارة علي (Sales Rep)', username: 'sales', password: 'sales123', dept: 'realestate', role: 'sales', active: true }
+        { id: 'u-1', name: 'المدير العام (Admin Desk)', username: 'admin', password: 'admin123', role: 'admin', active: true },
+        { id: 'u-2', name: 'أحمد محمود (Media Buyer)', username: 'media', password: 'media123', role: 'mediabuyer', active: true },
+        { id: 'u-3', name: 'سارة علي (Sales Rep)', username: 'sales', password: 'sales123', role: 'sales', active: true }
     ];
 
     let usersState = JSON.parse(localStorage.getItem('adsales_registered_users')) || defaultUsers;
@@ -68,15 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function getDeptLabel(deptKey) {
-        switch(deptKey) {
-            case 'realestate': return 'قسم العقارات';
-            case 'clinics': return 'قسم العيادات والخدمات الطبية';
-            case 'ecommerce': return 'قسم التجارة الإلكترونية';
-            case 'general': default: return 'قسم المبيعات العامة';
-        }
-    }
-
     function getRoleBadge(role) {
         switch(role) {
             case 'admin': return `<span class="badge-role badge-admin"><i class="fa-solid fa-crown"></i> المدير العام</span>`;
@@ -99,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><strong>${user.name}</strong></td>
                 <td><span class="user-tag-display">@${user.username}</span></td>
                 <td><code>${user.password}</code></td>
-                <td><span class="dept-tag">${getDeptLabel(user.dept)}</span></td>
                 <td>${getRoleBadge(user.role)}</td>
                 <td>
                     <span class="status-badge ${user.active ? 'badge-winning' : 'badge-pause'}">
@@ -128,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('user-name').value = user.name;
             document.getElementById('user-username').value = user.username;
             document.getElementById('user-password').value = user.password;
-            document.getElementById('user-dept').value = user.dept;
             document.getElementById('user-role').value = user.role;
             userModalTitle.innerHTML = `<i class="fa-solid fa-user-pen"></i> تعديل بيانات الحساب وكلمة المرور`;
             userModal.classList.remove('hidden');
@@ -169,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = document.getElementById('user-name').value.trim();
             const username = document.getElementById('user-username').value.trim().toLowerCase();
             const password = document.getElementById('user-password').value.trim();
-            const dept = document.getElementById('user-dept').value;
             const role = document.getElementById('user-role').value;
 
             const existingUser = usersState.find(u => u.username === username && u.id !== id);
@@ -184,13 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     user.name = name;
                     user.username = username;
                     user.password = password;
-                    user.dept = dept;
                     user.role = role;
                 }
             } else {
                 const newUser = {
                     id: 'u-' + Date.now(),
-                    name, username, password, dept, role, active: true
+                    name, username, password, role, active: true
                 };
                 usersState.push(newUser);
             }
