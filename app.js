@@ -786,9 +786,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); display:inline-block;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
                 (cGroup.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); background:rgba(99,102,241,0.12); padding:2px 8px; border-radius:12px;"><i class="fa-solid fa-bullseye"></i> ' + cGroup.objective + '</span>' : '') +
                 '</div>' +
-                '<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
+                '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
                 '<span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);"><i class="fa-solid fa-user-tag"></i> ' + cGroup.salesRep + '</span>' +
-                '<span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-cubes"></i> ' + adsetsList.length + ' مجموعات | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span>' +
+                '<span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-cubes"></i> ' + cGroup.totalAdsCount + ' إعلانات • ' + cGroup.activeAdsCount + ' 🟢 نشط</span>' +
                 '<i class="fa-solid fa-chevron-down" style="color:var(--text-muted);"></i>' +
                 '</div>' +
                 '</div>' +
@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢)</span></div>' +
                 '</div></td>';
             salesTableBody.appendChild(cTr);
 
@@ -874,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢)</span></div>' +
                 '</div></td>';
             resultsTableBody.appendChild(cTr);
 
@@ -959,7 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢)</span></div>' +
                 '</div></td>';
             mediaBuyerTableBody.appendChild(cTr);
 
