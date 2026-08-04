@@ -771,12 +771,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         '</div>';
                 }).join('');
 
-                return '<div class="adset-group-box">' +
-                    '<div class="adset-header-title">' +
+                return '<div class="adset-group-section">' +
+                    '<div class="adset-title-bar">' +
                     '<i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): ' + asGroup.name +
                     ' <span style="font-size:0.75rem; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:12px; color:var(--text-secondary); margin-right:auto;">' + asGroup.ads.length + ' إعلانات</span>' +
                     '</div>' +
-                    '<div class="nested-ads-grid">' + adsCardsHTML + '</div>' +
+                    '<div class="hierarchical-ads-grid">' + adsCardsHTML + '</div>' +
                     '</div>';
             }).join('');
 
@@ -804,36 +804,59 @@ document.addEventListener('DOMContentLoaded', () => {
         const canEditQuality = ROLES_CONFIG[currentRole].canEditQuality;
         const canEditNotes = ROLES_CONFIG[currentRole].canEditNotes;
 
-        filteredAds.forEach(ad => {
-            const tr = document.createElement('tr');
-            
-            const qualityCellHTML = canEditQuality ? 
-                '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)">' +
-                '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
-                '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
-                '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' :
-                getQualityBadgeHTML(ad.quality) + '<small style="display:block; color:var(--text-muted); font-size:0.75rem; margin-top:2px;"><i class="fa-solid fa-lock"></i> تقييم خاص بالمبيعات والمدير</small>';
+        const hierarchicalCampaigns = getHierarchicalCampaigns(filteredAds);
 
-            tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td><td><strong>' + ad.name + '</strong>' +
-                (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') +
-                '</td><td>' + ad.campaign + '<br><small style="color:var(--text-muted);">' + ad.adset + '</small></td>' +
-                '<td><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</td><td>' + qualityCellHTML + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
-                '<td><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></td>' +
-                '<td style="font-size:0.78rem; color: var(--text-muted);">' + ad.updatedAt + '</td>';
-            salesTableBody.appendChild(tr);
+        hierarchicalCampaigns.forEach(cGroup => {
+            const cTr = document.createElement('tr');
+            cTr.className = 'table-campaign-row';
+            cTr.innerHTML = '<td colspan="8">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1.05rem; margin-right:8px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
+                (cGroup.objective ? ' <span style="font-size:0.78rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
+                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '</div></td>';
+            salesTableBody.appendChild(cTr);
 
-            const mCard = document.createElement('div');
-            mCard.className = 'sales-mobile-card';
-            mCard.innerHTML = '<div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;"><div>' +
-                getPlatformBadgeHTML(ad.platform) + '<h4 style="display:inline-block; margin-right:6px;">' + ad.name + '</h4></div>' +
-                getStatusBadgeHTML(ad.status) + '</div>' + (ad.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); display:block; margin-bottom:4px;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</span>' : '') +
-                '<span class="meta-sub">' + ad.campaign + ' | ' + ad.salesRep + '</span></div><div class="form-group" style="margin-top: 10px;"><label>تقييم جودة الـ Leads:</label>' + qualityCellHTML +
-                '</div><div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></div>';
-            salesMobileCards.appendChild(mCard);
+            Object.values(cGroup.adsetsMap).forEach(asGroup => {
+                const asTr = document.createElement('tr');
+                asTr.className = 'table-adset-row';
+                asTr.innerHTML = '<td colspan="8"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                salesTableBody.appendChild(asTr);
+
+                asGroup.ads.forEach(ad => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'table-ad-child-row';
+
+                    const qualityCellHTML = canEditQuality ? 
+                        '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)">' +
+                        '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
+                        '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
+                        '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' :
+                        getQualityBadgeHTML(ad.quality);
+
+                    tr.innerHTML = '<td class="tree-indented-cell">' + getPlatformBadgeHTML(ad.platform) + '</td>' +
+                        '<td><strong>' + ad.name + '</strong>' + (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') + '</td>' +
+                        '<td>' + ad.campaign + '<br><small style="color:var(--text-muted);">' + ad.adset + '</small></td>' +
+                        '<td><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</td>' +
+                        '<td>' + qualityCellHTML + '</td>' +
+                        '<td>' + getStatusBadgeHTML(ad.status) + '</td>' +
+                        '<td><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></td>' +
+                        '<td style="font-size:0.78rem; color: var(--text-muted);">' + ad.updatedAt + '</td>';
+                    salesTableBody.appendChild(tr);
+
+                    const mCard = document.createElement('div');
+                    mCard.className = 'sales-mobile-card';
+                    mCard.innerHTML = '<div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;"><div>' +
+                        getPlatformBadgeHTML(ad.platform) + '<h4 style="display:inline-block; margin-right:6px;">' + ad.name + '</h4></div>' +
+                        getStatusBadgeHTML(ad.status) + '</div>' + (ad.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); display:block; margin-bottom:4px;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</span>' : '') +
+                        '<span class="meta-sub">' + ad.campaign + ' | ' + ad.salesRep + '</span></div><div class="form-group" style="margin-top: 10px;"><label>تقييم جودة الـ Leads:</label>' + qualityCellHTML +
+                        '</div><div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></div>';
+                    salesMobileCards.appendChild(mCard);
+                });
+            });
         });
     }
 
-    /* RENDER RESULTS & DAILY METRICS BOARD (NEW TAB 3 - MESSAGES FOCUS) */
     function renderResultsView(filteredAds) {
         if (!resultsTableBody || !resultsMobileCards) return;
         resultsTableBody.innerHTML = '';
@@ -842,60 +865,82 @@ document.addEventListener('DOMContentLoaded', () => {
         const selDate = resultsDatePicker ? (resultsDatePicker.value || todayStr) : todayStr;
         const canEditResults = ROLES_CONFIG[currentRole].canEditResults;
 
-        filteredAds.forEach(ad => {
-            const tr = document.createElement('tr');
-            const dayEntry = (ad.dailyResults && ad.dailyResults[selDate]) ? ad.dailyResults[selDate] : {};
+        const hierarchicalCampaigns = getHierarchicalCampaigns(filteredAds);
 
-            const resultsVal = dayEntry.results !== undefined ? dayEntry.results : 0;
+        hierarchicalCampaigns.forEach(cGroup => {
+            const cTr = document.createElement('tr');
+            cTr.className = 'table-campaign-row';
+            cTr.innerHTML = '<td colspan="7">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1.05rem; margin-right:8px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
+                (cGroup.objective ? ' <span style="font-size:0.78rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
+                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '</div></td>';
+            resultsTableBody.appendChild(cTr);
 
-            const customFields = (ad.metricsConfig || []).filter(m => m.id !== 'results');
-            let customMetricsHTML = '';
+            Object.values(cGroup.adsetsMap).forEach(asGroup => {
+                const asTr = document.createElement('tr');
+                asTr.className = 'table-adset-row';
+                asTr.innerHTML = '<td colspan="7"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                resultsTableBody.appendChild(asTr);
 
-            if (customFields.length > 0) {
-                customMetricsHTML = customFields.map(m => {
-                    const val = dayEntry[m.id] !== undefined ? dayEntry[m.id] : 0;
-                    const deleteBtnHTML = canEditResults ? 
-                        '<button class="delete-metric-btn" onclick="deleteCustomMetric(\'' + ad.id + '\', \'' + m.id + '\')" title="حذف مؤشر ' + m.label + '">&times;</button>' : '';
-                    return '<span class="metric-pill" title="' + m.label + '">' + deleteBtnHTML + m.label + ': ' + val + ' ' + (m.unit || '') + '</span>';
-                }).join(' ');
-            } else {
-                customMetricsHTML = '<small style="color:var(--text-muted); font-size:0.75rem;">لا توجد مؤشرات إضافية (انقر + لإضافة مؤشر)</small>';
-            }
+                asGroup.ads.forEach(ad => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'table-ad-child-row';
 
-            let inlineEditHTML = '';
-            if (canEditResults) {
-                inlineEditHTML = '<div class="action-btn-group">' +
-                    '<button class="btn btn-primary btn-sm open-daily-entry-btn" data-ad-id="' + ad.id + '" title="تحديث أرقام اليوم بالتقويم"><i class="fa-solid fa-pen"></i> تحديث الأرقام</button>' +
-                    '<button class="btn btn-secondary btn-sm open-custom-metric-btn" data-ad-id="' + ad.id + '" title="إضافة مؤشر مخصص كـ CPR أو Frequency"><i class="fa-solid fa-plus"></i> + مؤشر</button>' +
-                    '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '" title="سجل التواريخ والتقويم بالكامل"><i class="fa-solid fa-clock-rotate-left"></i> السجل</button>' +
-                    '</div>';
-            } else {
-                inlineEditHTML = '<div class="action-btn-group"><button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-eye"></i> عرض السجل</button></div>';
-            }
+                    const dayEntry = (ad.dailyResults && ad.dailyResults[selDate]) ? ad.dailyResults[selDate] : {};
+                    const resultsVal = dayEntry.results !== undefined ? dayEntry.results : 0;
 
-            const clickableDateBadge = '<button class="date-badge open-daily-entry-btn" data-ad-id="' + ad.id + '" title="انقر لتعديل أرقام هذا التاريخ أو تغيير التقويم"><i class="fa-solid fa-calendar-days"></i> ' + selDate + '</button>';
+                    const customFields = (ad.metricsConfig || []).filter(m => m.id !== 'results');
+                    let customMetricsHTML = '';
 
-            tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td>' +
-                '<td><strong>' + ad.name + '</strong>' + (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') + '</td>' +
-                '<td>' + ad.campaign + '<br><small style="color:var(--text-muted);">' + ad.adset + '</small></td>' +
-                '<td>' + clickableDateBadge + '</td>' +
-                '<td><strong style="color:var(--status-winning-text); font-size:1.15rem;">' + resultsVal + ' <small style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">رسالة</small></strong></td>' +
-                '<td>' + customMetricsHTML + '</td>' +
-                '<td>' + inlineEditHTML + '</td>';
-            resultsTableBody.appendChild(tr);
+                    if (customFields.length > 0) {
+                        customMetricsHTML = customFields.map(m => {
+                            const val = dayEntry[m.id] !== undefined ? dayEntry[m.id] : 0;
+                            const deleteBtnHTML = canEditResults ? 
+                                '<button class="delete-metric-btn" onclick="deleteCustomMetric(\'' + ad.id + '\', \'' + m.id + '\')" title="حذف مؤشر ' + m.label + '">&times;</button>' : '';
+                            return '<span class="metric-pill" title="' + m.label + '">' + deleteBtnHTML + m.label + ': ' + val + ' ' + (m.unit || '') + '</span>';
+                        }).join(' ');
+                    } else {
+                        customMetricsHTML = '<small style="color:var(--text-muted); font-size:0.75rem;">لا توجد مؤشرات إضافية (انقر + لإضافة مؤشر)</small>';
+                    }
 
-            const mCard = document.createElement('div');
-            mCard.className = 'sales-mobile-card';
-            mCard.innerHTML = '<div><div style="display:flex; justify-content:space-between; align-items:center;">' +
-                getPlatformBadgeHTML(ad.platform) + clickableDateBadge + '</div>' +
-                '<h4 style="margin-top:6px;">' + ad.name + '</h4>' +
-                '<span class="meta-sub">' + ad.campaign + ' | ' + ad.adset + '</span></div>' +
-                '<div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:flex; justify-space:around; align-items:center; text-align:center;">' +
-                '<div><small style="color:var(--text-muted); display:block;">عدد الرسائل</small><strong style="color:var(--status-winning-text); font-size:1.2rem;">' + resultsVal + ' رسالة</strong></div>' +
-                '</div>' +
-                '<div style="margin-top:8px;">' + customMetricsHTML + '</div>' +
-                '<div style="margin-top:8px;">' + inlineEditHTML + '</div>';
-            resultsMobileCards.appendChild(mCard);
+                    let inlineEditHTML = '';
+                    if (canEditResults) {
+                        inlineEditHTML = '<div class="action-btn-group">' +
+                            '<button class="btn btn-primary btn-sm open-daily-entry-btn" data-ad-id="' + ad.id + '" title="تحديث أرقام اليوم بالتقويم"><i class="fa-solid fa-pen"></i> تحديث الأرقام</button>' +
+                            '<button class="btn btn-secondary btn-sm open-custom-metric-btn" data-ad-id="' + ad.id + '" title="إضافة مؤشر مخصص كـ CPR أو Frequency"><i class="fa-solid fa-plus"></i> + مؤشر</button>' +
+                            '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '" title="سجل التواريخ والتقويم بالكامل"><i class="fa-solid fa-clock-rotate-left"></i> السجل</button>' +
+                            '</div>';
+                    } else {
+                        inlineEditHTML = '<div class="action-btn-group"><button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-eye"></i> عرض السجل</button></div>';
+                    }
+
+                    const clickableDateBadge = '<button class="date-badge open-daily-entry-btn" data-ad-id="' + ad.id + '" title="انقر لتعديل أرقام هذا التاريخ أو تغيير التقويم"><i class="fa-solid fa-calendar-days"></i> ' + selDate + '</button>';
+
+                    tr.innerHTML = '<td class="tree-indented-cell">' + getPlatformBadgeHTML(ad.platform) + '</td>' +
+                        '<td><strong>' + ad.name + '</strong>' + (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') + '</td>' +
+                        '<td>' + ad.campaign + '<br><small style="color:var(--text-muted);">' + ad.adset + '</small></td>' +
+                        '<td>' + clickableDateBadge + '</td>' +
+                        '<td><strong style="color:var(--status-winning-text); font-size:1.15rem;">' + resultsVal + ' <small style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">رسالة</small></strong></td>' +
+                        '<td>' + customMetricsHTML + '</td>' +
+                        '<td>' + inlineEditHTML + '</td>';
+                    resultsTableBody.appendChild(tr);
+
+                    const mCard = document.createElement('div');
+                    mCard.className = 'sales-mobile-card';
+                    mCard.innerHTML = '<div><div style="display:flex; justify-content:space-between; align-items:center;">' +
+                        getPlatformBadgeHTML(ad.platform) + clickableDateBadge + '</div>' +
+                        '<h4 style="margin-top:6px;">' + ad.name + '</h4>' +
+                        '<span class="meta-sub">' + ad.campaign + ' | ' + ad.adset + '</span></div>' +
+                        '<div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:flex; justify-space:around; align-items:center; text-align:center;">' +
+                        '<div><small style="color:var(--text-muted); display:block;">عدد الرسائل</small><strong style="color:var(--status-winning-text); font-size:1.2rem;">' + resultsVal + ' رسالة</strong></div>' +
+                        '</div>' +
+                        '<div style="margin-top:8px;">' + customMetricsHTML + '</div>' +
+                        '<div style="margin-top:8px;">' + inlineEditHTML + '</div>';
+                    resultsMobileCards.appendChild(mCard);
+                });
+            });
         });
     }
 
@@ -909,7 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hierarchicalCampaigns.forEach(cGroup => {
             const cTr = document.createElement('tr');
-            cTr.className = 'campaign-table-header';
+            cTr.className = 'table-campaign-row';
             cTr.innerHTML = '<td colspan="8">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1.05rem; margin-right:8px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
@@ -920,15 +965,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             Object.values(cGroup.adsetsMap).forEach(asGroup => {
                 const asTr = document.createElement('tr');
-                asTr.className = 'adset-table-header';
-                asTr.innerHTML = '<td colspan="8" style="padding-right:1.5rem;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                asTr.className = 'table-adset-row';
+                asTr.innerHTML = '<td colspan="8"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
                 mediaBuyerTableBody.appendChild(asTr);
 
                 asGroup.ads.forEach(ad => {
                     const tr = document.createElement('tr');
+                    tr.className = 'table-ad-child-row';
                     const isPaused = ad.status === 'pause';
 
-                    tr.innerHTML = '<td class="indented-ad-cell" style="padding-right:2.5rem !important;"><i class="fa-solid fa-turn-down-left" style="color:var(--text-muted);"></i> ' + getPlatformBadgeHTML(ad.platform) + '</td>' +
+                    tr.innerHTML = '<td class="tree-indented-cell">' + getPlatformBadgeHTML(ad.platform) + '</td>' +
                         '<td><strong>' + ad.name + '</strong></td>' +
                         '<td>' + ad.adset + '</td><td>' + ad.campaign + '</td><td>' + ad.salesRep + '</td><td>' + getQualityBadgeHTML(ad.quality) + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
                         '<td><div class="action-btn-group">' + (!isPaused ? 
