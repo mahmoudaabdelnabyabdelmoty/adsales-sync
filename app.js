@@ -809,18 +809,18 @@ document.addEventListener('DOMContentLoaded', () => {
         hierarchicalCampaigns.forEach(cGroup => {
             const cTr = document.createElement('tr');
             cTr.className = 'table-campaign-row';
-            cTr.innerHTML = '<td colspan="8">' +
+            cTr.innerHTML = '<td colspan="8" style="padding: 0.85rem 2rem !important;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1.05rem; margin-right:8px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.78rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '<div style="padding-left: 1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
                 '</div></td>';
             salesTableBody.appendChild(cTr);
 
             Object.values(cGroup.adsetsMap).forEach(asGroup => {
                 const asTr = document.createElement('tr');
                 asTr.className = 'table-adset-row';
-                asTr.innerHTML = '<td colspan="8"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 2rem !important;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
                 salesTableBody.appendChild(asTr);
 
                 asGroup.ads.forEach(ad => {
@@ -870,18 +870,18 @@ document.addEventListener('DOMContentLoaded', () => {
         hierarchicalCampaigns.forEach(cGroup => {
             const cTr = document.createElement('tr');
             cTr.className = 'table-campaign-row';
-            cTr.innerHTML = '<td colspan="7">' +
+            cTr.innerHTML = '<td colspan="8" style="padding: 0.85rem 2rem !important;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1.05rem; margin-right:8px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.78rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '<div style="padding-left: 1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
                 '</div></td>';
             resultsTableBody.appendChild(cTr);
 
             Object.values(cGroup.adsetsMap).forEach(asGroup => {
                 const asTr = document.createElement('tr');
                 asTr.className = 'table-adset-row';
-                asTr.innerHTML = '<td colspan="7"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 2rem !important;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
                 resultsTableBody.appendChild(asTr);
 
                 asGroup.ads.forEach(ad => {
@@ -955,18 +955,18 @@ document.addEventListener('DOMContentLoaded', () => {
         hierarchicalCampaigns.forEach(cGroup => {
             const cTr = document.createElement('tr');
             cTr.className = 'table-campaign-row';
-            cTr.innerHTML = '<td colspan="8">' +
+            cTr.innerHTML = '<td colspan="8" style="padding: 0.85rem 2rem !important;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1.05rem; margin-right:8px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.78rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '<div style="padding-left: 1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
                 '</div></td>';
             mediaBuyerTableBody.appendChild(cTr);
 
             Object.values(cGroup.adsetsMap).forEach(asGroup => {
                 const asTr = document.createElement('tr');
                 asTr.className = 'table-adset-row';
-                asTr.innerHTML = '<td colspan="8"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 2rem !important;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
                 mediaBuyerTableBody.appendChild(asTr);
 
                 asGroup.ads.forEach(ad => {
