@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ADSALES SYNC ENTERPRISE - STREAMLINED CORE ENGINE (app.js)
+   ADSALES SYNC ENTERPRISE - REAL MEDIA BUYER VS SALES WORKFLOW (app.js)
    ========================================================================== */
 
 window.openRoleModal = function() {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             campaign: 'Campaign_FireSafety_Cairo',
             adset: 'AdSet_Business_Owners',
             salesRep: 'أحمد محمود',
-            status: 'winning',
+            status: 'active',
             quality: 'qualified',
             salesNotes: 'إعلان ممتاز جداً، معظم المحادثات عملاء جادين بيطلبوا عروض أسعار للمصانع.',
             updatedAt: new Date(Date.now() - 3600000).toLocaleString('ar-EG')
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             campaign: 'Campaign_Emergency_Offers',
             adset: 'AdSet_RealEstate_Devs',
             salesRep: 'محمود حسن',
-            status: 'testing',
+            status: 'active',
             quality: 'mixed',
             salesNotes: 'مستوى الرسائل متوسط، جاري متابعة 4 عملاء محتملين.',
             updatedAt: new Date(Date.now() - 1800000).toLocaleString('ar-EG')
@@ -280,9 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateMetrics() {
         if (statTotal) statTotal.textContent = adsState.length;
-        if (statWinning) statWinning.textContent = adsState.filter(a => a.status === 'winning').length;
+        if (statWinning) statWinning.textContent = adsState.filter(a => a.status === 'active' || a.status === 'winning').length;
         if (statPause) statPause.textContent = adsState.filter(a => a.status === 'pause').length;
-        if (statTesting) statTesting.textContent = adsState.filter(a => a.status === 'testing').length;
+        if (statTesting) statTesting.textContent = adsState.filter(a => a.quality === 'unqualified' && a.status !== 'pause').length;
     }
 
     function getFilteredAds() {
@@ -295,18 +295,29 @@ document.addEventListener('DOMContentLoaded', () => {
                                  ad.campaign.toLowerCase().includes(query) ||
                                  ad.adset.toLowerCase().includes(query) ||
                                  ad.salesRep.toLowerCase().includes(query);
-            const matchesStatus = (statusVal === 'all') || (ad.status === statusVal);
-            const matchesSales = (salesVal === 'all') || (ad.salesRep === salesVal);
+            
+            const isAdActive = ad.status === 'active' || ad.status === 'winning';
+            const matchesStatus = (statusVal === 'all') || 
+                                  (statusVal === 'active' && isAdActive) || 
+                                  (statusVal === 'pause' && ad.status === 'pause');
+            const matchesSales = (salesVal === 'all') || (ad.salesRep === salesSales);
 
             return matchesQuery && matchesStatus && matchesSales;
         });
     }
 
     function getStatusBadgeHTML(status) {
-        switch(status) {
-            case 'winning': return `<span class="status-badge badge-winning"><i class="fa-solid fa-circle-check"></i> شغال تمام (Scale)</span>`;
-            case 'pause': return `<span class="status-badge badge-pause"><i class="fa-solid fa-circle-xmark"></i> أوقف الإعلان (Pause)</span>`;
-            case 'testing': default: return `<span class="status-badge badge-testing"><i class="fa-solid fa-vial"></i> قيد الاختبار</span>`;
+        if (status === 'pause') {
+            return `<span class="status-badge badge-pause"><i class="fa-solid fa-circle-xmark"></i> 🔴 متوقف</span>`;
+        }
+        return `<span class="status-badge badge-winning"><i class="fa-solid fa-circle-check"></i> 🟢 شغال</span>`;
+    }
+
+    function getQualityBadgeHTML(quality) {
+        switch(quality) {
+            case 'qualified': return `<span class="status-badge badge-winning" style="font-size:0.75rem;"><i class="fa-solid fa-star"></i> 🟢 عملاء ممتازين</span>`;
+            case 'unqualified': return `<span class="status-badge badge-pause" style="font-size:0.75rem;"><i class="fa-solid fa-circle-exclamation"></i> 🔴 عملاء غير مهتمين / سيء</span>`;
+            case 'mixed': default: return `<span class="status-badge badge-testing" style="font-size:0.75rem;"><i class="fa-solid fa-hourglass-half"></i> 🟡 متوسط / قيد المتابعة</span>`;
         }
     }
 
@@ -321,7 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         filteredAds.forEach(ad => {
             const card = document.createElement('div');
-            card.className = `ad-card status-${ad.status}`;
+            const isPaused = ad.status === 'pause';
+            const isBadQuality = ad.quality === 'unqualified';
+
+            card.className = `ad-card ${isPaused ? 'status-pause' : 'status-winning'}`;
             card.innerHTML = `
                 <div class="ad-card-header">
                     <div class="ad-card-top-bar">
@@ -333,16 +347,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="ad-meta-list">
                     <div class="meta-item"><span class="meta-label">المجموعة الإعلانية:</span><span class="meta-val">${ad.adset}</span></div>
                     <div class="meta-item"><span class="meta-label">مسؤول الـ Sales:</span><span class="meta-val"><i class="fa-solid fa-user-tag"></i> ${ad.salesRep}</span></div>
+                    <div class="meta-item"><span class="meta-label">تقييم الـ Sales للجودة:</span><span class="meta-val">${getQualityBadgeHTML(ad.quality)}</span></div>
                     <div class="meta-item"><span class="meta-label">التحديث:</span><span class="meta-val" style="font-size:0.78rem;">${ad.updatedAt}</span></div>
                 </div>
+
+                ${isBadQuality && !isPaused ? `
+                    <div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; color: #fca5a5; font-size: 0.85rem; font-weight: 700;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> تنبيه: المبيعات تقيم هذا الإعلان بـ (غير مهتمين/سيء) وتطلب إيقافه!
+                    </div>
+                ` : ''}
+
                 <div class="sales-note-box">
-                    <strong><i class="fa-solid fa-comment-dots"></i> ملاحظة الـ Sales الحالية:</strong>
+                    <strong><i class="fa-solid fa-comment-dots"></i> ملاحظة الـ Sales للميديا باير:</strong>
                     ${ad.salesNotes ? ad.salesNotes : 'لا توجد ملاحظات بعد.'}
                 </div>
                 <div class="ad-card-actions ${isLocked ? 'action-locked' : ''}">
-                    ${ad.status !== 'pause' ? 
-                        `<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus('${ad.id}', 'pause')" style="color: var(--status-pause-text); border-color: var(--status-pause-border);" ${isLocked ? 'disabled' : ''}><i class="fa-solid fa-pause"></i> علم للإيقاف</button>` : 
-                        `<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus('${ad.id}', 'winning')" style="color: var(--status-winning-text); border-color: var(--status-winning-border);" ${isLocked ? 'disabled' : ''}><i class="fa-solid fa-play"></i> إعلان شغال تمام</button>`
+                    ${!isPaused ? 
+                        `<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus('${ad.id}', 'pause')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);" ${isLocked ? 'disabled' : ''}><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان (Pause)</button>` : 
+                        `<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus('${ad.id}', 'active')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);" ${isLocked ? 'disabled' : ''}><i class="fa-solid fa-play"></i> 🟢 إعلان شغال (Active)</button>`
                     }
                     <button class="btn btn-secondary ad-action-btn" onclick="editAdModal('${ad.id}')" ${isLocked ? 'disabled' : ''}><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
                 </div>
@@ -368,19 +390,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>
                     <select class="quality-select" onchange="updateAdQuality('${ad.id}', this.value)" ${!canEditQuality ? 'disabled' : ''}>
                         <option value="qualified" ${ad.quality === 'qualified' ? 'selected' : ''}>🟢 عملاء ممتازين (Qualified)</option>
-                        <option value="mixed" ${ad.quality === 'mixed' ? 'selected' : ''}>🟡 عملاء متوسطين (Mixed)</option>
-                        <option value="unqualified" ${ad.quality === 'unqualified' ? 'selected' : ''}>🔴 غير مهتمين / سيء</option>
+                        <option value="mixed" ${ad.quality === 'mixed' ? 'selected' : ''}>🟡 عملاء متوسطين / متابعة</option>
+                        <option value="unqualified" ${ad.quality === 'unqualified' ? 'selected' : ''}>🔴 غير مهتمين / سيء (طلب إيقاف)</option>
                     </select>
                 </td>
                 <td>
-                    <select class="status-select" onchange="updateAdStatus('${ad.id}', this.value)" ${!canEditQuality ? 'disabled' : ''}>
-                        <option value="winning" ${ad.status === 'winning' ? 'selected' : ''}>🟢 شغال تمام (Scale)</option>
-                        <option value="testing" ${ad.status === 'testing' ? 'selected' : ''}>🟡 قيد الاختبار (Testing)</option>
-                        <option value="pause" ${ad.status === 'pause' ? 'selected' : ''}>🔴 أوقف الإعلان (Pause)</option>
-                    </select>
+                    ${getStatusBadgeHTML(ad.status)}
                 </td>
                 <td>
-                    <input type="text" class="note-input" value="${ad.salesNotes || ''}" placeholder="${canEditNotes ? 'أضف ملاحظة...' : 'مشاهد فقط'}" onchange="updateAdNote('${ad.id}', this.value)" ${!canEditNotes ? 'disabled' : ''}>
+                    <input type="text" class="note-input" value="${ad.salesNotes || ''}" placeholder="${canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط'}" onchange="updateAdNote('${ad.id}', this.value)" ${!canEditNotes ? 'disabled' : ''}>
                 </td>
                 <td style="font-size:0.78rem; color: var(--text-muted);">${ad.updatedAt}</td>
             `;
@@ -390,28 +408,23 @@ document.addEventListener('DOMContentLoaded', () => {
             mCard.className = 'sales-mobile-card';
             mCard.innerHTML = `
                 <div>
-                    <h4>${ad.name}</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                        <h4>${ad.name}</h4>
+                        ${getStatusBadgeHTML(ad.status)}
+                    </div>
                     <span class="meta-sub">${ad.campaign} | ${ad.salesRep}</span>
                 </div>
-                <div class="form-group">
-                    <label>جودة الـ Leads:</label>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>تقييم جودة الـ Leads:</label>
                     <select class="quality-select" onchange="updateAdQuality('${ad.id}', this.value)" ${!canEditQuality ? 'disabled' : ''}>
                         <option value="qualified" ${ad.quality === 'qualified' ? 'selected' : ''}>🟢 عملاء ممتازين (Qualified)</option>
-                        <option value="mixed" ${ad.quality === 'mixed' ? 'selected' : ''}>🟡 عملاء متوسطين (Mixed)</option>
-                        <option value="unqualified" ${ad.quality === 'unqualified' ? 'selected' : ''}>🔴 غير مهتمين / سيء</option>
+                        <option value="mixed" ${ad.quality === 'mixed' ? 'selected' : ''}>🟡 عملاء متوسطين / متابعة</option>
+                        <option value="unqualified" ${ad.quality === 'unqualified' ? 'selected' : ''}>🔴 غير مهتمين / سيء (طلب إيقاف)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>حالة الإعلان:</label>
-                    <select class="status-select" onchange="updateAdStatus('${ad.id}', this.value)" ${!canEditQuality ? 'disabled' : ''}>
-                        <option value="winning" ${ad.status === 'winning' ? 'selected' : ''}>🟢 شغال تمام (Scale)</option>
-                        <option value="testing" ${ad.status === 'testing' ? 'selected' : ''}>🟡 قيد الاختبار (Testing)</option>
-                        <option value="pause" ${ad.status === 'pause' ? 'selected' : ''}>🔴 أوقف الإعلان (Pause)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>ملاحظة للـ Media Buyer:</label>
-                    <input type="text" class="note-input" value="${ad.salesNotes || ''}" placeholder="${canEditNotes ? 'أضف ملاحظة...' : 'مشاهد فقط'}" onchange="updateAdNote('${ad.id}', this.value)" ${!canEditNotes ? 'disabled' : ''}>
+                    <label>ملاحظة للميديا باير:</label>
+                    <input type="text" class="note-input" value="${ad.salesNotes || ''}" placeholder="${canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط'}" onchange="updateAdNote('${ad.id}', this.value)" ${!canEditNotes ? 'disabled' : ''}>
                 </div>
             `;
             salesMobileCards.appendChild(mCard);
@@ -426,14 +439,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         filteredAds.forEach(ad => {
             const tr = document.createElement('tr');
+            const isPaused = ad.status === 'pause';
+
             tr.innerHTML = `
                 <td><i class="fa-solid fa-image" style="font-size: 1.3rem; color: var(--primary-color);"></i></td>
                 <td><strong>${ad.name}</strong></td>
                 <td>${ad.adset}</td>
                 <td>${ad.campaign}</td>
                 <td>${ad.salesRep}</td>
+                <td>${getQualityBadgeHTML(ad.quality)}</td>
                 <td>${getStatusBadgeHTML(ad.status)}</td>
                 <td>
+                    ${!isPaused ? 
+                        `<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus('${ad.id}', 'pause')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ${!canEditStructure ? 'disabled' : ''}><i class="fa-solid fa-pause"></i> تعطيل الإعلان</button>` : 
+                        `<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus('${ad.id}', 'active')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ${!canEditStructure ? 'disabled' : ''}><i class="fa-solid fa-play"></i> تشغيل الإعلان</button>`
+                    }
                     <button class="btn btn-secondary btn-sm" onclick="editAdModal('${ad.id}')" ${!canEditStructure ? 'disabled' : ''}><i class="fa-solid fa-pen"></i></button>
                     <button class="btn btn-secondary btn-sm" onclick="deleteAd('${ad.id}')" style="color:#ef4444;" ${!canDelete ? 'disabled' : ''}><i class="fa-solid fa-trash"></i></button>
                 </td>
@@ -469,8 +489,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const ad = adsState.find(a => a.id === id);
         if (ad) {
             ad.quality = newQuality;
-            if (newQuality === 'unqualified') ad.status = 'pause';
-            else if (newQuality === 'qualified') ad.status = 'winning';
             ad.updatedAt = new Date().toLocaleString('ar-EG');
             saveToCloud();
         }
@@ -515,8 +533,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (closeModalBtn) closeModalBtn.addEventListener('click', () => adModal.classList.add('hidden'));
-    if (cancelModalBtn) cancelModalBtn.addEventListener('click', () => adModal.classList.add('hidden'));
+    if (closeModalBtn) closeModalBtn.addEventListener('click', () => adModal ? adModal.classList.add('hidden') : null);
+    if (cancelModalBtn) cancelModalBtn.addEventListener('click', () => roleModal ? roleModal.classList.add('hidden') : null);
 
     if (adForm) {
         adForm.addEventListener('submit', (e) => {
@@ -539,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newAd = {
                     id: 'ad-' + Date.now(),
                     name, campaign, adset, salesRep,
-                    status: 'testing', // Always automatically 'testing' (قيد الاختبار) for new ads!
+                    status: 'active', // Always automatically 'active' (🟢 شغال) when Media Buyer creates a new ad!
                     quality: 'mixed',
                     salesNotes,
                     updatedAt: new Date().toLocaleString('ar-EG')
