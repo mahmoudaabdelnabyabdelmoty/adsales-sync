@@ -151,6 +151,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    const defaultActivities = [
+        { id: 'act-1', user: 'أحمد محمود', time: '11:05 م', text: 'قام بتشغيل إعلان (Ad 01) لعميل (شركة الفارس للأمن والسلامة)', icon: 'fa-play' },
+        { id: 'act-2', user: 'سارة علي', time: '10:48 م', text: 'قيمت جودة رسائل الإعلان (Ad 01) كـ 🟢 عملاء ممتازين', icon: 'fa-star' },
+        { id: 'act-3', user: 'محمود حسن', time: '10:12 م', text: 'حدث أرقام النتائج اليومية بالتقويم', icon: 'fa-chart-column' },
+        { id: 'act-4', user: 'أحمد محمود', time: '09:30 م', text: 'أنشأ حملة إعلانية جديدة لعميل (مستشفى السلام الدولي)', icon: 'fa-layer-group' }
+    ];
+
+    let activityState = JSON.parse(localStorage.getItem('adsales_activity_log')) || defaultActivities;
+
+    function logActivity(actionText, iconClass = 'fa-bolt') {
+        const d = new Date();
+        const timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+        const userName = loggedUser ? loggedUser.name : 'زائر (عرض فقط)';
+        
+        const newAct = {
+            id: 'act-' + Date.now(),
+            user: userName,
+            time: timeStr,
+            text: actionText,
+            icon: iconClass
+        };
+        
+        activityState.unshift(newAct);
+        if (activityState.length > 25) activityState = activityState.slice(0, 25);
+        localStorage.setItem('adsales_activity_log', JSON.stringify(activityState));
+    }
+
+    function renderTicker() {
+        const track = document.getElementById('live-ticker-track');
+        if (!track) return;
+        
+        if (!activityState || activityState.length === 0) {
+            track.innerHTML = '<span class="ticker-item"><i class="fa-solid fa-info-circle"></i> لا توجد تنبيهات حية حالياً.</span>';
+            return;
+        }
+        
+        const displayList = [...activityState, ...activityState];
+        const itemsHTML = displayList.map(act => `
+            <span class="ticker-item">
+                <span class="ticker-time"><i class="fa-solid fa-clock"></i> ${act.time}</span>
+                <span class="ticker-user"><i class="fa-solid fa-user"></i> ${act.user}:</span>
+                <span class="ticker-action"><i class="fa-solid ${act.icon || 'fa-circle-dot'}"></i> ${act.text}</span>
+            </span>
+        `).join('');
+        
+        track.innerHTML = itemsHTML;
+    }
+
     let adsState = JSON.parse(localStorage.getItem('adsales_sync_data')) || initialAds;
 
     // Ensure all ads have default metricsConfig, dailyResults, and clientAccount
@@ -290,6 +338,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let remoteAds = Array.isArray(cloudData) ? cloudData : (cloudData.ads || adsState);
                 let remoteUsers = Array.isArray(cloudData) ? null : cloudData.users;
+                let remoteActivities = Array.isArray(cloudData) ? null : cloudData.activities;
+
+                if (Array.isArray(remoteActivities) && JSON.stringify(remoteActivities) !== JSON.stringify(activityState)) {
+                    activityState = remoteActivities;
+                    localStorage.setItem('adsales_activity_log', JSON.stringify(activityState));
+                    renderTicker();
+                }
 
                 if (Array.isArray(remoteAds) && JSON.stringify(remoteAds) !== JSON.stringify(adsState)) {
                     adsState = remoteAds;
@@ -317,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cloudBlobId) return;
         try {
             const registeredUsers = JSON.parse(localStorage.getItem('adsales_registered_users')) || defaultUsers;
-            const newPayload = { ads: adsState, users: registeredUsers };
+            const newPayload = { ads: adsState, users: registeredUsers, activities: activityState };
 
             await fetch(CLOUD_API_BASE + '/' + cloudBlobId, {
                 method: 'PUT',
@@ -1021,6 +1076,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyRolePermissions();
         updateSalesFilterOptions();
         updateMetrics();
+        renderTicker();
         const filtered = getFilteredAds();
         renderLiveBoard(filtered);
         renderSalesView(filtered);
@@ -1037,6 +1093,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const metricName = metricObj ? metricObj.label : 'المؤشر';
         if (confirm('هل أنت تأكد من رغبتك في حذف مؤشر (' + metricName + ') من هذا الإعلان؟')) {
             ad.metricsConfig = (ad.metricsConfig || []).filter(m => m.id !== metricId);
+            logActivity('حذف مؤشر (' + metricName + ') من الإعلان (' + ad.name + ')', 'fa-trash');
             saveToCloud();
         }
     };
@@ -1148,6 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ad.updatedAt = new Date().toLocaleString('ar-EG');
             dailyResultModal.classList.add('hidden');
+            logActivity('سجّل/حدّث نتائج تاريخ (' + dateVal + ') للإعلان (' + ad.name + ')', 'fa-pen-to-square');
             saveToCloud();
             alert('✅ تم حفظ وتحديث نتائج تاريخ (' + dateVal + ') للإعلان بنجاح!');
         });
@@ -1167,6 +1225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ad.metricsConfig.push({ id: metricId, label, unit });
 
             customMetricModal.classList.add('hidden');
+            logActivity('إضافة مؤشر مخصص جديد (' + label + ') للإعلان (' + ad.name + ')', 'fa-plus-square');
             saveToCloud();
             alert('✅ تم إضافة المؤشر المخصص (' + label + ') للإعلان بنجاح!');
         });
@@ -1179,13 +1238,23 @@ document.addEventListener('DOMContentLoaded', () => {
     window.quickToggleStatus = function(id, newStatus) {
         if (!ROLES_CONFIG[currentRole].canEditStructure) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (ad) { ad.status = newStatus; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
+        if (ad) {
+            ad.status = newStatus;
+            ad.updatedAt = new Date().toLocaleString('ar-EG');
+            logActivity('قام بتغيير حالة الإعلان (' + ad.name + ') إلى ' + (newStatus === 'pause' ? '🔴 متوقف' : '🟢 شغال'), newStatus === 'pause' ? 'fa-pause' : 'fa-play');
+            saveToCloud();
+        }
     };
 
     window.updateAdStatus = function(id, newStatus) {
         if (!ROLES_CONFIG[currentRole].canEditQuality) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (ad) { ad.status = newStatus; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
+        if (ad) {
+            ad.status = newStatus;
+            ad.updatedAt = new Date().toLocaleString('ar-EG');
+            logActivity('قام بتغيير حالة الإعلان (' + ad.name + ') إلى ' + (newStatus === 'pause' ? '🔴 متوقف' : '🟢 شغال'), newStatus === 'pause' ? 'fa-pause' : 'fa-play');
+            saveToCloud();
+        }
     };
 
     window.updateAdQuality = function(id, newQuality) {
@@ -1198,6 +1267,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ad) {
             ad.quality = newQuality;
             ad.updatedAt = new Date().toLocaleString('ar-EG');
+            const qLabel = newQuality === 'qualified' ? '🟢 عملاء ممتازين' : newQuality === 'unqualified' ? '🔴 غير مهتمين / طلب إيقاف' : '🟡 متوسط';
+            logActivity('قام بتقييم جودة محادثات الإعلان (' + ad.name + ') كـ (' + qLabel + ')', 'fa-headset');
             saveToCloud();
         }
     };
@@ -1205,13 +1276,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateAdNote = function(id, newNote) {
         if (!ROLES_CONFIG[currentRole].canEditNotes) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (ad) { ad.salesNotes = newNote; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
+        if (ad) {
+            ad.salesNotes = newNote;
+            ad.updatedAt = new Date().toLocaleString('ar-EG');
+            logActivity('أضاف ملاحظة جديدة للإعلان (' + ad.name + ')', 'fa-comment-dots');
+            saveToCloud();
+        }
     };
 
     window.deleteAd = function(id) {
         if (!ROLES_CONFIG[currentRole].canDelete) return window.openRoleModal();
+        const ad = adsState.find(a => a.id === id);
+        const adName = ad ? ad.name : 'الإعلان';
         if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) {
             adsState = adsState.filter(a => a.id !== id);
+            logActivity('حذف الإعلان (' + adName + ') من النظام', 'fa-trash');
             saveToCloud();
         }
     };
@@ -1271,6 +1350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ad.campaign = campaign; ad.clientAccount = clientAccount; ad.adset = adset;
                     ad.salesRep = salesRep; ad.salesNotes = salesNotes;
                     ad.updatedAt = new Date().toLocaleString('ar-EG');
+                    logActivity('قام بتحديث بيانات الإعلان (' + name + ')', 'fa-pen');
                 }
             } else {
                 let totalCreated = 0;
@@ -1301,6 +1381,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
+                logActivity('أنشأ حملة إعلانية جديدة (' + campaign + ') للعميل (' + clientAccount + ') إجمالي (' + totalCreated + ') إعلانات', 'fa-plus-circle');
                 alert('🚀 تم بنجاح إنشاء حملة (' + campaign + ') للعميل (' + clientAccount + ') وتحتوي على (' + builderAdSets.length + ') مجموعات إعلانية و إجمالي (' + totalCreated + ') إعلانات!');
             }
 
