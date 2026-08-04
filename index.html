@@ -48,7 +48,7 @@
 
                     <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
                     <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> خروج</button>
-                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان</button>
+                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة حملة إعلانية</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
@@ -240,7 +240,7 @@
                         <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
                         <p>إضافة وتعديل بيانات الإعلانات وتحديد المنصة والهدف وتعيين الـ Sales.</p>
                     </div>
-                    <button class="btn btn-primary btn-md admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button>
+                    <button class="btn btn-primary btn-md admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة حملة إعلانية جديدة</button>
                 </div>
 
                 <div class="table-responsive">
@@ -292,22 +292,22 @@
             </div>
         </div>
 
-        <!-- ADD / EDIT AD MODAL -->
+        <!-- ADD / EDIT CAMPAIGN & ADSETS MODAL -->
         <div id="ad-modal" class="modal-overlay hidden">
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 720px;">
                 <div class="modal-header">
-                    <h3 id="modal-title"><i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد</h3>
+                    <h3 id="modal-title"><i class="fa-solid fa-layer-group"></i> إنشاء حملة إعلانية جديدة (Campaign & Multi-AdSets)</h3>
                     <button id="close-modal-btn" class="close-btn" onclick="document.getElementById('ad-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="ad-form">
                     <input type="hidden" id="ad-id">
                     
-                    <div class="form-group">
-                        <label for="ad-name">اسم الإعلان / الكود <span class="required">*</span></label>
-                        <input type="text" id="ad-name" placeholder="مثال: Ad 01 - Carousel - Fire Safety System" required>
-                    </div>
-
+                    <!-- Campaign General Info -->
                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="ad-campaign">اسم الحملة (Campaign Name) <span class="required">*</span></label>
+                            <input type="text" id="ad-campaign" placeholder="مثال: Campaign_FireSafety_Cairo_Aug" required>
+                        </div>
                         <div class="form-group">
                             <label for="ad-platform">المنصة الإعلانية (Platform) <span class="required">*</span></label>
                             <select id="ad-platform" required>
@@ -319,6 +319,13 @@
                                 <option value="twitter">🔲 X (Twitter)</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ad-objective">نوع/هدف الحملة (Campaign Objective)</label>
+                            <input type="text" id="ad-objective" placeholder="مثال: رسائل واتساب مباشرة / صفحة هبوط + زر واتس / Lead Form">
+                        </div>
                         <div class="form-group">
                             <label for="ad-sales">مسؤول المبيعات المتابع (Sales Rep) <span class="required">*</span></label>
                             <select id="ad-sales" required>
@@ -327,30 +334,38 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="ad-campaign">اسم الحملة (Campaign) <span class="required">*</span></label>
-                            <input type="text" id="ad-campaign" placeholder="مثال: Campaign_Leads_Cairo_Aug" required>
+                    <!-- Single Ad Edit Field (Only shown when editing an existing single ad) -->
+                    <div id="single-ad-edit-fields" class="hidden">
+                        <div class="form-group" style="margin-top: 8px;">
+                            <label for="ad-name">اسم الإعلان / الكود <span class="required">*</span></label>
+                            <input type="text" id="ad-name" placeholder="مثال: Ad 01 - Carousel - Fire Safety System">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="margin-top: 8px;">
                             <label for="ad-adset">المجموعة الإعلانية (Ad Set) <span class="required">*</span></label>
-                            <input type="text" id="ad-adset" placeholder="مثال: AdSet_Target_BusinessOwners" required>
+                            <input type="text" id="ad-adset" placeholder="مثال: AdSet_Target_BusinessOwners">
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="ad-objective">نوع/هدف الحملة (Campaign Destination/Objective)</label>
-                        <input type="text" id="ad-objective" placeholder="مثال: رسائل واتساب مباشرة / صفحة هبوط + زر واتس / مكالمات / Lead Form">
+                    <!-- Multi-AdSet & Ad Hierarchy Builder (Shown when creating new Campaign) -->
+                    <div id="multi-adset-builder-wrapper" style="margin-top: 12px; background: rgba(0,0,0,0.25); border: 1px dashed var(--border-color); border-radius: 12px; padding: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <h4 style="font-size: 0.92rem; color: var(--accent-blue);"><i class="fa-solid fa-cubes"></i> هيكل المجموعات الإعلانية والإعلانات (AdSets & Ads)</h4>
+                            <button type="button" id="add-adset-builder-btn" class="btn btn-secondary btn-sm" onclick="window.addAdSetToBuilder();" style="color: var(--accent-green); border-color: rgba(16,185,129,0.3);"><i class="fa-solid fa-plus"></i> + إضافة مجموعة إعلانية (AdSet)</button>
+                        </div>
+
+                        <div id="adset-builder-container" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Dynamic AdSet & Ads Builder Cards populated by JS -->
+                        </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-top: 10px;">
                         <label for="ad-notes">توجيهات/ملاحظات أولية للـ Sales (اختياري)</label>
-                        <textarea id="ad-notes" rows="3" placeholder="أضف أي تفاصيل تهم الـ Sales..."></textarea>
+                        <textarea id="ad-notes" rows="2" placeholder="أضف أي تفاصيل تهم الـ Sales..."></textarea>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" id="cancel-modal-btn" class="btn btn-secondary" onclick="document.getElementById('ad-modal').classList.add('hidden');">إلغاء</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعلان</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> <span id="submit-ad-btn-text">إنشاء وثبات الحملة بكافة إعلاناتها</span></button>
                     </div>
                 </form>
             </div>
@@ -435,7 +450,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('history-modal').classList.add('hidden');">إغلاق السجل</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('history-modal').classList.add('hidden');">إلاق السجل</button>
                 </div>
             </div>
         </div>
@@ -447,4 +462,4 @@
 
     <script src="app.js?v=13.0"></script>
 </body>
-</html>
+    </html>
