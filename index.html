@@ -7,25 +7,40 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <script>
+        // Force automatic cache invalidation for all users
+        (function() {
+            var CURRENT_VER = 'v12.0';
+            if (localStorage.getItem('adsales_app_ver') !== CURRENT_VER) {
+                localStorage.setItem('adsales_app_ver', CURRENT_VER);
+                if (window.location.search.indexOf('v=12.0') === -1) {
+                    window.location.href = window.location.pathname + '?v=12.0&nocache=' + Date.now();
+                }
+            }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=7.0">
+    <link rel="stylesheet" href="style.css?v=12.0">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
+        <!-- Main Top Bar Header -->
         <header class="main-header">
             <div class="header-top-row">
                 <div class="brand-section">
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
-                        <h1>AdSales Sync <span class="version-tag">v7.0 Enterprise</span></h1>
+                        <h1>AdSales Sync <span class="version-tag">v12.0 Enterprise</span></h1>
                         <p>نظام التنسيق الفوري بين المبيعات والـ Media Buyer</p>
                     </div>
                 </div>
 
                 <div class="header-actions-row">
+                    <!-- Current Active User Badge & Login / Logout Button -->
                     <div class="role-indicator-badge" id="role-badge" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;" title="انقر لتغيير الصلاحية أو تسجيل الدخول">
                         <i class="fa-solid fa-eye"></i>
                         <span id="role-text">زائر (عرض فقط)</span>
@@ -33,12 +48,13 @@
 
                     <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
                     <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> خروج</button>
-                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only" style="display: none !important;"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
+                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
             </div>
 
+            <!-- Segmented Navigation Tabs -->
             <nav class="view-switcher">
                 <button class="nav-btn active" data-view="live-board">
                     <i class="fa-solid fa-border-all"></i> اللوحة التفاعلية
@@ -46,12 +62,13 @@
                 <button class="nav-btn" data-view="sales-view">
                     <i class="fa-solid fa-headset"></i> شاشة الـ Sales
                 </button>
-                <button class="nav-btn admin-mb-only" id="nav-mb-btn" data-view="media-buyer-view" style="display: none !important;">
+                <button class="nav-btn admin-mb-only" id="nav-mb-btn" data-view="media-buyer-view">
                     <i class="fa-solid fa-sliders"></i> إدارة الحملات
                 </button>
             </nav>
         </header>
 
+        <!-- Summary Metrics Bar -->
         <section class="metrics-bar">
             <div class="metric-card card-total">
                 <div class="metric-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
@@ -83,6 +100,7 @@
             </div>
         </section>
 
+        <!-- Controls & Filters -->
         <section class="controls-bar">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -123,21 +141,29 @@
             </div>
         </section>
 
+        <!-- MAIN CONTENT PANELS -->
         <main class="main-content">
+            
+            <!-- VIEW 1: LIVE INTERACTIVE BOARD -->
             <section id="view-live-board" class="view-panel active">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2>
                     <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات الحية عبر كل المنصات.</p>
                 </div>
-                <div id="live-ads-grid" class="ads-grid"></div>
+                
+                <div id="live-ads-grid" class="ads-grid">
+                    <!-- Dynamic Cards -->
+                </div>
             </section>
 
+            <!-- VIEW 2: SALES / CRM FEEDBACK VIEW -->
             <section id="view-sales-view" class="view-panel">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تقييم جودة الـ Leads والتوجيه)</h2>
                     <p>قم بتحديد جودة المحادثات لكل إعلان وكتابة ملاحظاتك للميديا باير (خاص بحسابات Sales أو Admin).</p>
                 </div>
 
+                <!-- Desktop Table View -->
                 <div class="table-responsive desktop-only">
                     <table class="data-table">
                         <thead>
@@ -152,17 +178,26 @@
                                 <th>التحديث</th>
                             </tr>
                         </thead>
-                        <tbody id="sales-table-body"></tbody>
+                        <tbody id="sales-table-body">
+                            <!-- Dynamic Rows -->
+                        </tbody>
                     </table>
                 </div>
 
-                <div id="sales-mobile-cards" class="sales-mobile-grid mobile-only"></div>
+                <!-- Mobile Card View for Sales -->
+                <div id="sales-mobile-cards" class="sales-mobile-grid mobile-only">
+                    <!-- Dynamic Mobile Cards -->
+                </div>
             </section>
 
+            <!-- VIEW 3: MEDIA BUYER MANAGEMENT VIEW -->
             <section id="view-media-buyer-view" class="view-panel">
-                <div class="panel-header">
-                    <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
-                    <p>إضافة وتعديل بيانات الإعلانات وتحديد المنصة والهدف وتعيين الـ Sales.</p>
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
+                        <p>إضافة وتعديل بيانات الإعلانات وتحديد المنصة والهدف وتعيين الـ Sales.</p>
+                    </div>
+                    <button class="btn btn-primary btn-md admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button>
                 </div>
 
                 <div class="table-responsive">
@@ -179,12 +214,16 @@
                                 <th>إجراءات الإيقاف/التشغيل</th>
                             </tr>
                         </thead>
-                        <tbody id="media-buyer-table-body"></tbody>
+                        <tbody id="media-buyer-table-body">
+                            <!-- Dynamic Rows -->
+                        </tbody>
                     </table>
                 </div>
             </section>
+
         </main>
 
+        <!-- USERNAME & PASSWORD LOGIN MODAL -->
         <div id="role-modal" class="modal-overlay hidden">
             <div class="modal-content" style="max-width: 440px;">
                 <div class="modal-header">
@@ -210,6 +249,7 @@
             </div>
         </div>
 
+        <!-- ADD / EDIT AD MODAL -->
         <div id="ad-modal" class="modal-overlay hidden">
             <div class="modal-content">
                 <div class="modal-header">
@@ -278,6 +318,6 @@
         </footer>
     </div>
 
-    <script src="app.js?v=7.0"></script>
+    <script src="app.js?v=12.0"></script>
 </body>
 </html>
