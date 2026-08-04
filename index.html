@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تتبع أداء الإعلانات والمبيعات | AdSales Sync Enterprise</title>
+    <title>\u062a\u062a\u0628\u0639 \u0623\u062f\u0627\u0621 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a | AdSales Sync Enterprise</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <script>
         // Force automatic cache invalidation for all users
         (function() {
-            var CURRENT_VER = 'v12.0';
+            var CURRENT_VER = 'v13.0';
             if (localStorage.getItem('adsales_app_ver') !== CURRENT_VER) {
                 localStorage.setItem('adsales_app_ver', CURRENT_VER);
-                if (window.location.search.indexOf('v=12.0') === -1) {
-                    window.location.href = window.location.pathname + '?v=12.0&nocache=' + Date.now();
+                if (window.location.search.indexOf('v=13.0') === -1) {
+                    window.location.href = window.location.pathname + '?v=13.0&nocache=' + Date.now();
                 }
             }
         })();
@@ -24,7 +24,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=12.0">
+    <link rel="stylesheet" href="style.css?v=13.0">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
@@ -34,36 +34,39 @@
                 <div class="brand-section">
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
-                        <h1>AdSales Sync <span class="version-tag">v12.0 Enterprise</span></h1>
-                        <p>نظام التنسيق الفوري بين المبيعات والـ Media Buyer</p>
+                        <h1>AdSales Sync <span class="version-tag">v13.0 Enterprise</span></h1>
+                        <p>\u0646\u0638\u0627\u0645 \u0627\u0644\u062a\u0646\u0633\u064a\u0642 \u0627\u0644\u0641\u0648\u0631\u064a \u0628\u064a\u0646 \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0648\u0627\u0644\u0640 Media Buyer</p>
                     </div>
                 </div>
 
                 <div class="header-actions-row">
                     <!-- Current Active User Badge & Login / Logout Button -->
-                    <div class="role-indicator-badge" id="role-badge" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;" title="انقر لتغيير الصلاحية أو تسجيل الدخول">
+                    <div class="role-indicator-badge" id="role-badge" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;" title="\u0627\u0646\u0642\u0631 \u0644\u062a\u063a\u064a\u064a\u0631 \u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629 \u0623\u0648 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644">
                         <i class="fa-solid fa-eye"></i>
-                        <span id="role-text">زائر (عرض فقط)</span>
+                        <span id="role-text">\u0632\u0627\u0626\u0631 (\u0639\u0631\u0636 \u0641\u0642\u0637)</span>
                     </div>
 
-                    <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
-                    <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> خروج</button>
-                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان</button>
-                    <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
-                    <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
+                    <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644</button>
+                    <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> \u062e\u0631\u0648\u062c</button>
+                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + \u0625\u0636\u0627\u0641\u0629 \u0625\u0639\u0644\u0627\u0646</button>
+                    <button id="share-link-btn" class="btn btn-share btn-sm" title="\u0646\u0633\u062e \u0631\u0627\u0628\u0637 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629"><i class="fa-solid fa-share-nodes"></i> \u0645\u0634\u0627\u0631\u0643\u0629</button>
+                    <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="\u0627\u0644\u0645\u0638\u0647\u0631"><i class="fa-solid fa-sun"></i></button>
                 </div>
             </div>
 
             <!-- Segmented Navigation Tabs -->
             <nav class="view-switcher">
                 <button class="nav-btn active" data-view="live-board">
-                    <i class="fa-solid fa-border-all"></i> اللوحة التفاعلية
+                    <i class="fa-solid fa-border-all"></i> \u0627\u0644\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u0641\u0627\u0639\u0644\u064a\u0629
                 </button>
                 <button class="nav-btn" data-view="sales-view">
-                    <i class="fa-solid fa-headset"></i> شاشة الـ Sales
+                    <i class="fa-solid fa-headset"></i> \u0634\u0627\u0634\u0629 \u0627\u0644\u0640 Sales
+                </button>
+                <button class="nav-btn" data-view="results-view">
+                    <i class="fa-solid fa-chart-line"></i> \u0646\u062a\u0627\u0626\u062c \u0627\u0644\u062d\u0645\u0644\u0627\u062a \u0648\u0627\u0644\u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u064a\u0648\u0645\u064a
                 </button>
                 <button class="nav-btn admin-mb-only" id="nav-mb-btn" data-view="media-buyer-view">
-                    <i class="fa-solid fa-sliders"></i> إدارة الحملات
+                    <i class="fa-solid fa-sliders"></i> \u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u062d\u0645\u0644\u0627\u062a
                 </button>
             </nav>
         </header>
@@ -73,45 +76,44 @@
             <div class="metric-card card-total">
                 <div class="metric-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">إجمالي الإعلانات</span>
+                    <span class="metric-label">\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a</span>
                     <h3 id="stat-total-ads">0</h3>
                 </div>
             </div>
             <div class="metric-card card-winning">
                 <div class="metric-icon"><i class="fa-solid fa-circle-check"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">إعلانات شغالة 🟢</span>
+                    <span class="metric-label">\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0634\u063a\u0627\u0644\u0629 \ud83d\udfe2</span>
                     <h3 id="stat-winning-ads">0</h3>
                 </div>
             </div>
             <div class="metric-card card-pause">
                 <div class="metric-icon"><i class="fa-solid fa-circle-xmark"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">إعلانات متوقفة 🔴</span>
+                    <span class="metric-label">\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0645\u062a\u0648\u0642\u0641\u0629 \ud83d\udd34</span>
                     <h3 id="stat-pause-ads">0</h3>
                 </div>
             </div>
             <div class="metric-card card-testing">
-                <div class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="metric-icon"><i class="fa-solid fa-chart-pie"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">تنبيهات إيقاف من المبيعات ⚠️</span>
-                    <h3 id="stat-testing-ads">0</h3>
+                    <span class="metric-label">\u0646\u062a\u0627\u0626\u062c \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a\u0629 \ud83d\udc8a</span>
+                    <h3 id="stat-results-today">0</h3>
                 </div>
             </div>
         </section>
-
         <!-- Controls & Filters -->
         <section class="controls-bar">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="ابحث باسم الإعلان، الحملة، المنصة، أو Sales...">
+                <input type="text" id="search-input" placeholder="\u0627\u0628\u062d\u062b \u0628\u0627\u0633\u0645 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u060c \u0627\u0644\u062d\u0645\u0644\u0627\u062a\u060c \u0627\u0644\u0645\u0646\u0635\u0629\u060c \u0623\u0648 Sales...">
             </div>
 
             <div class="filter-group">
                 <div class="filter-item">
-                    <label for="filter-platform"><i class="fa-solid fa-globe"></i> المنصة:</label>
+                    <label for="filter-platform"><i class="fa-solid fa-globe"></i> \u0627\u0644\u0645\u0646\u0635\u0629:</label>
                     <select id="filter-platform">
-                        <option value="all">جميع المنصات</option>
+                        <option value="all">\u062c\u0645\u064a\u0639 \u0627\u0644\u0645\u0646\u0635\u0627\u062a</option>
                         <option value="meta">Meta (FB & IG)</option>
                         <option value="google">Google Ads</option>
                         <option value="tiktok">TikTok</option>
@@ -122,22 +124,22 @@
                 </div>
 
                 <div class="filter-item">
-                    <label for="filter-status"><i class="fa-solid fa-filter"></i> حالة الإعلان:</label>
+                    <label for="filter-status"><i class="fa-solid fa-filter"></i> \u062d\u0627\u0644\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646:</label>
                     <select id="filter-status">
-                        <option value="all">جميع الحالات</option>
-                        <option value="active">🟢 شغال (Active)</option>
-                        <option value="pause">🔴 متوقف (Paused)</option>
+                        <option value="all">\u062c\u0645\u064a\u0639 \u0627\u0644\u062d\u0627\u0644\u0627\u062a</option>
+                        <option value="active">\ud83d\udfe2 \u0634\u063a\u0627\u0644 (Active)</option>
+                        <option value="pause">\ud83d\udd34 \u0645\u062a\u0648\u0642\u0641 (Paused)</option>
                     </select>
                 </div>
 
                 <div class="filter-item">
                     <label for="filter-sales"><i class="fa-solid fa-user-tag"></i> Sales:</label>
                     <select id="filter-sales">
-                        <option value="all">الجميع</option>
+                        <option value="all">\u0627\u0644\u062c\u0645\u064a\u0639</option>
                     </select>
                 </div>
 
-                <button id="reset-filters-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-rotate-left"></i> إعادة ضبط</button>
+                <button id="reset-filters-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-rotate-left"></i> \u0625\u0639\u0627\u062f\u0629 \u0636\u0628\u0637</button>
             </div>
         </section>
 
@@ -147,8 +149,8 @@
             <!-- VIEW 1: LIVE INTERACTIVE BOARD -->
             <section id="view-live-board" class="view-panel active">
                 <div class="panel-header">
-                    <h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2>
-                    <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات الحية عبر كل المنصات.</p>
+                    <h2><i class="fa-solid fa-fire-flame-curved"></i> \u0642\u0631\u0627\u0631\u0627\u062a \u0627\u0644\u0640 Media Buyer \u0627\u0644\u0641\u0648\u0631\u064a\u0629</h2>
+                    <p>\u0639\u0631\u0636 \u062a\u0641\u0627\u0639\u0644\u064a \u0645\u0628\u0627\u0634\u0631 \u0644\u062d\u0627\u0644\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u062a\u0642\u064a\u064a\u0645\u0627\u062a \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0627\u0644\u062d\u064a\u0629 \u0639\u0625\u0631 \u0643\u0644 \u0627\u0644\u0645\u0646\u0635\u0627\u062a.</p>
                 </div>
                 
                 <div id="live-ads-grid" class="ads-grid">
@@ -159,8 +161,8 @@
             <!-- VIEW 2: SALES / CRM FEEDBACK VIEW -->
             <section id="view-sales-view" class="view-panel">
                 <div class="panel-header">
-                    <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تقييم جودة الـ Leads والتوجيه)</h2>
-                    <p>قم بتحديد جودة المحادثات لكل إعلان وكتابة ملاحظاتك للميديا باير (خاص بحسابات Sales أو Admin).</p>
+                    <h2><i class="fa-solid fa-headset"></i> \u0634\u0627\u0634\u0629 \u0627\u0644\u0640 Sales (\u062a\u0642\u064a\u064a\u0645 \u062c\u0648\u062f\u0629 \u0627\u0644\u0640 Leads \u0648\u0627\u0644\u062a\u0648\u062c\u064a\u0647)</h2>
+                    <p>\u0642\u0645 \u0628\u062a\u062d\u062f\u064a\u062f \u062c\u0648\u062f\u0629 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a \u0644\u0643\u0644 \u0625\u0639\u0644\u0627\u0646 \u0648\u0643\u062a\u0627\u0628\u0629 \u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643 \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631 (\u062e\u0627\u0635 \u0628\u062d\u0633\u0627\u0628\u0627\u062a Sales \u0623\u0648 Admin).</p>
                 </div>
 
                 <!-- Desktop Table View -->
@@ -168,14 +170,14 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>المنصة</th>
-                                <th>الإعلان والهدف</th>
-                                <th>الحملة والمجموعة</th>
-                                <th>الـ Sales</th>
-                                <th>جودة الـ Leads (تقييمك)</th>
-                                <th>حالة الإعلان (تنفيذ الميديا باير)</th>
-                                <th>ملاحظاتك للميديا باير</th>
-                                <th>التحديث</th>
+                                <th>\u0627\u0644\u0645\u0646\u0635\u0629</th>
+                                <th>\u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0648\u0627\u0644\u0647\u062f\u0641</th>
+                                <th>\u0627\u0644\u062d\u0645\u0644\u0627\u062a \u0648\u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0629</th>
+                                <th>\u0627\u0644\u0640 Sales</th>
+                                <th>\u062c\u0648\u062f\u0629 \u0627\u0644\u0640 Leads (\u062a\u0642\u064a\u064a\u0645\u0643)</th>
+                                <th>\u062d\u0627\u0644\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 (\u062a\u0646\u0641\u064a\u0630 \u0627\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631)</th>
+                                <th>\u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643 \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631</th>
+                                <th>\u0627\u0644\u062a\u062d\u062f\u064a\u062b</th>
                             </tr>
                         </thead>
                         <tbody id="sales-table-body">
@@ -190,28 +192,71 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: MEDIA BUYER MANAGEMENT VIEW -->
+            <!-- VIEW 3: CAMPAIGN RESULTS & DAILY METRICS BOARD (NEW!) -->
+            <section id="view-results-view" class="view-panel">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2><i class="fa-solid fa-chart-line"></i> \u0646\u062a\u0627\u0626\u062c \u0627\u0644\u062d\u0645\u0644\u0627\u062a \u0648\u0627\u0644\u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u064a\u0648\u0645\u064a (Campaign Results)</h2>
+                        <p>\u0645\u062a\u0627\u0628\u0639\u0629 \u0645\u0628\u0627\u0634\u0631\u0629 \u0644\u0639\u062f\u062f \u0627\u0644\u0631\u0633\u0627\u0626\u0644/\u0627\u0644\u0646\u062a\u0627\u0626\u062c\u060c \u062a\u0643\u0644\u0641\u0629 \u0627\u0644\u0631\u0633\u0627\u0626\u0644\u060c \u0648\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0645\u0635\u0631\u0648\u0641 \u0627\u0644\u064a\u0648\u0645\u064a \u0644\u0643\u0644 \u0625\u0639\u0644\u0627\u0646 \u0628\u062f\u0648\u0646 \u0627\u0644\u062d\u0627\u062c\u0629 \u0644\u0625\u0631\u0633\u0627\u0644 Screenshots.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <label for="results-date-picker" style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);"><i class="fa-solid fa-calendar-days"></i> \u062a\u0627\u0631\u064a\u062e \u0627\u0644\u062a\u0642\u0631\u064a\u0631:</label>
+                            <input type="date" id="results-date-picker" style="background: transparent; color: var(--text-color); border: none; font-size: 0.85rem; font-weight: 700; font-family: inherit; cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Results Data Table -->
+                <div class="table-responsive desktop-only">
+                    <table class="data-table">
+                        <thead>
+                            <tr id="results-table-header">
+                                <th>\u0627\u0644\u0645\u0646\u0635\u0629</th>
+                                <th>\u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0648\u0627\u0644\u0647\u062f\u0641</th>
+                                <th>\u0627\u0644\u062d\u0645\u0644\u0627\u062a \u0648\u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0629</th>
+                                <th>\u0627\u0644\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0645\u062d\u062f\u062f</th>
+                                <th>\u0639\u062f\u062f \u0627\u0644\u0631\u0633\u0627\u0626\u0644 / Results</th>
+                                <th>\u062a\u0643\u0644\u0641\u0629 \u0627\u0644\u0631\u0633\u0627\u0626\u0644 (CPR)</th>
+                                <th>\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0645\u0635\u0631\u0648\u0641</th>
+                                <th>\u0627\u0644\u0645\u0624\u0634\u0631\u0627\u062a \u0627\u0644\u0645\u062e\u0635\u0635\u0629</th>
+                                <th>\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0646\u062a\u0627\u0626\u062c \u0648\u0627\u0644\u062a\u0627\u0631\u064a\u062e</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-table-body">
+                            <!-- Dynamic Results Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Results Cards -->
+                <div id="results-mobile-cards" class="sales-mobile-grid mobile-only">
+                    <!-- Dynamic Mobile Results Cards -->
+                </div>
+            </section>
+
+            <!-- VIEW 4: MEDIA BUYER MANAGEMENT VIEW -->
             <section id="view-media-buyer-view" class="view-panel">
                 <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
-                        <p>إضافة وتعديل بيانات الإعلانات وتحديد المنصة والهدف وتعيين الـ Sales.</p>
+                        <h2><i class="fa-solid fa-sliders"></i> \u0625\u062f\u0627\u0631\u0629 \u0648\u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a (Media Buyer & Admin Desk)</h2>
+                        <p>\u0625\u0636\u0627\u0641\u0629 \u0648\u062a\u0639\u062f\u064a\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u062a\u062d\u062f\u064a\u062f \u0627\u0644\u0645\u0646\u0635\u0629 \u0648\u0627\u0644\u0647\u062f\u0641 \u0648\u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0640 Sales.</p>
                     </div>
-                    <button class="btn btn-primary btn-md admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button>
+                    <button class="btn btn-primary btn-md admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + \u0625\u0636\u0627\u0641\u0629 \u0625\u0639\u0644\u0627\u0646 \u062c\u062f\u064a\u062f</button>
                 </div>
 
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>المنصة</th>
-                                <th>اسم الإعلان والهدف</th>
-                                <th>المجموعة الإعلانية</th>
-                                <th>الحملة</th>
-                                <th>الـ Sales</th>
-                                <th>تقييم المبيعات</th>
-                                <th>حالة الإعلان</th>
-                                <th>إجراءات الإيقاف/التشغيل</th>
+                                <th>\u0627\u0644\u0645\u0646\u0635\u0629</th>
+                                <th>\u0627\u0633\u0645 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0648\u0627\u0644\u0647\u062f\u0641</th>
+                                <th>\u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u062a\u064a\u0629</th>
+                                <th>\u0627\u0644\u062d\u0645\u0644\u0627\u062a</th>
+                                <th>\u0627\u0644\u0640 Sales</th>
+                                <th>\u062a\u0642\u064a\u064a\u0645 \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a</th>
+                                <th>\u062d\u0627\u0644\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646</th>
+                                <th>\u0625\u062c\u0631\u0627\u0621\u0627\u062a \u0627\u0644\u0625\u064a\u0642\u0627\u0641/\u0627\u0644\u062a\u0634\u063a\u064a\u0644</th>
                             </tr>
                         </thead>
                         <tbody id="media-buyer-table-body">
@@ -227,23 +272,23 @@
         <div id="role-modal" class="modal-overlay hidden">
             <div class="modal-content" style="max-width: 440px;">
                 <div class="modal-header">
-                    <h3><i class="fa-solid fa-user-lock"></i> تسجيل دخول الأعضاء</h3>
+                    <h3><i class="fa-solid fa-user-lock"></i> \u062a\u0633\u062c\u064a\u0644 \u062f\u062e\u0648\u0644 \u0627\u0644\u0623\u0639\u0636\u0627\u0621</h3>
                     <button id="close-role-modal-btn" class="close-btn" onclick="document.getElementById('role-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="role-form">
                     <div class="form-group">
-                        <label for="login-username">اسم المستخدم (Username) <span class="required">*</span></label>
-                        <input type="text" id="login-username" placeholder="أدخل اسم المستخدم الخاص بك" required autofocus>
+                        <label for="login-username">\u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 (Username) <span class="required">*</span></label>
+                        <input type="text" id="login-username" placeholder="\u0623\u062f\u062e\u0644 \u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 \u0627\u0644\u062e\u0627\u0635 \u0628\u0643" required autofocus>
                     </div>
 
                     <div class="form-group">
-                        <label for="login-password">كلمة المرور (Password) <span class="required">*</span></label>
-                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
+                        <label for="login-password">\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 (Password) <span class="required">*</span></label>
+                        <input type="password" id="login-password" placeholder="\u0623\u062f\u062e\u0644 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631" required>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" id="cancel-role-modal-btn" class="btn btn-secondary" onclick="document.getElementById('role-modal').classList.add('hidden');">إلغاء</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
+                        <button type="button" id="cancel-role-modal-btn" class="btn btn-secondary" onclick="document.getElementById('role-modal').classList.add('hidden');">\u0625\u0644\u063a\u0627\u0621</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644</button>
                     </div>
                 </form>
             </div>
@@ -253,20 +298,20 @@
         <div id="ad-modal" class="modal-overlay hidden">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 id="modal-title"><i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد</h3>
+                    <h3 id="modal-title"><i class="fa-solid fa-plus-circle"></i> \u0625\u0636\u0627\u0641\u0629 \u0625\u0639\u0644\u0627\u0646 \u062c\u062f\u064a\u062f</h3>
                     <button id="close-modal-btn" class="close-btn" onclick="document.getElementById('ad-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="ad-form">
                     <input type="hidden" id="ad-id">
                     
                     <div class="form-group">
-                        <label for="ad-name">اسم الإعلان / الكود <span class="required">*</span></label>
+                        <label for="ad-name">\u0627\u0633\u0645 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 / \u0627\u0644\u0643\u0648\u062f <span class="required">*</span></label>
                         <input type="text" id="ad-name" placeholder="مثال: Ad 01 - Carousel - Fire Safety System" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="ad-platform">المنصة الإعلانية (Platform) <span class="required">*</span></label>
+                            <label for="ad-platform">\u0627\u0644\u0645\u0646\u0635\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u064a\u0629 (Platform) <span class="required">*</span></label>
                             <select id="ad-platform" required>
                                 <option value="meta">🔵 Meta (Facebook & Instagram)</option>
                                 <option value="google">🔴 Google Ads / YouTube</option>
@@ -277,7 +322,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ad-sales">مسؤول المبيعات المتابع (Sales Rep) <span class="required">*</span></label>
+                            <label for="ad-sales">\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0627\u0644\u0645\u062a\u0627\u0628\u0639 (Sales Rep) <span class="required">*</span></label>
                             <select id="ad-sales" required>
                                 <!-- Dynamically populated from registered sales accounts -->
                             </select>
@@ -286,38 +331,124 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="ad-campaign">اسم الحملة (Campaign) <span class="required">*</span></label>
+                            <label for="ad-campaign">\u0627\u0633\u0645 \u0627\u0644\u062d\u0645\u0644\u0627\u062a (Campaign) <span class="required">*</span></label>
                             <input type="text" id="ad-campaign" placeholder="مثال: Campaign_Leads_Cairo_Aug" required>
                         </div>
                         <div class="form-group">
-                            <label for="ad-adset">المجموعة الإعلانية (Ad Set) <span class="required">*</span></label>
+                            <label for="ad-adset">\u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u062a\u064a\u0629 (Ad Set) <span class="required">*</span></label>
                             <input type="text" id="ad-adset" placeholder="مثال: AdSet_Target_BusinessOwners" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="ad-objective">نوع/هدف الحملة (Campaign Destination/Objective)</label>
-                        <input type="text" id="ad-objective" placeholder="مثال: رسائل واتساب مباشرة / صفحة هبوط + زر واتس / مكالمات / Lead Form">
+                        <label for="ad-objective">\u0646\u0648\u0639/\u0647\u062f\u0641 \u0627\u0644\u062d\u0645\u0644\u0627\u062a (Campaign Destination/Objective)</label>
+                        <input type="text" id="ad-objective" placeholder="\u0645\u062b\u0627\u0644: \u0631\u0633\u0627\u0626\u0644 \u0648\u0627\u062a\u0633\u0627\u0628 \u0645\u0628\u0627\u0634\u0631\u0629 / \u0635\u0641\u062d\u0629 \u0647\u0628\u0648\u0637 + \u0632\u0631 \u0648\u0627\u062a\u0633 / \u0645\u0643\u0627\u0644\u0645\u0627\u062a / Lead Form">
                     </div>
 
                     <div class="form-group">
-                        <label for="ad-notes">توجيهات/ملاحظات أولية للـ Sales (اختياري)</label>
-                        <textarea id="ad-notes" rows="3" placeholder="أضف أي تفاصيل تهم الـ Sales (مثال: الإعلان ده موجه لأصحاب المصانع، ركزوا على عروض الأسعار)..."></textarea>
+                        <label for="ad-notes">\u062a\u0648\u062c\u064a\u0647\u0627\u062a/\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0623\u0648\u0644\u064a\u0629 \u0644\u0644\u0640 Sales (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)</label>
+                        <textarea id="ad-notes" rows="3" placeholder="\u0623\u0636\u0641 \u0623\u064a \u062a\u0641\u0627\u0635\u064a\u0644 \u062a\u0647\u0645 \u0627\u0644\u0640 Sales..."></textarea>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" id="cancel-modal-btn" class="btn btn-secondary" onclick="document.getElementById('ad-modal').classList.add('hidden');">إلغاء</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعلان</button>
+                        <button type="button" id="cancel-modal-btn" class="btn btn-secondary" onclick="document.getElementById('ad-modal').classList.add('hidden');">\u0625\u0644\u063a\u0627\u0621</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> \u062d\u0641\u0638 \u0627\u0644\u0625\u0639\u0644\u0627\u0646</button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- DAILY RESULT ENTRY MODAL (FOR MEDIA BUYER) -->
+        <div id="daily-result-modal" class="modal-overlay hidden">
+            <div class="modal-content" style="max-width: 520px;">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-pen-to-square"></i> \u062a\u0633\u062c\u064a\u0644 \u0648\u062a\u062d\u062f\u064a\u062b \u0646\u062a\u0627\u0626\u062c \u0627\u0644\u064a\u0648\u0645</h3>
+                    <button class="close-btn" onclick="document.getElementById('daily-result-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="daily-result-form">
+                    <input type="hidden" id="entry-ad-id">
+                    
+                    <div class="form-group">
+                        <label for="entry-date"><i class="fa-solid fa-calendar-day"></i> \u0627\u062e\u062a\u0631 \u0627\u0644\u062a\u0627\u0631\u064a\u062e (Date) <span class="required">*</span></label>
+                        <input type="date" id="entry-date" required style="font-weight:700;">
+                    </div>
+
+                    <div id="dynamic-metrics-inputs-container">
+                        <!-- Dynamically filled fields based on ad metricsConfig -->
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('daily-result-modal').classList.add('hidden');">\u0625\u0644\u063a\u0627\u0621</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> \u062d\u0641\u0638 \u0646\u062a\u0627\u0626\u062c \u0627\u0644\u062a\u0627\u0631\u064a\u062e</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ADD CUSTOM METRIC MODAL (FOR MEDIA BUYER) -->
+        <div id="custom-metric-modal" class="modal-overlay hidden">
+            <div class="modal-content" style="max-width: 460px;">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-plus-square"></i> \u0625\u0636\u0627\u0641\u0629 \u0645\u0624\u0634\u0631 \u0645\u062e\u0635\u0635 \u0644\u0644\u0625\u0639\u0644\u0627\u0646</h3>
+                    <button class="close-btn" onclick="document.getElementById('custom-metric-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="custom-metric-form">
+                    <input type="hidden" id="metric-ad-id">
+                    
+                    <div class="form-group">
+                        <label for="metric-label">\u0627\u0633\u0645 \u0627\u0644\u0645\u0624\u0634\u0631 \u0627\u0644\u062c\u062f\u064a\u062f <span class="required">*</span></label>
+                        <input type="text" id="metric-label" placeholder="\u0645\u062b\u0627\u0644: \u0627\u0644\u062a\u0643\u0631\u0627\u0631 (Frequency) \u0623\u0648 \u0645\u0639\u062f\u0644 \u0627\u0644\u0646\u0642\u0631 (CTR)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="metric-unit">\u0648\u062d\u062f\u0629 \u0627\u0644\u0642\u064a\u0627\u0633 / \u0627\u0644\u0639\u0645\u0644\u0629 (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)</label>
+                        <input type="text" id="metric-unit" placeholder="\u0645\u062b\u0627\u0644: \u062c.\u0645 / % / \u0645\u062d\u0627\u062f\u062b\u0629">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('custom-metric-modal').classList.add('hidden');">\u0625\u0644\u063a\u0627\u0621</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus-circle"></i> \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0624\u0634\u0631</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- HISTORICAL LOG MODAL (FOR ALL USERS) -->
+        <div id="history-modal" class="modal-overlay hidden">
+            <div class="modal-content" style="max-width: 700px;">
+                <div class="modal-header">
+                    <h3 id="history-modal-title"><i class="fa-solid fa-clock-rotate-left"></i> \u0633\u062c\u0644 \u0646\u062a\u0627\u0626\u062c \u0627\u0644\u062a\u0627\u0631\u064a\u062e \u0628\u0627\u0644\u062a\u0642\u0648\u064a\u0645</h3>
+                    <button class="close-btn" onclick="document.getElementById('history-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div style="padding: 1rem 0;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr id="history-table-header">
+                                    <th>\u0627\u0644\u062a\u0627\u0631\u064a\u062e (Date)</th>
+                                    <th>\u0639\u062f\u062f \u0627\u0644\u0646\u062a\u0627\u0626\u062c / \u0627\u0644\u0631\u0633\u0627\u0626\u0644</th>
+                                    <th>\u062a\u0643\u0644\u0641\u0629 \u0627\u0644\u0631\u0633\u0627\u0626\u0644</th>
+                                    <th>\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0645\u0635\u0631\u0648\u0641</th>
+                                    <th>\u0645\u0624\u0634\u0631\u0627\u062a \u0645\u062e\u0635\u0635\u0629</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- Dynamic History Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('history-modal').classList.add('hidden');">\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0633\u062c\u0644</button>
+                </div>
+            </div>
+        </div>
+
         <footer class="app-footer">
-            <p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة صلاحيات الإعلانات والمبيعات الموحد</p>
+            <p>AdSales Sync Enterprise &copy; 2026 - \u0646\u0638\u0627\u0645 \u0625\u062f\u0627\u0631\u0629 \u0635\u0644\u0627\u062d\u064a\u0627\u062a \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0627\u0644\u0645\u0648\u062d\u062f</p>
         </footer>
     </div>
 
-    <script src="app.js?v=12.0"></script>
+    <script src="app.js?v=13.0"></script>
 </body>
 </html>
