@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4.5">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
@@ -23,20 +23,20 @@
                 </div>
 
                 <div class="header-actions-row">
-                    <div class="role-indicator-badge" id="role-badge" onclick="window.openRoleModal && window.openRoleModal(); return false;" title="انقر لتغيير الصلاحية أو تسجيل الدخول">
+                    <div class="role-indicator-badge" id="role-badge" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;" title="انقر لتغيير الصلاحية أو تسجيل الدخول">
                         <i class="fa-solid fa-eye"></i>
                         <span id="role-text">زائر (عرض فقط)</span>
                     </div>
 
-                    <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="window.openRoleModal && window.openRoleModal(); return false;"><i class="fa-solid fa-key"></i> تغيير الصلاحية</button>
+                    <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-key"></i> تغيير الصلاحية</button>
                     <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
             </div>
 
-            <div id="read-only-banner" class="read-only-banner" onclick="window.openRoleModal && window.openRoleModal();">
-                <i class="fa-solid fa-lock"></i> أنت تتصفح النظام بوضع <strong>"مشاهد فقط (Read-Only)"</strong>. للتعديل، يرجى <a href="javascript:void(0)" id="banner-login-link" onclick="window.openRoleModal && window.openRoleModal(); return false;">تسجيل الدخول بصلاحية (Media Buyer / Sales / Admin)</a>.
+            <div id="read-only-banner" class="read-only-banner" onclick="document.getElementById('role-modal').classList.remove('hidden');">
+                <i class="fa-solid fa-lock"></i> أنت تتصفح النظام بوضع <strong>"مشاهد فقط (Read-Only)"</strong>. للتعديل، يرجى <a href="javascript:void(0)" id="banner-login-link" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;">تسجيل الدخول بصلاحية (Media Buyer / Sales / Admin)</a>.
             </div>
 
             <nav class="view-switcher">
@@ -145,7 +145,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3><i class="fa-solid fa-user-lock"></i> تسجيل الدخول وتغيير الصلاحية</h3>
-                    <button id="close-role-modal-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+                    <button id="close-role-modal-btn" class="close-btn" onclick="document.getElementById('role-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="role-form">
                     <div class="form-group">
@@ -169,7 +169,7 @@
                         </small>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="cancel-role-modal-btn" class="btn btn-secondary">إلغاء</button>
+                        <button type="button" id="cancel-role-modal-btn" class="btn btn-secondary" onclick="document.getElementById('role-modal').classList.add('hidden');">إلغاء</button>
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> دخول والتفعيل</button>
                     </div>
                 </form>
@@ -180,7 +180,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 id="modal-title"><i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد</h3>
-                    <button id="close-modal-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+                    <button id="close-modal-btn" class="close-btn" onclick="document.getElementById('ad-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="ad-form">
                     <input type="hidden" id="ad-id">
@@ -226,7 +226,7 @@
                         <textarea id="ad-notes" rows="3" placeholder="أضف أي تفاصيل تهم الـ Sales أو الـ Media Buyer..."></textarea>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="cancel-modal-btn" class="btn btn-secondary">إلغاء</button>
+                        <button type="button" id="cancel-modal-btn" class="btn btn-secondary" onclick="document.getElementById('ad-modal').classList.add('hidden');">إلغاء</button>
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعلان</button>
                     </div>
                 </form>
@@ -237,6 +237,6 @@
             <p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة الصلاحيات والأقسام الموحد</p>
         </footer>
     </div>
-    <script src="app.js"></script>
+    <script src="app.js?v=4.5"></script>
 </body>
 </html>
