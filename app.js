@@ -364,12 +364,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (loggedUser) {
             roleBadge.innerHTML = '<i class="fa-solid ' + config.icon + '"></i> <span id="role-text">' + loggedUser.name + ' (' + config.name + ')</span>';
-            if (loginRoleBtn) loginRoleBtn.classList.add('hidden');
-            if (logoutBtn) logoutBtn.classList.remove('hidden');
+            if (loginRoleBtn) { loginRoleBtn.classList.add('hidden'); loginRoleBtn.style.setProperty('display', 'none', 'important'); }
+            if (logoutBtn) { logoutBtn.classList.remove('hidden'); logoutBtn.style.setProperty('display', 'inline-flex', 'important'); }
         } else {
             roleBadge.innerHTML = '<i class="fa-solid ' + config.icon + '"></i> <span id="role-text">' + config.name + '</span>';
-            if (loginRoleBtn) loginRoleBtn.classList.remove('hidden');
-            if (logoutBtn) logoutBtn.classList.add('hidden');
+            if (loginRoleBtn) { loginRoleBtn.classList.remove('hidden'); loginRoleBtn.style.setProperty('display', 'inline-flex', 'important'); }
+            if (logoutBtn) { logoutBtn.classList.add('hidden'); logoutBtn.style.setProperty('display', 'none', 'important'); }
         }
     }
 
