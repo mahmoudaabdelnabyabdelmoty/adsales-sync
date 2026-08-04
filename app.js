@@ -684,6 +684,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function getHierarchicalCampaigns(filteredAds) {
+        const campaignsMap = {};
+        filteredAds.forEach(ad => {
+            const cName = ad.campaign || 'حملة بدون اسم';
+            if (!campaignsMap[cName]) {
+                campaignsMap[cName] = {
+                    name: cName,
+                    platform: ad.platform,
+                    objective: ad.objective,
+                    salesRep: ad.salesRep,
+                    adsetsMap: {},
+                    totalAdsCount: 0,
+                    activeAdsCount: 0,
+                    pauseAdsCount: 0
+                };
+            }
+            campaignsMap[cName].totalAdsCount++;
+            if (ad.status === 'pause') campaignsMap[cName].pauseAdsCount++;
+            else campaignsMap[cName].activeAdsCount++;
+
+            const asName = ad.adset || 'مجموعة إعلانية عامة';
+            if (!campaignsMap[cName].adsetsMap[asName]) {
+                campaignsMap[cName].adsetsMap[asName] = {
+                    name: asName,
+                    ads: []
+                };
+            }
+            campaignsMap[cName].adsetsMap[asName].ads.push(ad);
+        });
+        return Object.values(campaignsMap);
+    }
+
     function renderLiveBoard(filteredAds) {
         if (!liveAdsGrid) return;
         liveAdsGrid.innerHTML = '';
@@ -693,47 +725,76 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        filteredAds.forEach(ad => {
-            const card = document.createElement('div');
-            const isPaused = ad.status === 'pause';
-            const isBadQuality = ad.quality === 'unqualified';
+        const hierarchicalCampaigns = getHierarchicalCampaigns(filteredAds);
 
-            card.className = 'ad-card ' + (isPaused ? 'status-pause' : 'status-winning');
+        hierarchicalCampaigns.forEach(cGroup => {
+            const cCard = document.createElement('div');
+            cCard.className = 'campaign-group-card';
 
-            let cardActionHTML = '';
-            if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                cardActionHTML = '<div class="ad-card-actions">' + 
-                    (!isPaused ? 
-                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان (Pause)</button>' : 
-                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال (Active)</button>'
-                    ) + 
-                    '<button class="btn btn-secondary ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button></div>';
-            } else if (currentRole === 'sales') {
-                cardActionHTML = '<div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 12px; padding: 12px; margin-top: 10px;">' +
-                    '<label style="font-size:0.8rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:6px;"><i class="fa-solid fa-headset"></i> حدد تقييمك لجودة المحادثات:</label>' +
-                    '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.85rem; padding:6px 10px; margin-bottom:8px;">' +
-                    '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
-                    '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
-                    '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' +
-                    '<label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;"><i class="fa-solid fa-comment-dots"></i> ملاحظاتك للميديا باير:</label>' +
-                    '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف أي ملاحظة تهم الميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:6px 10px;"></div>';
-            } else {
-                cardActionHTML = '<div style="text-align:center; padding:6px; font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> كارت للعرض فقط (سجّل دخول للتقييم)</div>';
-            }
+            const adsetsList = Object.values(cGroup.adsetsMap);
 
-            card.innerHTML = '<div class="ad-card-header"><div class="ad-card-top-bar"><div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">' +
-                getPlatformBadgeHTML(ad.platform) +
-                '<span class="campaign-tag"><i class="fa-solid fa-layer-group"></i> ' + ad.campaign + '</span></div>' +
-                getStatusBadgeHTML(ad.status) + '</div><div class="ad-title-area"><h4>' + ad.name + '</h4>' +
-                (ad.objective ? '<span style="font-size:0.8rem; color:var(--primary-color); display:block; margin-top:3px;"><i class="fa-solid fa-bullseye"></i> الهدف: ' + ad.objective + '</span>' : '') +
-                '</div></div><div class="ad-meta-list"><div class="meta-item"><span class="meta-label">المجموعة الإعلانية:</span><span class="meta-val">' + ad.adset + '</span></div>' +
-                '<div class="meta-item"><span class="meta-label">مسؤول الـ Sales:</span><span class="meta-val"><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</span></div>' +
-                '<div class="meta-item"><span class="meta-label">تقييم الـ Sales للجودة:</span><span class="meta-val">' + getQualityBadgeHTML(ad.quality) + '</span></div>' +
-                '<div class="meta-item"><span class="meta-label">التحديث:</span><span class="meta-val" style="font-size:0.78rem;">' + ad.updatedAt + '</span></div></div>' +
-                ((currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? '<div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; color: #fca5a5; font-size: 0.85rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: المبيعات تقيم هذا الإعلان بـ (غير مهتمين/سيء) وتطلب إيقافه!</div>' : '') +
-                (currentRole !== 'sales' ? '<div class="sales-note-box"><strong><i class="fa-solid fa-comment-dots"></i> ملاحظات الـ Sales للميديا باير:</strong> ' + (ad.salesNotes ? ad.salesNotes : 'لا توجد ملاحظات مدونة بعد.') + '</div>' : '') +
-                cardActionHTML;
-            liveAdsGrid.appendChild(card);
+            let adsetsHTML = adsetsList.map(asGroup => {
+                let adsCardsHTML = asGroup.ads.map(ad => {
+                    const isPaused = ad.status === 'pause';
+                    const isBadQuality = ad.quality === 'unqualified';
+
+                    let cardActionHTML = '';
+                    if (currentRole === 'mediabuyer' || currentRole === 'admin') {
+                        cardActionHTML = '<div class="ad-card-actions" style="margin-top:8px;">' + 
+                            (!isPaused ? 
+                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان</button>' : 
+                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال</button>'
+                            ) + 
+                            '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button></div>';
+                    } else if (currentRole === 'sales') {
+                        cardActionHTML = '<div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 8px; padding: 8px; margin-top: 8px;">' +
+                            '<label style="font-size:0.75rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:4px;"><i class="fa-solid fa-headset"></i> تقييم الجودة:</label>' +
+                            '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:4px 8px; margin-bottom:6px;">' +
+                            '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
+                            '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
+                            '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' +
+                            '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="ملاحظتك للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.78rem; padding:4px 8px;"></div>';
+                    } else {
+                        cardActionHTML = '<div style="text-align:center; padding:4px; font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> للعرض فقط</div>';
+                    }
+
+                    return '<div class="ad-card ' + (isPaused ? 'status-pause' : 'status-winning') + '" style="margin:0;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">' +
+                        '<span style="font-weight:800; font-size:0.92rem; color:var(--text-primary);"><i class="fa-solid fa-rectangle-ad" style="color:var(--primary-color);"></i> ' + ad.name + '</span>' +
+                        getStatusBadgeHTML(ad.status) + '</div>' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; color:var(--text-muted); margin-bottom:6px;">' +
+                        '<span>جودة الـ Leads: ' + getQualityBadgeHTML(ad.quality) + '</span>' +
+                        '</div>' +
+                        ((currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? '<div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 6px; padding: 4px 8px; margin-bottom: 6px; color: #fca5a5; font-size: 0.78rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: طلب إيقاف من المبيعات!</div>' : '') +
+                        (currentRole !== 'sales' && ad.salesNotes ? '<div class="sales-note-box" style="padding:6px; margin-bottom:6px; font-size:0.78rem;"><strong>ملاحظة الـ Sales:</strong> ' + ad.salesNotes + '</div>' : '') +
+                        cardActionHTML +
+                        '</div>';
+                }).join('');
+
+                return '<div class="adset-group-box">' +
+                    '<div class="adset-header-title">' +
+                    '<i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): ' + asGroup.name +
+                    ' <span style="font-size:0.75rem; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:12px; color:var(--text-secondary); margin-right:auto;">' + asGroup.ads.length + ' إعلانات</span>' +
+                    '</div>' +
+                    '<div class="nested-ads-grid">' + adsCardsHTML + '</div>' +
+                    '</div>';
+            }).join('');
+
+            cCard.innerHTML = '<div class="campaign-header-bar" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
+                '<div class="campaign-header-title">' +
+                getPlatformBadgeHTML(cGroup.platform) +
+                '<h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); display:inline-block;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
+                (cGroup.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); background:rgba(99,102,241,0.12); padding:2px 8px; border-radius:12px;"><i class="fa-solid fa-bullseye"></i> ' + cGroup.objective + '</span>' : '') +
+                '</div>' +
+                '<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
+                '<span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);"><i class="fa-solid fa-user-tag"></i> ' + cGroup.salesRep + '</span>' +
+                '<span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-cubes"></i> ' + adsetsList.length + ' مجموعات | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span>' +
+                '<i class="fa-solid fa-chevron-down" style="color:var(--text-muted);"></i>' +
+                '</div>' +
+                '</div>' +
+                '<div>' + adsetsHTML + '</div>';
+
+            liveAdsGrid.appendChild(cCard);
         });
     }
     function renderSalesView(filteredAds) {
@@ -844,20 +905,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const canDelete = ROLES_CONFIG[currentRole].canDelete;
         const canEditStructure = ROLES_CONFIG[currentRole].canEditStructure;
 
-        filteredAds.forEach(ad => {
-            const tr = document.createElement('tr');
-            const isPaused = ad.status === 'pause';
+        const hierarchicalCampaigns = getHierarchicalCampaigns(filteredAds);
 
-            tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td><td><strong>' + ad.name + '</strong>' +
-                (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') +
-                '</td><td>' + ad.adset + '</td><td>' + ad.campaign + '</td><td>' + ad.salesRep + '</td><td>' + getQualityBadgeHTML(ad.quality) + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
-                '<td><div class="action-btn-group">' + (!isPaused ? 
-                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل</button>' : 
-                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل</button>'
-                ) +
-                '<button class="btn btn-secondary btn-sm" onclick="editAdModal(\'' + ad.id + '\')" title="تعديل الإعلان" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
-                '<button class="btn btn-secondary btn-sm" onclick="deleteAd(\'' + ad.id + '\')" title="حذف الإعلان" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></div></td>';
-            mediaBuyerTableBody.appendChild(tr);
+        hierarchicalCampaigns.forEach(cGroup => {
+            const cTr = document.createElement('tr');
+            cTr.className = 'campaign-table-header';
+            cTr.innerHTML = '<td colspan="8">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1.05rem; margin-right:8px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
+                (cGroup.objective ? ' <span style="font-size:0.78rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
+                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white;"><i class="fa-solid fa-user-tag"></i> Sales: ' + cGroup.salesRep + ' | ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢 / ' + cGroup.pauseAdsCount + ' 🔴)</span></div>' +
+                '</div></td>';
+            mediaBuyerTableBody.appendChild(cTr);
+
+            Object.values(cGroup.adsetsMap).forEach(asGroup => {
+                const asTr = document.createElement('tr');
+                asTr.className = 'adset-table-header';
+                asTr.innerHTML = '<td colspan="8" style="padding-right:1.5rem;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                mediaBuyerTableBody.appendChild(asTr);
+
+                asGroup.ads.forEach(ad => {
+                    const tr = document.createElement('tr');
+                    const isPaused = ad.status === 'pause';
+
+                    tr.innerHTML = '<td class="indented-ad-cell" style="padding-right:2.5rem !important;"><i class="fa-solid fa-turn-down-left" style="color:var(--text-muted);"></i> ' + getPlatformBadgeHTML(ad.platform) + '</td>' +
+                        '<td><strong>' + ad.name + '</strong></td>' +
+                        '<td>' + ad.adset + '</td><td>' + ad.campaign + '</td><td>' + ad.salesRep + '</td><td>' + getQualityBadgeHTML(ad.quality) + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
+                        '<td><div class="action-btn-group">' + (!isPaused ? 
+                            '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل</button>' : 
+                            '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل</button>'
+                        ) +
+                        '<button class="btn btn-secondary btn-sm" onclick="editAdModal(\'' + ad.id + '\')" title="تعديل الإعلان" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
+                        '<button class="btn btn-secondary btn-sm" onclick="deleteAd(\'' + ad.id + '\')" title="حذف الإعلان" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></div></td>';
+                    mediaBuyerTableBody.appendChild(tr);
+                });
+            });
         });
     }
 
