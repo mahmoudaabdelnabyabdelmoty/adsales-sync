@@ -192,12 +192,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: CAMPAIGN RESULTS & DAILY METRICS BOARD (NEW!) -->
+            <!-- VIEW 3: CAMPAIGN RESULTS & DAILY METRICS BOARD (MESSAGES FOCUS) -->
             <section id="view-results-view" class="view-panel">
                 <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
                         <h2><i class="fa-solid fa-chart-line"></i> نتائج الحملات والتقرير اليومي (Campaign Results)</h2>
-                        <p>متابعة مباشرة لعدد الرسائل/النتائج، تكلفة الرسالة، وإجمالي المصروف اليومي لكل إعلان بدون الحاجة لإرسال Screenshots.</p>
+                        <p>تتبع يومي لعدد الرسائل لكل إعلان وإمكانية إضافة أو حذف مؤشرات مخصصة حسب الحاجة.</p>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
@@ -215,12 +215,10 @@
                                 <th>المنصة</th>
                                 <th>الإعلان والهدف</th>
                                 <th>الحملة والمجموعة</th>
-                                <th>التاريخ المحدد</th>
-                                <th>عدد الرسائل / Results</th>
-                                <th>تكلفة الرسالة (CPR)</th>
-                                <th>إجمالي المصروف</th>
-                                <th>المؤشرات المخصصة</th>
-                                <th>تحديث النتائج والتاريخ</th>
+                                <th>التاريخ (انقر للتغيير بالتقويم)</th>
+                                <th>عدد الرسائل (النتيجة الرئيسية)</th>
+                                <th>المؤشرات المخصصة (إضافة/حذف)</th>
+                                <th>إجراءات التقويم والنتائج</th>
                             </tr>
                         </thead>
                         <tbody id="results-table-body">
@@ -362,15 +360,15 @@
         <div id="daily-result-modal" class="modal-overlay hidden">
             <div class="modal-content" style="max-width: 520px;">
                 <div class="modal-header">
-                    <h3><i class="fa-solid fa-pen-to-square"></i> تسجيل وتحديث نتائج اليوم</h3>
+                    <h3><i class="fa-solid fa-pen-to-square"></i> تسجيل وتحديث نتائج اليوم بالتقويم</h3>
                     <button class="close-btn" onclick="document.getElementById('daily-result-modal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form id="daily-result-form">
                     <input type="hidden" id="entry-ad-id">
                     
                     <div class="form-group">
-                        <label for="entry-date"><i class="fa-solid fa-calendar-day"></i> اختر التاريخ (Date) <span class="required">*</span></label>
-                        <input type="date" id="entry-date" required style="font-weight:700;">
+                        <label for="entry-date"><i class="fa-solid fa-calendar-day"></i> اختر التاريخ من التقويم (Date) <span class="required">*</span></label>
+                        <input type="date" id="entry-date" required style="font-weight:700; font-size:1.05rem; padding:8px 12px;">
                     </div>
 
                     <div id="dynamic-metrics-inputs-container">
@@ -397,12 +395,12 @@
                     
                     <div class="form-group">
                         <label for="metric-label">اسم المؤشر الجديد <span class="required">*</span></label>
-                        <input type="text" id="metric-label" placeholder="مثال: التكرار (Frequency) أو معدل النقر (CTR)" required>
+                        <input type="text" id="metric-label" placeholder="مثال: تكلفة الرسالة (CPR) أو التكرار (Frequency) أو المبيعات" required>
                     </div>
 
                     <div class="form-group">
                         <label for="metric-unit">وحدة القياس / العملة (اختياري)</label>
-                        <input type="text" id="metric-unit" placeholder="مثال: ج.م / % / محادثة">
+                        <input type="text" id="metric-unit" placeholder="مثال: ج.م / % / محادثة / عميل">
                     </div>
 
                     <div class="modal-footer">
@@ -426,9 +424,7 @@
                             <thead>
                                 <tr id="history-table-header">
                                     <th>التاريخ (Date)</th>
-                                    <th>عدد النتائج / الرسائل</th>
-                                    <th>تكلفة الرسالة</th>
-                                    <th>إجمالي المصروف</th>
+                                    <th>عدد الرسائل</th>
                                     <th>مؤشرات مخصصة</th>
                                 </tr>
                             </thead>
