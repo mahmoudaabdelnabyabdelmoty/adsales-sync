@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تتبع أداء الإعلانات والمبيعات | AdSales Sync Enterprise</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=6.1">
+    <link rel="stylesheet" href="style.css?v=7.0">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
@@ -17,7 +20,7 @@
                 <div class="brand-section">
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
-                        <h1>AdSales Sync <span class="version-tag">v6.1 Enterprise</span></h1>
+                        <h1>AdSales Sync <span class="version-tag">v7.0 Enterprise</span></h1>
                         <p>نظام التنسيق الفوري بين المبيعات والـ Media Buyer</p>
                     </div>
                 </div>
@@ -30,7 +33,7 @@
 
                     <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
                     <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> خروج</button>
-                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
+                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only" style="display: none !important;"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
@@ -43,7 +46,7 @@
                 <button class="nav-btn" data-view="sales-view">
                     <i class="fa-solid fa-headset"></i> شاشة الـ Sales
                 </button>
-                <button class="nav-btn" data-view="media-buyer-view">
+                <button class="nav-btn admin-mb-only" id="nav-mb-btn" data-view="media-buyer-view" style="display: none !important;">
                     <i class="fa-solid fa-sliders"></i> إدارة الحملات
                 </button>
             </nav>
@@ -83,10 +86,23 @@
         <section class="controls-bar">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="ابحث باسم الإعلان، الحملة، أو Sales...">
+                <input type="text" id="search-input" placeholder="ابحث باسم الإعلان، الحملة، المنصة، أو Sales...">
             </div>
 
             <div class="filter-group">
+                <div class="filter-item">
+                    <label for="filter-platform"><i class="fa-solid fa-globe"></i> المنصة:</label>
+                    <select id="filter-platform">
+                        <option value="all">جميع المنصات</option>
+                        <option value="meta">Meta (FB & IG)</option>
+                        <option value="google">Google Ads</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="snapchat">Snapchat</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="twitter">X (Twitter)</option>
+                    </select>
+                </div>
+
                 <div class="filter-item">
                     <label for="filter-status"><i class="fa-solid fa-filter"></i> حالة الإعلان:</label>
                     <select id="filter-status">
@@ -111,7 +127,7 @@
             <section id="view-live-board" class="view-panel active">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2>
-                    <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات الحية.</p>
+                    <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات الحية عبر كل المنصات.</p>
                 </div>
                 <div id="live-ads-grid" class="ads-grid"></div>
             </section>
@@ -126,9 +142,9 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>الإعلان</th>
-                                <th>الحملة</th>
-                                <th>المجموعة</th>
+                                <th>المنصة</th>
+                                <th>الإعلان والهدف</th>
+                                <th>الحملة والمجموعة</th>
                                 <th>الـ Sales</th>
                                 <th>جودة الـ Leads (تقييمك)</th>
                                 <th>حالة الإعلان (تنفيذ الميديا باير)</th>
@@ -146,15 +162,15 @@
             <section id="view-media-buyer-view" class="view-panel">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
-                    <p>إضافة وتعديل بيانات الإعلانات وتعيين الـ Sales وتفعيل/تعطيل الإعلانات.</p>
+                    <p>إضافة وتعديل بيانات الإعلانات وتحديد المنصة والهدف وتعيين الـ Sales.</p>
                 </div>
 
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>نوع</th>
-                                <th>اسم الإعلان</th>
+                                <th>المنصة</th>
+                                <th>اسم الإعلان والهدف</th>
                                 <th>المجموعة الإعلانية</th>
                                 <th>الحملة</th>
                                 <th>الـ Sales</th>
@@ -208,11 +224,24 @@
                         <input type="text" id="ad-name" placeholder="مثال: Ad 01 - Carousel - Fire Safety System" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="ad-sales">مسؤول المبيعات المتابع (Sales Rep) <span class="required">*</span></label>
-                        <select id="ad-sales" required>
-                            <!-- Dynamically populated from registered sales accounts -->
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ad-platform">المنصة الإعلانية (Platform) <span class="required">*</span></label>
+                            <select id="ad-platform" required>
+                                <option value="meta">🔵 Meta (Facebook & Instagram)</option>
+                                <option value="google">🔴 Google Ads / YouTube</option>
+                                <option value="tiktok">🎵 TikTok</option>
+                                <option value="snapchat">🟡 Snapchat</option>
+                                <option value="linkedin">🔷 LinkedIn</option>
+                                <option value="twitter">🔲 X (Twitter)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ad-sales">مسؤول المبيعات المتابع (Sales Rep) <span class="required">*</span></label>
+                            <select id="ad-sales" required>
+                                <!-- Dynamically populated from registered sales accounts -->
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-row">
@@ -224,6 +253,11 @@
                             <label for="ad-adset">المجموعة الإعلانية (Ad Set) <span class="required">*</span></label>
                             <input type="text" id="ad-adset" placeholder="مثال: AdSet_Target_BusinessOwners" required>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ad-objective">نوع/هدف الحملة (Campaign Destination/Objective)</label>
+                        <input type="text" id="ad-objective" placeholder="مثال: رسائل واتساب مباشرة / صفحة هبوط + زر واتس / مكالمات / Lead Form">
                     </div>
 
                     <div class="form-group">
@@ -244,6 +278,6 @@
         </footer>
     </div>
 
-    <script src="app.js?v=6.1"></script>
+    <script src="app.js?v=7.0"></script>
 </body>
 </html>
