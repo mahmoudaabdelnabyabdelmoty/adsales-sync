@@ -61,9 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth()+1).padStart(2,'0')}-${String(yesterdayDate.getDate()).padStart(2,'0')}`;
 
     const defaultMetricsConfig = [
-        { id: 'results', label: 'عدد الرسائل / النتائج', unit: '' },
-        { id: 'cpr', label: 'تكلفة الرسالة', unit: 'ج.م' },
-        { id: 'spend', label: 'إجمالي المصروف', unit: 'ج.م' }
+        { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' }
     ];
 
     const initialAds = [
@@ -80,13 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
             salesNotes: 'إعلان ممتاز جداً، معظم المحادثات عملاء جادين بيطلبوا عروض أسعار للمصانع.',
             updatedAt: new Date(Date.now() - 3600000).toLocaleString('ar-EG'),
             metricsConfig: [
-                { id: 'results', label: 'عدد الرسائل / النتائج', unit: 'محادثة' },
-                { id: 'cpr', label: 'تكلفة الرسالة', unit: 'ج.م' },
-                { id: 'spend', label: 'إجمالي المصروف', unit: 'ج.م' }
+                { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' }
             ],
             dailyResults: {
-                [todayStr]: { results: 15, cpr: 12.5, spend: 187.5 },
-                [yesterdayStr]: { results: 18, cpr: 11.0, spend: 198.0 }
+                [todayStr]: { results: 15 },
+                [yesterdayStr]: { results: 18 }
             }
         },
         {
@@ -102,13 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
             salesNotes: 'الرسائل كتير جداً بس كلهم بيسألوا عن شغل أو وظائف، مش عملاء لشراء النظام!',
             updatedAt: new Date(Date.now() - 7200000).toLocaleString('ar-EG'),
             metricsConfig: [
-                { id: 'results', label: 'عدد الرسائل / النتائج', unit: 'رسالة' },
-                { id: 'cpr', label: 'تكلفة الرسالة', unit: 'ج.م' },
-                { id: 'spend', label: 'إجمالي المصروف', unit: 'ج.م' }
+                { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' }
             ],
             dailyResults: {
-                [todayStr]: { results: 24, cpr: 6.2, spend: 148.8 },
-                [yesterdayStr]: { results: 30, cpr: 5.5, spend: 165.0 }
+                [todayStr]: { results: 24 },
+                [yesterdayStr]: { results: 30 }
             }
         },
         {
@@ -124,13 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
             salesNotes: 'مستوى الرسائل متوسط، جاري متابعة 4 عملاء محتملين.',
             updatedAt: new Date(Date.now() - 1800000).toLocaleString('ar-EG'),
             metricsConfig: [
-                { id: 'results', label: 'عدد المكالمات', unit: 'مكالمة' },
-                { id: 'cpr', label: 'تكلفة المكالمة', unit: 'ج.م' },
-                { id: 'spend', label: 'إجمالي المصروف', unit: 'ج.م' }
+                { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' }
             ],
             dailyResults: {
-                [todayStr]: { results: 8, cpr: 32.0, spend: 256.0 },
-                [yesterdayStr]: { results: 10, cpr: 28.0, spend: 280.0 }
+                [todayStr]: { results: 8 },
+                [yesterdayStr]: { results: 10 }
             }
         },
         {
@@ -146,13 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
             salesNotes: 'الأسعار بالنسبة لهم غالية وبيقفلوا السكة فك الإعلان ده فاشل.',
             updatedAt: new Date(Date.now() - 5400000).toLocaleString('ar-EG'),
             metricsConfig: [
-                { id: 'results', label: 'عدد النماذج (Leads)', unit: 'عميل' },
-                { id: 'cpr', label: 'تكلفة الـ Lead', unit: 'ج.م' },
-                { id: 'spend', label: 'إجمالي المصروف', unit: 'ج.م' }
+                { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' }
             ],
             dailyResults: {
-                [todayStr]: { results: 5, cpr: 45.0, spend: 225.0 },
-                [yesterdayStr]: { results: 6, cpr: 40.0, spend: 240.0 }
+                [todayStr]: { results: 5 },
+                [yesterdayStr]: { results: 6 }
             }
         }
     ];
@@ -662,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* RENDER RESULTS & DAILY METRICS BOARD (NEW TAB 3) */
+    /* RENDER RESULTS & DAILY METRICS BOARD (NEW TAB 3 - MESSAGES FOCUS) */
     function renderResultsView(filteredAds) {
         if (!resultsTableBody || !resultsMobileCards) return;
         resultsTableBody.innerHTML = '';
@@ -676,38 +666,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayEntry = (ad.dailyResults && ad.dailyResults[selDate]) ? ad.dailyResults[selDate] : {};
 
             const resultsVal = dayEntry.results !== undefined ? dayEntry.results : 0;
-            const cprVal = dayEntry.cpr !== undefined ? dayEntry.cpr : 0;
-            const spendVal = dayEntry.spend !== undefined ? dayEntry.spend : 0;
 
+            const customFields = (ad.metricsConfig || []).filter(m => m.id !== 'results');
             let customMetricsHTML = '';
-            if (ad.metricsConfig && ad.metricsConfig.length > 3) {
-                const customFields = ad.metricsConfig.slice(3);
+
+            if (customFields.length > 0) {
                 customMetricsHTML = customFields.map(m => {
                     const val = dayEntry[m.id] !== undefined ? dayEntry[m.id] : 0;
-                    return '<span class="metric-pill" title="' + m.label + '">' + m.label + ': ' + val + ' ' + (m.unit || '') + '</span>';
+                    const deleteBtnHTML = canEditResults ? 
+                        '<button class="delete-metric-btn" onclick="deleteCustomMetric(\'' + ad.id + '\', \'' + m.id + '\')" title="حذف مؤشر ' + m.label + '">&times;</button>' : '';
+                    return '<span class="metric-pill" title="' + m.label + '">' + deleteBtnHTML + m.label + ': ' + val + ' ' + (m.unit || '') + '</span>';
                 }).join(' ');
             } else {
-                customMetricsHTML = '<small style="color:var(--text-muted); font-size:0.75rem;">لا توجد مؤشرات إضافية</small>';
+                customMetricsHTML = '<small style="color:var(--text-muted); font-size:0.75rem;">لا توجد مؤشرات إضافية (انقر + لإضافة مؤشر)</small>';
             }
 
             let inlineEditHTML = '';
             if (canEditResults) {
                 inlineEditHTML = '<div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">' +
-                    '<button class="btn btn-primary btn-sm open-daily-entry-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-pen"></i> أدخل/تحديث الرقم (' + selDate + ')</button>' +
+                    '<button class="btn btn-primary btn-sm open-daily-entry-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-pen"></i> تحديث أرقام اليوم بالتقويم</button>' +
                     '<button class="btn btn-secondary btn-sm open-custom-metric-btn" data-ad-id="' + ad.id + '" title="إضافة مؤشر مخصص كـ CPR أو Frequency"><i class="fa-solid fa-plus"></i> + مؤشر مخصص</button>' +
-                    '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '" title="سجل التواريخ والتقويم"><i class="fa-solid fa-clock-rotate-left"></i> سجل التواريخ</button>' +
+                    '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '" title="سجل التواريخ والتقويم"><i class="fa-solid fa-clock-rotate-left"></i> السجل كامل</button>' +
                     '</div>';
             } else {
-                inlineEditHTML = '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-eye"></i> عرض سجل التواريخ بالتقويم</button>';
+                inlineEditHTML = '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-eye"></i> عرض السجل والتقويم</button>';
             }
+
+            const clickableDateBadge = '<button class="date-badge open-daily-entry-btn" data-ad-id="' + ad.id + '" title="انقر لتعديل أرقام هذا التاريخ أو تغيير التقويم"><i class="fa-solid fa-calendar-days"></i> ' + selDate + '</button>';
 
             tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td>' +
                 '<td><strong>' + ad.name + '</strong>' + (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') + '</td>' +
                 '<td>' + ad.campaign + '<br><small style="color:var(--text-muted);">' + ad.adset + '</small></td>' +
-                '<td><span class="date-badge"><i class="fa-solid fa-calendar-day"></i> ' + selDate + '</span></td>' +
-                '<td><strong style="color:var(--status-winning-text); font-size:1.1rem;">' + resultsVal + '</strong></td>' +
-                '<td><span style="font-weight:700;">' + cprVal + ' ج.م</span></td>' +
-                '<td><span style="font-weight:700;">' + spendVal + ' ج.م</span></td>' +
+                '<td>' + clickableDateBadge + '</td>' +
+                '<td><strong style="color:var(--status-winning-text); font-size:1.15rem;">' + resultsVal + ' <small style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">رسالة</small></strong></td>' +
                 '<td>' + customMetricsHTML + '</td>' +
                 '<td>' + inlineEditHTML + '</td>';
             resultsTableBody.appendChild(tr);
@@ -715,15 +706,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const mCard = document.createElement('div');
             mCard.className = 'sales-mobile-card';
             mCard.innerHTML = '<div><div style="display:flex; justify-content:space-between; align-items:center;">' +
-                getPlatformBadgeHTML(ad.platform) + '<span class="date-badge">' + selDate + '</span></div>' +
+                getPlatformBadgeHTML(ad.platform) + clickableDateBadge + '</div>' +
                 '<h4 style="margin-top:6px;">' + ad.name + '</h4>' +
                 '<span class="meta-sub">' + ad.campaign + ' | ' + ad.adset + '</span></div>' +
-                '<div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; text-align:center;">' +
-                '<div><small style="color:var(--text-muted); display:block;">النتائج</small><strong style="color:var(--status-winning-text); font-size:1.1rem;">' + resultsVal + '</strong></div>' +
-                '<div><small style="color:var(--text-muted); display:block;">تكلفة الرسالة</small><strong>' + cprVal + ' ج.م</strong></div>' +
-                '<div><small style="color:var(--text-muted); display:block;">المصروف</small><strong>' + spendVal + ' ج.م</strong></div>' +
+                '<div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:flex; justify-space:around; align-items:center; text-align:center;">' +
+                '<div><small style="color:var(--text-muted); display:block;">عدد الرسائل</small><strong style="color:var(--status-winning-text); font-size:1.2rem;">' + resultsVal + ' رسالة</strong></div>' +
                 '</div>' +
-                '<div style="margin-top:6px;">' + inlineEditHTML + '</div>';
+                '<div style="margin-top:8px;">' + customMetricsHTML + '</div>' +
+                '<div style="margin-top:8px;">' + inlineEditHTML + '</div>';
             resultsMobileCards.appendChild(mCard);
         });
     }
@@ -762,25 +752,44 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMediaBuyerTable(filtered);
     }
 
+    window.deleteCustomMetric = function(adId, metricId) {
+        const config = ROLES_CONFIG[normalizeRole(currentRole)] || ROLES_CONFIG.viewer;
+        if (!config.canEditResults) return window.openRoleModal();
+        const ad = adsState.find(a => a.id === adId);
+        if (!ad) return;
+        const metricObj = (ad.metricsConfig || []).find(m => m.id === metricId);
+        const metricName = metricObj ? metricObj.label : 'المؤشر';
+        if (confirm('هل أنت تأكد من رغبتك في حذف مؤشر (' + metricName + ') من هذا الإعلان؟')) {
+            ad.metricsConfig = (ad.metricsConfig || []).filter(m => m.id !== metricId);
+            saveToCloud();
+        }
+    };
+
     window.openDailyEntryModal = function(adId, targetDate) {
         const ad = adsState.find(a => a.id === adId);
         if (!ad) return;
         entryAdIdInput.value = ad.id;
         entryDateInput.value = targetDate || todayStr;
 
-        const dayData = (ad.dailyResults && ad.dailyResults[entryDateInput.value]) ? ad.dailyResults[entryDateInput.value] : {};
-        dynamicMetricsInputsContainer.innerHTML = '';
+        function refreshInputsForSelectedDate() {
+            const dateVal = entryDateInput.value;
+            const dayData = (ad.dailyResults && ad.dailyResults[dateVal]) ? ad.dailyResults[dateVal] : {};
+            dynamicMetricsInputsContainer.innerHTML = '';
 
-        ad.metricsConfig.forEach(metric => {
-            const div = document.createElement('div');
-            div.className = 'form-group';
-            div.style.marginBottom = '12px';
+            ad.metricsConfig.forEach(metric => {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.style.marginBottom = '12px';
 
-            const val = dayData[metric.id] !== undefined ? dayData[metric.id] : 0;
-            div.innerHTML = '<label><i class="fa-solid fa-gauge"></i> ' + metric.label + ' ' + (metric.unit ? '(' + metric.unit + ')' : '') + '</label>' +
-                '<input type="number" step="any" class="metric-input-field" data-metric-id="' + metric.id + '" value="' + val + '" placeholder="أدخل الرقم هنا...">';
-            dynamicMetricsInputsContainer.appendChild(div);
-        });
+                const val = dayData[metric.id] !== undefined ? dayData[metric.id] : 0;
+                div.innerHTML = '<label><i class="fa-solid fa-gauge"></i> ' + metric.label + ' ' + (metric.unit ? '(' + metric.unit + ')' : '') + '</label>' +
+                    '<input type="number" step="any" class="metric-input-field" data-metric-id="' + metric.id + '" value="' + val + '" placeholder="أدخل الرقم هنا...">';
+                dynamicMetricsInputsContainer.appendChild(div);
+            });
+        }
+
+        entryDateInput.onchange = refreshInputsForSelectedDate;
+        refreshInputsForSelectedDate();
 
         dailyResultModal.classList.remove('hidden');
     };
@@ -797,13 +806,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openHistoryModal = function(adId) {
         const ad = adsState.find(a => a.id === adId);
         if (!ad) return;
-        historyModalTitle.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> سجل نتائج الإعلان: ' + ad.name;
+        historyModalTitle.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> سجل نتائج الإعلان بالتقويم: ' + ad.name;
         
         let customHeadersHTML = '';
-        if (ad.metricsConfig && ad.metricsConfig.length > 3) {
-            customHeadersHTML = ad.metricsConfig.slice(3).map(m => '<th>' + m.label + '</th>').join('');
+        if (ad.metricsConfig && ad.metricsConfig.length > 1) {
+            customHeadersHTML = ad.metricsConfig.slice(1).map(m => '<th>' + m.label + '</th>').join('');
         }
-        historyTableHeader.innerHTML = '<th>التاريخ (Date)</th><th>عدد الرسائل / Results</th><th>تكلفة الرسالة (CPR)</th><th>إجمالي المصروف</th>' + customHeadersHTML;
+        historyTableHeader.innerHTML = '<th>التاريخ (Date)</th><th>عدد الرسائل</th>' + customHeadersHTML;
 
         historyTableBody.innerHTML = '';
         const dates = Object.keys(ad.dailyResults || {}).sort().reverse();
@@ -814,14 +823,12 @@ document.addEventListener('DOMContentLoaded', () => {
             dates.forEach(d => {
                 const day = ad.dailyResults[d] || {};
                 let customColsHTML = '';
-                if (ad.metricsConfig && ad.metricsConfig.length > 3) {
-                    customColsHTML = ad.metricsConfig.slice(3).map(m => '<td>' + (day[m.id] !== undefined ? day[m.id] : 0) + ' ' + (m.unit || '') + '</td>').join('');
+                if (ad.metricsConfig && ad.metricsConfig.length > 1) {
+                    customColsHTML = ad.metricsConfig.slice(1).map(m => '<td>' + (day[m.id] !== undefined ? day[m.id] : 0) + ' ' + (m.unit || '') + '</td>').join('');
                 }
                 const tr = document.createElement('tr');
                 tr.innerHTML = '<td><span class="date-badge"><i class="fa-solid fa-calendar-day"></i> ' + d + '</span></td>' +
-                    '<td><strong style="color:var(--status-winning-text);">' + (day.results || 0) + '</strong></td>' +
-                    '<td>' + (day.cpr || 0) + ' ج.م</td>' +
-                    '<td>' + (day.spend || 0) + ' ج.م</td>' +
+                    '<td><strong style="color:var(--status-winning-text);">' + (day.results || 0) + ' رسالة</strong></td>' +
                     customColsHTML;
                 historyTableBody.appendChild(tr);
             });
@@ -973,7 +980,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updatedAt: new Date().toLocaleString('ar-EG'),
                     metricsConfig: JSON.parse(JSON.stringify(defaultMetricsConfig)),
                     dailyResults: {
-                        [todayStr]: { results: 0, cpr: 0, spend: 0 }
+                        [todayStr]: { results: 0 }
                     }
                 };
                 adsState.unshift(newAd);
