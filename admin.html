@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=4.5">
+    <link rel="stylesheet" href="style.css?v=5.0">
     <style>
         .admin-auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -20,23 +20,32 @@
         .badge-admin { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
         .badge-mediabuyer { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .badge-sales { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-        .pin-display { font-family: 'Inter', monospace; background: var(--surface-bg); padding: 0.2rem 0.6rem; border-radius: 6px; border: 1px dashed var(--border-color); letter-spacing: 2px; font-weight: bold; color: var(--accent-gold); }
+        .user-tag-display {
+            font-family: 'Inter', monospace; background: var(--surface-bg);
+            padding: 0.2rem 0.6rem; border-radius: 6px; border: 1px solid var(--border-color);
+            font-size: 0.85rem; color: var(--accent-gold); font-weight: 600;
+        }
     </style>
 </head>
 <body class="dark-mode">
+
     <div id="admin-auth-gate" class="admin-auth-overlay">
         <div class="modal-content" style="max-width: 420px; text-align: center; border: 1px solid rgba(168, 85, 247, 0.4);">
             <div style="font-size: 3rem; color: var(--accent-purple); margin-bottom: 1rem;">
                 <i class="fa-solid fa-user-shield"></i>
             </div>
-            <h2 style="margin-bottom: 0.5rem; font-weight: 800;">لوحة إدارة الأعضاء والصلاحيات</h2>
+            <h2 style="margin-bottom: 0.5rem; font-weight: 800;">لوحة إدارة الأعضاء وكلمات المرور</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
-                هذه الصفحة خاصة لمدير النظام فقط لتوليد وتعيين حسابات الـ PINs والأقسام للشركة.
+                هذه الصفحة خاصة لمدير النظام لتوليد وتعديل اسم المستخدم وكلمة المرور لكل موظف.
             </p>
             <form id="admin-login-form">
                 <div class="form-group" style="text-align: right;">
-                    <label for="admin-pin-input">أدخل رمز دخول المدير العام (Master PIN) <span class="required">*</span></label>
-                    <input type="password" id="admin-pin-input" placeholder="رمز الدخول Master (الافتراضي: 1234)" style="text-align: center; font-size: 1.2rem; letter-spacing: 4px;" required autofocus>
+                    <label for="admin-user-input">اسم المستخدم للمدير العام <span class="required">*</span></label>
+                    <input type="text" id="admin-user-input" value="admin" placeholder="اسم المستخدم (الافتراضي: admin)" required autofocus>
+                </div>
+                <div class="form-group" style="text-align: right;">
+                    <label for="admin-pass-input">كلمة المرور (Master Password) <span class="required">*</span></label>
+                    <input type="password" id="admin-pass-input" placeholder="كلمة المرور (الافتراضية: admin123)" required>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.8rem; margin-top: 1rem;">
                     <i class="fa-solid fa-lock-open"></i> دخول لوحة التحكم
@@ -55,7 +64,7 @@
                     <div class="logo-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);"><i class="fa-solid fa-sliders"></i></div>
                     <div class="brand-text">
                         <h1>AdSales Sync <span class="version-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">Admin Desk</span></h1>
-                        <p>إدارة حسابات الأعضاء ورؤوس الأقسام والرمز السري (PINs)</p>
+                        <p>إدارة أسماء المستخدمين وكلمات المرور والأقسام</p>
                     </div>
                 </div>
 
@@ -90,8 +99,8 @@
             <section class="view-panel active">
                 <div class="admin-card-header">
                     <div>
-                        <h2><i class="fa-solid fa-users-gear"></i> جدول الحسابات والأذونات (Team Directory)</h2>
-                        <p style="color: var(--text-muted);">تحكم في رموز الـ PIN والأنشطة والأقسام لكل موظف في الشركة.</p>
+                        <h2><i class="fa-solid fa-users-gear"></i> دليل الحسابات وكلمات المرور (User Directory)</h2>
+                        <p style="color: var(--text-muted);">تحكم في اسم المستخدم وكلمة المرور والأقسام لكل موظف في الشركة.</p>
                     </div>
                 </div>
 
@@ -99,7 +108,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>اسم الموظف</th><th>القسم المخصص</th><th>الصلاحية (Role)</th><th>رمز الدخول (PIN Code)</th><th>الحالة</th><th>تاريخ الإنشاء</th><th>إجراءات</th>
+                                <th>اسم الموظف</th><th>اسم المستخدم (Username)</th><th>كلمة المرور (Password)</th><th>القسم المخصص</th><th>الصلاحية (Role)</th><th>الحالة</th><th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="users-table-body"></tbody>
@@ -116,7 +125,7 @@
     <div id="user-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="user-modal-title"><i class="fa-solid fa-user-plus"></i> إضافة حساب عضو جديد</h3>
+                <h3 id="user-modal-title"><i class="fa-solid fa-user-plus"></i> إنشاء حساب عضو جديد</h3>
                 <button id="close-user-modal-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="user-form">
@@ -125,6 +134,17 @@
                 <div class="form-group">
                     <label for="user-name">اسم الموظف / العضو <span class="required">*</span></label>
                     <input type="text" id="user-name" placeholder="مثال: أحمد محمود (مبيعات العقارات)" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user-username">اسم المستخدم (Username) <span class="required">*</span></label>
+                        <input type="text" id="user-username" placeholder="مثال: ahmed.sales" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-password">كلمة المرور (Password) <span class="required">*</span></label>
+                        <input type="text" id="user-password" placeholder="مثال: Pass1234" required>
+                    </div>
                 </div>
 
                 <div class="form-row">
@@ -147,14 +167,6 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="user-pin">رمز الدخول الخاص به (PIN Code) <span class="required">*</span></label>
-                    <input type="text" id="user-pin" placeholder="أدخل رمز سرّي من 4 أرقام (مثال: 5544)" required pattern="[0-9]{4,8}" title="أرقام فقط من 4 إلى 8 أرقام">
-                    <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
-                        💡 هذا الرمز هو الذي سيعطيه الموظف ليتعرف عليه النظام في الصفحة الرئيسية والتعديل بناءً على صلاحيته.
-                    </small>
-                </div>
-
                 <div class="modal-footer">
                     <button type="button" id="cancel-user-modal-btn" class="btn btn-secondary">إلغاء</button>
                     <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الحساب</button>
@@ -163,6 +175,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=4.5"></script>
+    <script src="admin.js?v=5.0"></script>
 </body>
 </html>
