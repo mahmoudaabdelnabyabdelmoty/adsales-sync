@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ADSALES SYNC ENTERPRISE - RBAC PERMISSIONS & DEPARTMENTS ENGINE
+   ADSALES SYNC ENTERPRISE - USERNAME & PASSWORD AUTHENTICATION ENGINE (app.js)
    ========================================================================== */
 
 window.openRoleModal = function() {
@@ -15,13 +15,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let cloudBlobId = getQueryParam('blob') || localStorage.getItem('adsales_blob_id') || SHARED_DEFAULT_BLOB;
 
     const ROLES_CONFIG = {
-        viewer: { name: 'زائر (عرض فقط - Read Only)', icon: 'fa-eye', pin: null, canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: false, canEditNotes: false },
-        sales: { name: 'مسؤول مبيعات (Sales Rep)', icon: 'fa-headset', pin: '2222', canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: true, canEditNotes: true },
-        mediabuyer: { name: 'Media Buyer', icon: 'fa-chart-line', pin: '1111', canAdd: true, canDelete: true, canEditStructure: true, canEditQuality: true, canEditNotes: true },
-        admin: { name: 'المدير العام (Admin)', icon: 'fa-crown', pin: '1234', canAdd: true, canDelete: true, canEditStructure: true, canEditQuality: true, canEditNotes: true }
+        viewer: { name: 'زائر (عرض فقط - Read Only)', icon: 'fa-eye', canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: false, canEditNotes: false },
+        sales: { name: 'مسؤول مبيعات (Sales Rep)', icon: 'fa-headset', canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: true, canEditNotes: true },
+        mediabuyer: { name: 'Media Buyer', icon: 'fa-chart-line', canAdd: true, canDelete: true, canEditStructure: true, canEditQuality: true, canEditNotes: true },
+        admin: { name: 'المدير العام (Admin)', icon: 'fa-crown', canAdd: true, canDelete: true, canEditStructure: true, canEditQuality: true, canEditNotes: true }
     };
 
-    let currentRole = localStorage.getItem('adsales_user_role') || 'viewer';
+    const defaultUsers = [
+        { id: 'u-1', name: 'المدير العام (Admin Desk)', username: 'admin', password: 'admin123', dept: 'general', role: 'admin', active: true },
+        { id: 'u-2', name: 'أحمد محمود (Media Buyer)', username: 'media', password: 'media123', dept: 'clinics', role: 'mediabuyer', active: true },
+        { id: 'u-3', name: 'سارة علي (Sales Rep)', username: 'sales', password: 'sales123', dept: 'realestate', role: 'sales', active: true }
+    ];
+
+    if (!localStorage.getItem('adsales_registered_users')) {
+        localStorage.setItem('adsales_registered_users', JSON.stringify(defaultUsers));
+    }
+
+    let loggedUser = JSON.parse(localStorage.getItem('adsales_logged_user')) || null;
+    let currentRole = loggedUser ? loggedUser.role : 'viewer';
 
     const initialAds = [
         {
@@ -84,14 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const roleBadge = document.getElementById('role-badge');
     const roleText = document.getElementById('role-text');
     const loginRoleBtn = document.getElementById('login-role-btn');
-    const readOnlyBanner = document.getElementById('read-only-banner');
-    const bannerLoginLink = document.getElementById('banner-login-link');
+    const logoutBtn = document.getElementById('logout-btn');
+
     const roleModal = document.getElementById('role-modal');
     const closeRoleModalBtn = document.getElementById('close-role-modal-btn');
     const cancelRoleModalBtn = document.getElementById('cancel-role-modal-btn');
     const roleForm = document.getElementById('role-form');
-    const roleSelect = document.getElementById('role-select');
-    const rolePinInput = document.getElementById('role-pin');
+    const loginUsernameInput = document.getElementById('login-username');
+    const loginPasswordInput = document.getElementById('login-password');
 
     const statTotal = document.getElementById('stat-total-ads');
     const statWinning = document.getElementById('stat-winning-ads');
@@ -171,16 +182,30 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.className = document.body.className.replace(/role-\w+/g, '');
         document.body.classList.add(`role-${currentRole}`);
 
-        roleBadge.innerHTML = `<i class="fa-solid ${config.icon}"></i> <span id="role-text">${config.name}</span>`;
-        if (readOnlyBanner) {
-            readOnlyBanner.style.display = (currentRole === 'viewer') ? 'flex' : 'none';
+        if (loggedUser) {
+            roleBadge.innerHTML = `<i class="fa-solid ${config.icon}"></i> <span id="role-text">${loggedUser.name} (${config.name})</span>`;
+            if (loginRoleBtn) loginRoleBtn.classList.add('hidden');
+            if (logoutBtn) logoutBtn.classList.remove('hidden');
+        } else {
+            roleBadge.innerHTML = `<i class="fa-solid ${config.icon}"></i> <span id="role-text">${config.name}</span>`;
+            if (loginRoleBtn) loginRoleBtn.classList.remove('hidden');
+            if (logoutBtn) logoutBtn.classList.add('hidden');
         }
     }
 
     if (loginRoleBtn) loginRoleBtn.addEventListener('click', window.openRoleModal);
-    if (roleBadge) roleBadge.addEventListener('click', window.openRoleModal);
-    if (bannerLoginLink) bannerLoginLink.addEventListener('click', (e) => { e.preventDefault(); window.openRoleModal(); });
-    if (readOnlyBanner) readOnlyBanner.addEventListener('click', (e) => { if (e.target.tagName !== 'A') window.openRoleModal(); });
+    if (roleBadge) roleBadge.addEventListener('click', () => { if (!loggedUser) window.openRoleModal(); });
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            loggedUser = null;
+            currentRole = 'viewer';
+            localStorage.removeItem('adsales_logged_user');
+            applyRolePermissions();
+            renderAll();
+            alert('🔒 تم تسجيل الخروج والعودة لوضع الزائر (Read-Only).');
+        });
+    }
 
     if (closeRoleModalBtn) closeRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
     if (cancelRoleModalBtn) cancelRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
@@ -188,30 +213,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (roleForm) {
         roleForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const selected = roleSelect.value;
-            const enteredPin = rolePinInput.value.trim();
-            const config = ROLES_CONFIG[selected];
+            const uInput = loginUsernameInput.value.trim().toLowerCase();
+            const pInput = loginPasswordInput.value.trim();
 
-            if (selected === 'viewer') {
-                currentRole = 'viewer';
-                localStorage.setItem('adsales_user_role', currentRole);
-                applyRolePermissions();
-                renderAll();
-                roleModal.classList.add('hidden');
+            const registeredUsers = JSON.parse(localStorage.getItem('adsales_registered_users')) || defaultUsers;
+            const match = registeredUsers.find(u => u.username.toLowerCase() === uInput && u.password === pInput && u.active);
+
+            if (!match) {
+                alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة! يرجى التواصل مع المدير العام للحصول على بيانات حسابك.');
                 return;
             }
 
-            if (config.pin && enteredPin !== config.pin) {
-                alert(`❌ رمز الـ PIN غير صحيح لصلاحية "${config.name}". يرجى المحاولة مرة أخرى.`);
-                return;
-            }
+            loggedUser = match;
+            currentRole = match.role;
+            localStorage.setItem('adsales_logged_user', JSON.stringify(loggedUser));
 
-            currentRole = selected;
-            localStorage.setItem('adsales_user_role', currentRole);
+            roleForm.reset();
+            roleModal.classList.add('hidden');
             applyRolePermissions();
             renderAll();
-            roleModal.classList.add('hidden');
-            alert(`✅ تم تسجيل الدخول بنجاح بصلاحية "${config.name}".`);
+
+            alert(`✅ أهلاً بك يا ${match.name}! تم تسجيل الدخول بنجاح بصلاحية (${ROLES_CONFIG[currentRole].name}).`);
         });
     }
 
@@ -219,9 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shareLinkBtn.addEventListener('click', () => {
             const finalUrl = window.location.href;
             navigator.clipboard.writeText(finalUrl).then(() => {
-                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:
-
-' + finalUrl);
+                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:\n\n' + finalUrl);
             }).catch(() => {
                 prompt('رابط AdSales Sync الرسمي:', finalUrl);
             });
@@ -544,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (searchInput) searchInput.addEventListener('input', renderAll);
     if (filterDept) filterDept.addEventListener('change', renderAll);
-    if (filterStatus) filterStatus.value = 'all';
+    if (filterStatus) filterStatus.addEventListener('change', renderAll);
     if (filterSales) filterSales.addEventListener('change', renderAll);
 
     if (resetFiltersBtn) {
