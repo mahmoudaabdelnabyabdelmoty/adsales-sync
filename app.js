@@ -803,13 +803,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let inlineEditHTML = '';
             if (canEditResults) {
-                inlineEditHTML = '<div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">' +
-                    '<button class="btn btn-primary btn-sm open-daily-entry-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-pen"></i> تحديث أرقام اليوم بالتقويم</button>' +
-                    '<button class="btn btn-secondary btn-sm open-custom-metric-btn" data-ad-id="' + ad.id + '" title="إضافة مؤشر مخصص كـ CPR أو Frequency"><i class="fa-solid fa-plus"></i> + مؤشر مخصص</button>' +
-                    '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '" title="سجل التواريخ والتقويم"><i class="fa-solid fa-clock-rotate-left"></i> السجل كامل</button>' +
+                inlineEditHTML = '<div class="action-btn-group">' +
+                    '<button class="btn btn-primary btn-sm open-daily-entry-btn" data-ad-id="' + ad.id + '" title="تحديث أرقام اليوم بالتقويم"><i class="fa-solid fa-pen"></i> تحديث الأرقام</button>' +
+                    '<button class="btn btn-secondary btn-sm open-custom-metric-btn" data-ad-id="' + ad.id + '" title="إضافة مؤشر مخصص كـ CPR أو Frequency"><i class="fa-solid fa-plus"></i> + مؤشر</button>' +
+                    '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '" title="سجل التواريخ والتقويم بالكامل"><i class="fa-solid fa-clock-rotate-left"></i> السجل</button>' +
                     '</div>';
             } else {
-                inlineEditHTML = '<button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-eye"></i> عرض السجل والتقويم</button>';
+                inlineEditHTML = '<div class="action-btn-group"><button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-eye"></i> عرض السجل</button></div>';
             }
 
             const clickableDateBadge = '<button class="date-badge open-daily-entry-btn" data-ad-id="' + ad.id + '" title="انقر لتعديل أرقام هذا التاريخ أو تغيير التقويم"><i class="fa-solid fa-calendar-days"></i> ' + selDate + '</button>';
@@ -851,12 +851,12 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td><td><strong>' + ad.name + '</strong>' +
                 (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') +
                 '</td><td>' + ad.adset + '</td><td>' + ad.campaign + '</td><td>' + ad.salesRep + '</td><td>' + getQualityBadgeHTML(ad.quality) + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
-                '<td>' + (!isPaused ? 
-                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل الإعلان</button>' : 
-                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل الإعلان</button>'
+                '<td><div class="action-btn-group">' + (!isPaused ? 
+                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل</button>' : 
+                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل</button>'
                 ) +
-                '<button class="btn btn-secondary btn-sm" onclick="editAdModal(\'' + ad.id + '\')" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
-                '<button class="btn btn-secondary btn-sm" onclick="deleteAd(\'' + ad.id + '\')" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></td>';
+                '<button class="btn btn-secondary btn-sm" onclick="editAdModal(\'' + ad.id + '\')" title="تعديل الإعلان" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
+                '<button class="btn btn-secondary btn-sm" onclick="deleteAd(\'' + ad.id + '\')" title="حذف الإعلان" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></div></td>';
             mediaBuyerTableBody.appendChild(tr);
         });
     }
