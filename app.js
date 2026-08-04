@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const defaultUsers = [
         { id: 'u-1', name: 'المدير العام (Admin Desk)', username: 'admin', password: 'admin123', role: 'admin', active: true },
-        { id: 'u-2', name: 'أحمد محمود (Media Buyer)', username: 'media', password: 'media123', role: 'mediabuyer', active: true },
-        { id: 'u-3', name: 'سارة علي (Sales Rep)', username: 'sales', password: 'sales123', role: 'sales', active: true }
+        { id: 'u-2', name: 'أحمد محمود', username: 'media', password: 'media123', role: 'mediabuyer', active: true },
+        { id: 'u-3', name: 'سارة علي', username: 'sales', password: 'sales123', role: 'sales', active: true }
     ];
 
     if (!localStorage.getItem('adsales_registered_users')) {
@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢)</span></div>' +
+                '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
                 '</div></td>';
             salesTableBody.appendChild(cTr);
 
@@ -874,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢)</span></div>' +
+                '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
                 '</div></td>';
             resultsTableBody.appendChild(cTr);
 
@@ -959,7 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات (' + cGroup.activeAdsCount + ' 🟢)</span></div>' +
+                '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
                 '</div></td>';
             mediaBuyerTableBody.appendChild(cTr);
 
