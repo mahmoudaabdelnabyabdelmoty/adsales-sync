@@ -48,7 +48,7 @@
 
                     <button id="login-role-btn" class="btn btn-secondary btn-sm" onclick="document.getElementById('role-modal').classList.remove('hidden'); return false;"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</button>
                     <button id="logout-btn" class="btn btn-secondary btn-sm hidden" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> خروج</button>
-                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة حملة إعلانية</button>
+                    <button id="add-ad-btn" class="btn btn-primary btn-sm admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان</button>
                     <button id="share-link-btn" class="btn btn-share btn-sm" title="نسخ رابط المزامنة"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                     <button id="theme-toggle-btn" class="btn btn-icon btn-sm" title="المظهر"><i class="fa-solid fa-sun"></i></button>
                 </div>
@@ -63,7 +63,7 @@
                     <i class="fa-solid fa-headset"></i> شاشة الـ Sales
                 </button>
                 <button class="nav-btn" data-view="results-view">
-                    <i class="fa-solid fa-chart-line"></i> نتائج الحملات والتقرير اليومي
+                    <i class="fa-solid fa-chart-line"></i> نتائج الحملات
                 </button>
                 <button class="nav-btn admin-mb-only" id="nav-mb-btn" data-view="media-buyer-view">
                     <i class="fa-solid fa-sliders"></i> إدارة الحملات
@@ -102,6 +102,7 @@
                 </div>
             </div>
         </section>
+
         <!-- Controls & Filters -->
         <section class="controls-bar">
             <div class="search-box">
@@ -110,6 +111,12 @@
             </div>
 
             <div class="filter-group">
+                <div class="filter-item">
+                    <label for="filter-client"><i class="fa-solid fa-briefcase"></i> العميل:</label>
+                    <select id="filter-client">
+                        <option value="all">جميع العملاء</option>
+                    </select>
+                </div>
                 <div class="filter-item">
                     <label for="filter-platform"><i class="fa-solid fa-globe"></i> المنصة:</label>
                     <select id="filter-platform">
@@ -192,12 +199,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: CAMPAIGN RESULTS & DAILY METRICS BOARD (MESSAGES FOCUS) -->
+            <!-- VIEW 3: CAMPAIGN RESULTS & DAILY METRICS BOARD (NEW!) -->
             <section id="view-results-view" class="view-panel">
                 <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h2><i class="fa-solid fa-chart-line"></i> نتائج الحملات والتقرير اليومي (Campaign Results)</h2>
-                        <p>تتبع يومي لعدد الرسائل لكل إعلان وإمكانية إضافة أو حذف مؤشرات مخصصة حسب الحاجة.</p>
+                        <h2><i class="fa-solid fa-chart-line"></i> نتائج الحملات (Campaign Results)</h2>
+                        <p>تقرير مباشر لعدد الرسائل/النتائج، تكلفة الرسالة، وإجمالي المصروف اليومي لكل إعلان بدون الحاجة لإرسال Screenshots.</p>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
@@ -240,7 +247,7 @@
                         <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
                         <p>إضافة وتعديل بيانات الإعلانات وتحديد المنصة والهدف وتعيين الـ Sales.</p>
                     </div>
-                    <button class="btn btn-primary btn-md admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة حملة إعلانية جديدة</button>
+                    <button class="btn btn-primary btn-md admin-mb-only open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button>
                 </div>
 
                 <div class="table-responsive">
@@ -303,6 +310,10 @@
                     <input type="hidden" id="ad-id">
                     
                     <!-- Campaign General Info -->
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label for="ad-client"><i class="fa-solid fa-briefcase"></i> اسم حساب العميل / البراند <span class="required">*</span></label>
+                        <input type="text" id="ad-client" placeholder="مثال: شركة الفارس للأمن والسلامة / عيادات الشفاء / متجر الأناقة" required>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="ad-campaign">اسم الحملة (Campaign Name) <span class="required">*</span></label>
@@ -342,30 +353,16 @@
                         </div>
                         <div class="form-group" style="margin-top: 8px;">
                             <label for="ad-adset">المجموعة الإعلانية (Ad Set) <span class="required">*</span></label>
-                            <input type="text" id="ad-adset" placeholder="مثال: AdSet_Target_BusinessOwners">
-                        </div>
                     </div>
 
-                    <!-- Multi-AdSet & Ad Hierarchy Builder (Shown when creating new Campaign) -->
-                    <div id="multi-adset-builder-wrapper" style="margin-top: 12px; background: rgba(0,0,0,0.25); border: 1px dashed var(--border-color); border-radius: 12px; padding: 14px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                            <h4 style="font-size: 0.92rem; color: var(--accent-blue);"><i class="fa-solid fa-cubes"></i> هيكل المجموعات الإعلانية والإعلانات (AdSets & Ads)</h4>
-                            <button type="button" id="add-adset-builder-btn" class="btn btn-secondary btn-sm" onclick="window.addAdSetToBuilder();" style="color: var(--accent-green); border-color: rgba(16,185,129,0.3);"><i class="fa-solid fa-plus"></i> + إضافة مجموعة إعلانية (AdSet)</button>
-                        </div>
-
-                        <div id="adset-builder-container" style="display: flex; flex-direction: column; gap: 12px;">
-                            <!-- Dynamic AdSet & Ads Builder Cards populated by JS -->
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 10px;">
+                    <div class="form-group">
                         <label for="ad-notes">توجيهات/ملاحظات أولية للـ Sales (اختياري)</label>
-                        <textarea id="ad-notes" rows="2" placeholder="أضف أي تفاصيل تهم الـ Sales..."></textarea>
+                        <textarea id="ad-notes" rows="3" placeholder="أضف أي تفاصيل تهم الـ Sales (مثال: الإعلان ده موجه لأصحاب المصانع، ركزوا على عروض الأسعار)..."></textarea>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" id="cancel-modal-btn" class="btn btn-secondary" onclick="document.getElementById('ad-modal').classList.add('hidden');">إلغاء</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> <span id="submit-ad-btn-text">إنشاء وثبات الحملة بكافة إعلاناتها</span></button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعلان</button>
                     </div>
                 </form>
             </div>
@@ -382,13 +379,8 @@
                     <input type="hidden" id="entry-ad-id">
                     
                     <div class="form-group">
-                        <label for="entry-date"><i class="fa-solid fa-calendar-day"></i> اختر التاريخ من التقويم (Date) <span class="required">*</span></label>
-                        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px; flex-wrap: wrap;">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="window.setEntryDateShortcut('today')" style="color:var(--accent-blue); border-color:rgba(56,189,248,0.3);"><i class="fa-solid fa-calendar-check"></i> 🟢 اليوم</button>
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="window.setEntryDateShortcut('yesterday')"><i class="fa-solid fa-calendar-minus"></i> 🟡 أمس</button>
-                            <small style="color:var(--text-muted); font-size:0.78rem;">أو اختر أي يوم سابق من التقويم بالأسفل 👇</small>
-                        </div>
-                        <input type="date" id="entry-date" required style="font-weight:700; font-size:1.05rem; padding:8px 12px; width:100%;">
+                        <label for="entry-date"><i class="fa-solid fa-calendar-day"></i> اختر التاريخ (Date) <span class="required">*</span></label>
+                        <input type="date" id="entry-date" required style="font-weight:700;">
                     </div>
 
                     <div id="dynamic-metrics-inputs-container">
@@ -415,7 +407,7 @@
                     
                     <div class="form-group">
                         <label for="metric-label">اسم المؤشر الجديد <span class="required">*</span></label>
-                        <input type="text" id="metric-label" placeholder="مثال: تكلفة الرسالة (CPR) أو التكرار (Frequency) أو المبيعات" required>
+                        <input type="text" id="metric-label" placeholder="مثال: التكرار (Frequency) أو معدل النقر (CTR) أو المبيعات" required>
                     </div>
 
                     <div class="form-group">
@@ -444,7 +436,9 @@
                             <thead>
                                 <tr id="history-table-header">
                                     <th>التاريخ (Date)</th>
-                                    <th>عدد الرسائل</th>
+                                    <th>عدد النتائج / الرسائل</th>
+                                    <th>تكلفة الرسالة</th>
+                                    <th>إجمالي المصروف</th>
                                     <th>مؤشرات مخصصة</th>
                                 </tr>
                             </thead>
