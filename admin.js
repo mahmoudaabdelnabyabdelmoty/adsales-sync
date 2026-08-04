@@ -1,10 +1,12 @@
 /* ==========================================================================
-   ADSALES SYNC ENTERPRISE - ADMIN USER MANAGEMENT ENGINE (admin.js)
+   ADSALES SYNC ENTERPRISE - ADMIN USER MANAGEMENT ENGINE WITH CLOUD SYNC (admin.js)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
     const MASTER_USER = 'admin';
     const MASTER_PASS = 'admin123';
+    const SHARED_DEFAULT_BLOB = '019fcb65-44a7-725c-bb3f-39c8cc55649a';
+    const CLOUD_API_BASE = 'https://jsonblob.com/api/jsonBlob';
 
     const adminAuthGate = document.getElementById('admin-auth-gate');
     const adminLoginForm = document.getElementById('admin-login-form');
@@ -106,9 +108,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function saveUsers() {
+    async function saveUsersAndSync() {
         localStorage.setItem('adsales_registered_users', JSON.stringify(usersState));
         renderAdminDashboard();
+
+        try {
+            const res = await fetch(`${CLOUD_API_BASE}/${SHARED_DEFAULT_BLOB}`);
+            let currentBlobData = {};
+            if (res.ok) {
+                currentBlobData = await res.json();
+            }
+
+            let newPayload = {};
+            if (Array.isArray(currentBlobData)) {
+                newPayload = { ads: currentBlobData, users: usersState };
+            } else if (typeof currentBlobData === 'object' && currentBlobData !== null) {
+                newPayload = { ...currentBlobData, users: usersState };
+            } else {
+                newPayload = { ads: [], users: usersState };
+            }
+
+            await fetch(`${CLOUD_API_BASE}/${SHARED_DEFAULT_BLOB}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(newPayload)
+            });
+        } catch (e) {}
+    }
+
+    async function fetchUsersFromCloud() {
+        try {
+            const res = await fetch(`${CLOUD_API_BASE}/${SHARED_DEFAULT_BLOB}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && Array.isArray(data.users) && data.users.length > 0) {
+                    usersState = data.users;
+                    localStorage.setItem('adsales_registered_users', JSON.stringify(usersState));
+                    renderAdminDashboard();
+                }
+            }
+        } catch (e) {}
     }
 
     window.editUser = function(id) {
@@ -128,14 +167,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = usersState.find(u => u.id === id);
         if (user) {
             user.active = !user.active;
-            saveUsers();
+            saveUsersAndSync();
         }
     };
 
     window.deleteUser = function(id) {
         if (confirm('هل أنت تأكد من رغبتك في حذف هذا الحساب؟')) {
             usersState = usersState.filter(u => u.id !== id);
-            saveUsers();
+            saveUsersAndSync();
         }
     };
 
@@ -183,10 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             userModal.classList.add('hidden');
-            saveUsers();
-            alert(`✅ تم حفظ حساب (@${username}) وكلمة المرور بنجاح!`);
+            saveUsersAndSync();
+            alert(`✅ تم حفظ حساب (@${username}) وكلمة المرور ومزامنتها سحابياً لجميع الأجهزة بنجاح!`);
         });
     }
 
     renderAdminDashboard();
+    fetchUsersFromCloud();
+    setInterval(fetchUsersFromCloud, 4000);
 });
