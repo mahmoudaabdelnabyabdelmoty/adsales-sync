@@ -473,6 +473,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.setEntryDateShortcut = function(type) {
+        if (type === 'today') {
+            entryDateInput.value = todayStr;
+        } else if (type === 'yesterday') {
+            entryDateInput.value = yesterdayStr;
+        }
+        if (entryDateInput.onchange) entryDateInput.onchange();
+    };
+
     // Global Event Delegation for Add Ad, Daily Entry, Custom Metric, & History Modals
     document.addEventListener('click', (e) => {
         const addAdBtn = e.target.closest('.open-add-ad-modal-btn');
@@ -917,7 +926,23 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openHistoryModal = function(adId) {
         const ad = adsState.find(a => a.id === adId);
         if (!ad) return;
-        historyModalTitle.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> سجل نتائج الإعلان بالتقويم: ' + ad.name;
+        
+        const dates = Object.keys(ad.dailyResults || {}).sort().reverse();
+        let totalMessages = 0;
+        dates.forEach(d => {
+            if (ad.dailyResults[d] && ad.dailyResults[d].results) {
+                totalMessages += Number(ad.dailyResults[d].results) || 0;
+            }
+        });
+        const activeDaysCount = dates.length;
+        const avgDaily = activeDaysCount > 0 ? Math.round((totalMessages / activeDaysCount) * 10) / 10 : 0;
+
+        historyModalTitle.innerHTML = '<div style="display:flex; flex-direction:column; gap:4px;"><div><i class="fa-solid fa-clock-rotate-left"></i> سجل نتائج الإعلان بالتقويم: <strong>' + ad.name + '</strong></div>' +
+            '<div style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); display:flex; gap:12px; margin-top:4px; flex-wrap:wrap;">' +
+            '<span><i class="fa-solid fa-chart-simple" style="color:var(--accent-blue);"></i> إجمالي الرسائل: <strong style="color:var(--status-winning-text);">' + totalMessages + ' رسالة</strong></span>' +
+            '<span><i class="fa-solid fa-calendar-days" style="color:var(--accent-purple);"></i> أيام التسجيل: <strong>' + activeDaysCount + ' يوم</strong></span>' +
+            '<span><i class="fa-solid fa-calculator" style="color:var(--accent-amber);"></i> المتوسط اليومي: <strong>' + avgDaily + ' رسالة/يوم</strong></span>' +
+            '</div></div>';
         
         let customHeadersHTML = '';
         if (ad.metricsConfig && ad.metricsConfig.length > 1) {
@@ -926,10 +951,9 @@ document.addEventListener('DOMContentLoaded', () => {
         historyTableHeader.innerHTML = '<th>التاريخ (Date)</th><th>عدد الرسائل</th>' + customHeadersHTML;
 
         historyTableBody.innerHTML = '';
-        const dates = Object.keys(ad.dailyResults || {}).sort().reverse();
 
         if (dates.length === 0) {
-            historyTableBody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--text-muted);">لا يوجد سجل نتائج مسجل لهذا الإعلان بعد.</td></tr>';
+            historyTableBody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--text-muted); padding:2rem;">لا يوجد سجل نتائج مسجل لهذا الإعلان بعد.</td></tr>';
         } else {
             dates.forEach(d => {
                 const day = ad.dailyResults[d] || {};
@@ -939,7 +963,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const tr = document.createElement('tr');
                 tr.innerHTML = '<td><span class="date-badge"><i class="fa-solid fa-calendar-day"></i> ' + d + '</span></td>' +
-                    '<td><strong style="color:var(--status-winning-text);">' + (day.results || 0) + ' رسالة</strong></td>' +
+                    '<td><strong style="color:var(--status-winning-text); font-size:1.05rem;">' + (day.results || 0) + ' رسالة</strong></td>' +
                     customColsHTML;
                 historyTableBody.appendChild(tr);
             });
