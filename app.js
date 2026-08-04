@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentRole === 'sales') {
                 liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2><p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>';
             } else if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button></div>';
+                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة حملة إعلانية جديدة</button></div>';
             } else {
                 liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2><p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>';
             }
@@ -373,6 +373,106 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // MULTI-ADSET & MULTI-AD HIERARCHY BUILDER LOGIC
+    let builderAdSets = [];
+
+    window.initBuilderState = function() {
+        builderAdSets = [
+            {
+                id: 'as_' + Date.now(),
+                name: 'AdSet 01 - Target Audience',
+                ads: [
+                    { id: 'ad_' + Date.now(), name: 'Ad 01 - Creative 1' }
+                ]
+            }
+        ];
+        window.renderAdSetBuilder();
+    };
+
+    window.renderAdSetBuilder = function() {
+        const container = document.getElementById('adset-builder-container');
+        if (!container) return;
+        container.innerHTML = '';
+
+        builderAdSets.forEach((adset, asIndex) => {
+            const card = document.createElement('div');
+            card.className = 'adset-builder-card';
+
+            let adsListHTML = (adset.ads || []).map((ad, adIndex) => `
+                <div class="ad-builder-item">
+                    <i class="fa-solid fa-rectangle-ad" style="color: var(--primary-color);"></i>
+                    <input type="text" class="ad-name-input" data-as-idx="${asIndex}" data-ad-idx="${adIndex}" value="${ad.name}" placeholder="اسم الإعلان / الكود" style="flex: 1; font-size: 0.84rem; padding: 4px 8px;" required>
+                    ${adset.ads.length > 1 ? `<button type="button" class="btn btn-secondary btn-sm" onclick="removeAdFromBuilder(${asIndex}, ${adIndex})" style="color:#ef4444; padding:2px 8px;" title="حذف الإعلان">&times;</button>` : ''}
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="adset-builder-header">
+                    <div style="display:flex; align-items:center; gap:8px; flex:1;">
+                        <i class="fa-solid fa-cubes" style="color: var(--accent-blue);"></i>
+                        <input type="text" class="adset-name-input" data-as-idx="${asIndex}" value="${adset.name}" placeholder="اسم المجموعة الإعلانية (AdSet Name)" style="flex: 1; font-weight:700; font-size:0.88rem; padding: 5px 10px;" required>
+                    </div>
+                    ${builderAdSets.length > 1 ? `<button type="button" class="btn btn-secondary btn-sm" onclick="removeAdSetFromBuilder(${asIndex})" style="color:#ef4444; padding: 4px 10px;" title="حذف هذه المجموعة"><i class="fa-solid fa-trash"></i> حذف AdSet</button>` : ''}
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px; padding-right:12px; border-right:2px solid var(--primary-color);">
+                    ${adsListHTML}
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addAdToBuilder(${asIndex})" style="align-self:flex-start; margin-top:4px; font-size:0.78rem; color:var(--accent-blue); padding: 3px 8px;"><i class="fa-solid fa-plus"></i> + إضافة إعلان آخر لهذه المجموعة</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        container.querySelectorAll('.adset-name-input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const asIdx = Number(e.target.getAttribute('data-as-idx'));
+                if (builderAdSets[asIdx]) builderAdSets[asIdx].name = e.target.value;
+            });
+        });
+
+        container.querySelectorAll('.ad-name-input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const asIdx = Number(e.target.getAttribute('data-as-idx'));
+                const adIdx = Number(e.target.getAttribute('data-ad-idx'));
+                if (builderAdSets[asIdx] && builderAdSets[asIdx].ads[adIdx]) {
+                    builderAdSets[asIdx].ads[adIdx].name = e.target.value;
+                }
+            });
+        });
+    };
+
+    window.addAdSetToBuilder = function() {
+        builderAdSets.push({
+            id: 'as_' + Date.now(),
+            name: 'AdSet ' + String(builderAdSets.length + 1).padStart(2, '0'),
+            ads: [{ id: 'ad_' + Date.now(), name: 'Ad 01' }]
+        });
+        window.renderAdSetBuilder();
+    };
+
+    window.removeAdSetFromBuilder = function(asIdx) {
+        if (builderAdSets.length > 1) {
+            builderAdSets.splice(asIdx, 1);
+            window.renderAdSetBuilder();
+        }
+    };
+
+    window.addAdToBuilder = function(asIdx) {
+        if (builderAdSets[asIdx]) {
+            builderAdSets[asIdx].ads.push({
+                id: 'ad_' + Date.now(),
+                name: 'Ad ' + String(builderAdSets[asIdx].ads.length + 1).padStart(2, '0')
+            });
+            window.renderAdSetBuilder();
+        }
+    };
+
+    window.removeAdFromBuilder = function(asIdx, adIdx) {
+        if (builderAdSets[asIdx] && builderAdSets[asIdx].ads.length > 1) {
+            builderAdSets[asIdx].ads.splice(adIdx, 1);
+            window.renderAdSetBuilder();
+        }
+    };
+
     // Global Event Delegation for Add Ad, Daily Entry, Custom Metric, & History Modals
     document.addEventListener('click', (e) => {
         const addAdBtn = e.target.closest('.open-add-ad-modal-btn');
@@ -385,7 +485,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (adForm) adForm.reset();
             if (adIdInput) adIdInput.value = '';
             populateAdSalesSelect();
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد';
+            
+            const singleFields = document.getElementById('single-ad-edit-fields');
+            const multiWrapper = document.getElementById('multi-adset-builder-wrapper');
+            const submitText = document.getElementById('submit-ad-btn-text');
+            
+            if (singleFields) singleFields.classList.add('hidden');
+            if (multiWrapper) multiWrapper.classList.remove('hidden');
+            if (submitText) submitText.textContent = 'إنشاء وثبات الحملة بكافة إعلاناتها';
+            
+            window.initBuilderState();
+
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-layer-group"></i> إنشاء حملة إعلانية جديدة (Campaign & Multi-AdSets)';
             if (adModal) adModal.classList.remove('hidden');
             return;
         }
@@ -937,6 +1048,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ad-adset').value = ad.adset;
             populateAdSalesSelect(ad.salesRep);
             document.getElementById('ad-notes').value = ad.salesNotes || '';
+
+            const singleFields = document.getElementById('single-ad-edit-fields');
+            const multiWrapper = document.getElementById('multi-adset-builder-wrapper');
+            const submitText = document.getElementById('submit-ad-btn-text');
+
+            if (singleFields) singleFields.classList.remove('hidden');
+            if (multiWrapper) multiWrapper.classList.add('hidden');
+            if (submitText) submitText.textContent = 'حفظ تعديلات الإعلان';
+
             modalTitle.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات الإعلان';
             adModal.classList.remove('hidden');
         }
@@ -949,20 +1069,20 @@ document.addEventListener('DOMContentLoaded', () => {
         adForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = adIdInput.value;
-            const name = document.getElementById('ad-name').value.trim();
             const platform = adPlatformSelect ? adPlatformSelect.value : 'meta';
             const objective = adObjectiveInput ? adObjectiveInput.value.trim() : '';
             const campaign = document.getElementById('ad-campaign').value.trim();
-            const adset = document.getElementById('ad-adset').value.trim();
             const salesRep = document.getElementById('ad-sales').value;
             const salesNotes = document.getElementById('ad-notes').value.trim();
 
             if (!salesRep) {
-                alert('⚠️ يرجى اختيار مسؤول المبيعات المتابع للإعلان من القائمة.');
+                alert('⚠️ يرجى اختيار مسؤول المبيعات المتابع للحملة من القائمة.');
                 return;
             }
 
             if (id) {
+                const name = document.getElementById('ad-name').value.trim();
+                const adset = document.getElementById('ad-adset').value.trim();
                 const ad = adsState.find(a => a.id === id);
                 if (ad) {
                     ad.name = name; ad.platform = platform; ad.objective = objective;
@@ -971,19 +1091,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     ad.updatedAt = new Date().toLocaleString('ar-EG');
                 }
             } else {
-                const newAd = {
-                    id: 'ad-' + Date.now(),
-                    name, platform, objective, campaign, adset, salesRep,
-                    status: 'active',
-                    quality: 'mixed',
-                    salesNotes,
-                    updatedAt: new Date().toLocaleString('ar-EG'),
-                    metricsConfig: JSON.parse(JSON.stringify(defaultMetricsConfig)),
-                    dailyResults: {
-                        [todayStr]: { results: 0 }
-                    }
-                };
-                adsState.unshift(newAd);
+                let totalCreated = 0;
+                builderAdSets.forEach(adsetItem => {
+                    const adsetName = (adsetItem.name || 'AdSet').trim();
+                    (adsetItem.ads || []).forEach(adItem => {
+                        const adName = (adItem.name || 'Ad').trim();
+                        const newAd = {
+                            id: 'ad-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+                            name: adName,
+                            platform: platform,
+                            objective: objective,
+                            campaign: campaign,
+                            adset: adsetName,
+                            salesRep: salesRep,
+                            status: 'active',
+                            quality: 'mixed',
+                            salesNotes: salesNotes,
+                            updatedAt: new Date().toLocaleString('ar-EG'),
+                            metricsConfig: JSON.parse(JSON.stringify(defaultMetricsConfig)),
+                            dailyResults: {
+                                [todayStr]: { results: 0 }
+                            }
+                        };
+                        adsState.unshift(newAd);
+                        totalCreated++;
+                    });
+                });
+
+                alert('🚀 تم بنجاح إنشاء حملة (' + campaign + ') وتحتوي على (' + builderAdSets.length + ') مجموعات إعلانية و إجمالي (' + totalCreated + ') إعلانات!');
             }
 
             adModal.classList.add('hidden');
