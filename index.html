@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=6.0">
+    <link rel="stylesheet" href="style.css?v=6.1">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
@@ -17,7 +17,7 @@
                 <div class="brand-section">
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
-                        <h1>AdSales Sync <span class="version-tag">v6.0 Workflow</span></h1>
+                        <h1>AdSales Sync <span class="version-tag">v6.1 Enterprise</span></h1>
                         <p>نظام التنسيق الفوري بين المبيعات والـ Media Buyer</p>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
             <section id="view-sales-view" class="view-panel">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تقييم جودة الـ Leads والتوجيه)</h2>
-                    <p>قم بتحديد جودة المحادثات لكل إعلان وكتابة ملاحظاتك للميديا باير (يتطلب حساب Sales أو Admin).</p>
+                    <p>قم بتحديد جودة المحادثات لكل إعلان وكتابة ملاحظاتك للميديا باير (خاص بحسابات Sales أو Admin).</p>
                 </div>
 
                 <div class="table-responsive desktop-only">
@@ -209,8 +209,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="ad-sales">مسؤول المبيعات (Sales Rep) <span class="required">*</span></label>
-                        <input type="text" id="ad-sales" placeholder="مثال: أحمد محمود" required>
+                        <label for="ad-sales">مسؤول المبيعات المتابع (Sales Rep) <span class="required">*</span></label>
+                        <select id="ad-sales" required>
+                            <!-- Dynamically populated from registered sales accounts -->
+                        </select>
                     </div>
 
                     <div class="form-row">
@@ -242,6 +244,6 @@
         </footer>
     </div>
 
-    <script src="app.js?v=6.0"></script>
+    <script src="app.js?v=6.1"></script>
 </body>
 </html>
