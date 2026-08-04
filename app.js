@@ -24,10 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const ROLES_CONFIG = {
-        viewer: { name: 'زائر (عرض فقط - Read Only)', icon: 'fa-eye', canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: false, canEditNotes: false },
-        sales: { name: 'مسؤول مبيعات (Sales Rep)', icon: 'fa-headset', canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: true, canEditNotes: true },
+        viewer: { name: '\u0632\u0627\u0626\u0631 (\u0639\u0631\u0636 \u0641\u0642\u0637 - Read Only)', icon: 'fa-eye', canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: false, canEditNotes: false },
+        sales: { name: '\u0645\u0633\u0624\u0648\u0644 \u0645\u0628\u064a\u0639\u0627\u062a (Sales Rep)', icon: 'fa-headset', canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: true, canEditNotes: true },
         mediabuyer: { name: 'Media Buyer', icon: 'fa-chart-line', canAdd: true, canDelete: true, canEditStructure: true, canEditQuality: false, canEditNotes: false },
-        admin: { name: 'المدير العام (Admin)', icon: 'fa-crown', canAdd: true, canDelete: true, canEditStructure: true, canEditQuality: true, canEditNotes: true }
+        admin: { name: '\u0627\u0644\u0645\u062f\u064a\u0631 \u0627\u0644\u0639\u0627\u0645 (Admin)', icon: 'fa-crown', canAdd: true, canDelete: true, canEditStructure: true, canEditQuality: true, canEditNotes: true }
     };
     ROLES_CONFIG.media = ROLES_CONFIG.mediabuyer;
     ROLES_CONFIG.media_buyer = ROLES_CONFIG.mediabuyer;
@@ -35,9 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ROLES_CONFIG.sales_rep = ROLES_CONFIG.sales;
 
     const defaultUsers = [
-        { id: 'u-1', name: 'المدير العام (Admin Desk)', username: 'admin', password: 'admin123', role: 'admin', active: true },
-        { id: 'u-2', name: 'أحمد محمود (Media Buyer)', username: 'media', password: 'media123', role: 'mediabuyer', active: true },
-        { id: 'u-3', name: 'سارة علي (Sales Rep)', username: 'sales', password: 'sales123', role: 'sales', active: true }
+        { id: 'u-1', name: '\u0627\u0644\u0645\u062f\u064a\u0631 \u0627\u0644\u0639\u0627\u0645 (Admin Desk)', username: 'admin', password: 'admin123', role: 'admin', active: true },
+        { id: 'u-2', name: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u0648\u062f (Media Buyer)', username: 'media', password: 'media123', role: 'mediabuyer', active: true },
+        { id: 'u-3', name: '\u0633\u0627\u0631\u0629 \u0639\u0644\u064a (Sales Rep)', username: 'sales', password: 'sales123', role: 'sales', active: true }
     ];
 
     if (!localStorage.getItem('adsales_registered_users')) {
@@ -52,52 +52,52 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'ad-101',
             name: 'Ad 01 - Fire Extinguisher Carousel',
             platform: 'meta',
-            objective: 'رسائل واتساب مباشرة',
+            objective: '\u0631\u0633\u0627\u0626\u0644 \u0648\u0627\u062a\u0633\u0627\u0628 \u0645\u0628\u0627\u0634\u0631\u0629',
             campaign: 'Campaign_FireSafety_Cairo',
             adset: 'AdSet_Business_Owners',
-            salesRep: 'أحمد محمود',
+            salesRep: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u0648\u062f',
             status: 'active',
             quality: 'qualified',
-            salesNotes: 'إعلان ممتاز جداً، معظم المحادثات عملاء جادين بيطلبوا عروض أسعار للمصانع.',
+            salesNotes: '\u0625\u0639\u0644\u0627\u0646 \u0645\u0645\u062a\u0627\u0632 \u062c\u062f\u0627\u064b\u060c \u0645\u0639\u0638\u0645 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a \u0639\u0645\u0644\u0627\u0621 \u062c\u0627\u062f\u064a\u0646 \u0628\u064a\u0637\u0644\u0628\u0648\u0627 \u0639\u0631\u0648\u0636 \u0623\u0633\u0639\u0627\u0631 \u0644\u0644\u0645\u0635\u0627\u0646\u0639.',
             updatedAt: new Date(Date.now() - 3600000).toLocaleString('ar-EG')
         },
         {
             id: 'ad-102',
             name: 'Ad 02 - Safety Alarm Systems Video',
             platform: 'tiktok',
-            objective: 'صفحة هبوط + زر واتساب',
+            objective: '\u0635\u0641\u062d\u0629 \u0647\u0628\u0648\u0637 + \u0632\u0631 \u0648\u0627\u062a\u0633\u0627\u0628',
             campaign: 'Campaign_FireSafety_Cairo',
             adset: 'AdSet_Factory_Managers',
-            salesRep: 'سارة علي',
+            salesRep: '\u0633\u0627\u0631\u0629 \u0639\u0644\u064a',
             status: 'pause',
             quality: 'unqualified',
-            salesNotes: 'الرسائل كتير جداً بس كلهم بيسألوا عن شغل أو وظائف، مش عملاء لشراء النظام!',
+            salesNotes: '\u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u0643\u062a\u064a\u0631 \u062c\u062f\u0627\u064b \u0628\u0633 \u0643\u0644\u0647\u0645 \u0628\u064a\u0633\u0623\u0644\u0648\u0627 \u0639\u0646 \u0634\u063a\u0644 \u0623\u0648 \u0648\u0638\u0627\u0626\u0641\u060c \u0645\u0634 \u0639\u0645\u0644\u0627\u0621 \u0644\u0634\u0631\u0627\u0621 \u0627\u0644\u0646\u0638\u0627\u0645!',
             updatedAt: new Date(Date.now() - 7200000).toLocaleString('ar-EG')
         },
         {
             id: 'ad-103',
             name: 'Ad 03 - Emergency Smoke Detector Offer',
             platform: 'google',
-            objective: 'مكالمات هاتفية مباشرة',
+            objective: '\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0647\u0627\u062a\u0641\u064a\u0629 \u0645\u0628\u0627\u0634\u0631\u0629',
             campaign: 'Campaign_Emergency_Offers',
             adset: 'AdSet_RealEstate_Devs',
-            salesRep: 'محمود حسن',
+            salesRep: '\u0645\u062d\u0645\u0648\u062f \u062d\u0633\u0646',
             status: 'active',
             quality: 'mixed',
-            salesNotes: 'مستوى الرسائل متوسط، جاري متابعة 4 عملاء محتملين.',
+            salesNotes: '\u0645\u0633\u062a\u0648\u0649 \u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u0645\u062a\u0648\u0633\u0637\u060c \u062c\u0627\u0631\u064a \u0645\u062a\u0627\u0628\u0639\u0629 4 \u0639\u0645\u0644\u0627\u0621 \u0645\u062d\u062a\u0645\u0644\u064a\u0646.',
             updatedAt: new Date(Date.now() - 1800000).toLocaleString('ar-EG')
         },
         {
             id: 'ad-104',
             name: 'Ad 04 - VIP Maintenance Package',
             platform: 'snapchat',
-            objective: 'نموذج تسجيل بيانات (Lead Form)',
+            objective: '\u0646\u0645\u0648\u0630\u062c \u062a\u0633\u062c\u064a\u0644 \u0628\u062a\u0627\u0646\u0627\u062a (Lead Form)',
             campaign: 'Campaign_Emergency_Offers',
             adset: 'AdSet_Hotel_Managers',
-            salesRep: 'أحمد محمود',
+            salesRep: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u0648\u062f',
             status: 'pause',
             quality: 'unqualified',
-            salesNotes: 'الأسعار بالنسبة لهم غالية وبيقفلوا السكة فك الإعلان ده فاشل.',
+            salesNotes: '\u0627\u0644\u0623\u0633\u0639\u0627\u0631 \u0628\u0627\u0644\u0646\u0633\u0628\u0629 \u0644\u0647\u0645 \u063a\u0627\u0644\u064a\u0629 \u0648\u0628\u064a\u0642\u0641\u0644\u0648\u0627 \u0627\u0644\u0633\u0643\u0629 \u0641\u0643 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u062f\u0647 \u0641\u0627\u0634\u0644.',
             updatedAt: new Date(Date.now() - 5400000).toLocaleString('ar-EG')
         }
     ];
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const registeredUsers = JSON.parse(localStorage.getItem('adsales_registered_users')) || defaultUsers;
         const salesUsers = registeredUsers.filter(u => u.active);
 
-        adSalesSelect.innerHTML = '<option value="" disabled selected>-- اختر مسؤول المبيعات المتابع --</option>';
+        adSalesSelect.innerHTML = '<option value="" disabled selected>-- \u0627\u062e\u062a\u0631 \u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0627\u0644\u0645\u062a\u0627\u0628\u0639 --</option>';
         salesUsers.forEach(user => {
             const opt = document.createElement('option');
             opt.value = user.name;
@@ -244,11 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const liveBoardHeader = document.querySelector('#view-live-board .panel-header');
         if (liveBoardHeader) {
             if (currentRole === 'sales') {
-                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2><p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>';
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> \u0645\u062a\u0627\u0628\u0639\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u062a\u0648\u062c\u064a\u0647\u0627\u062a \u0627\u0644\u062d\u0645\u0644\u0627\u062a (\u062e\u0627\u0635 \u0628\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a)</h2><p>\u062a\u0627\u0628\u0639 \u062d\u0627\u0644\u0629 \u0625\u0639\u0644\u0627\u0646\u0627\u062a\u0643 \u0648\u0642\u0645 \u0628\u062a\u0642\u064a\u064a\u0645 \u062c\u0648\u062f\u0629 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a \u0648\u062a\u062f\u0648\u064a\u0640\u0646 \u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643 \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631 \u0645\u0628\u0627\u0634\u0631\u0629.</p>';
             } else if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button></div>';
+                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> \u0642\u0631\u0627\u0631\u0627\u062a \u0627\u0644\u0640 Media Buyer \u0627\u0644\u0641\u0648\u0631\u064a\u0629</h2><p>\u0639\u0631\u0636 \u062a\u0641\u0627\u0639\u0644\u064a \u0645\u0628\u0627\u0634\u0631 \u0644\u0627\u062a\u062e\u0627\u0630 \u0642\u0631\u0627\u0631\u0627\u062a \u0625\u064a\u0642\u0627\u0641 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0628\u0646\u0627\u0621\u064b \u0639\u0644\u0649 \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0627\u0644\u062d\u064a\u0629.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + \u0625\u0636\u0627\u0641\u0629 \u0625\u0639\u0644\u0627\u0646 \u062c\u062f\u064a\u062f</button></div>';
             } else {
-                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2><p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>';
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> \u0627\u0644\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u0641\u0627\u0639\u0644\u064a\u0629 \u0627\u0644\u0639\u0627\u0645\u0629</h2><p>\u0639\u0631\u0636 \u062a\u0641\u0627\u0639\u0644\u064a \u0645\u0628\u0627\u0634\u0631 \u0644\u062d\u0627\u0644\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u062a\u0642\u064a\u064a\u0645\u0627\u062a \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0639\u0625\u0631 \u0643\u0627\u0641\u0629 \u0627\u0644\u0645\u0646\u0635\u0627\u062a.</p>';
             }
         }
 
@@ -279,18 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        document.querySelectorAll('.open-add-ad-modal-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                e.preventDefault();
-                if (!ROLES_CONFIG[currentRole].canAdd) return window.openRoleModal();
-                adForm.reset();
-                adIdInput.value = '';
-                populateAdSalesSelect();
-                modalTitle.innerHTML = '<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد';
-                adModal.classList.remove('hidden');
-            };
-        });
-
         if (loggedUser) {
             roleBadge.innerHTML = '<i class="fa-solid ' + config.icon + '"></i> <span id="role-text">' + loggedUser.name + ' (' + config.name + ')</span>';
             if (loginRoleBtn) loginRoleBtn.classList.add('hidden');
@@ -302,6 +290,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Global Event Delegation for ALL Add Ad buttons (100% immune to innerHTML updates!)
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.open-add-ad-modal-btn');
+        if (btn) {
+            e.preventDefault();
+            const config = ROLES_CONFIG[normalizeRole(currentRole)] || ROLES_CONFIG.viewer;
+            if (!config.canAdd) {
+                return window.openRoleModal();
+            }
+            if (adForm) adForm.reset();
+            if (adIdInput) adIdInput.value = '';
+            populateAdSalesSelect();
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-plus-circle"></i> \u0625\u0636\u0627\u0641\u0629 \u0625\u0639\u0644\u0627\u0646 \u062c\u062f\u064a\u062f';
+            if (adModal) adModal.classList.remove('hidden');
+        }
+    });
     if (loginRoleBtn) loginRoleBtn.addEventListener('click', window.openRoleModal);
     if (roleBadge) roleBadge.addEventListener('click', () => { if (!loggedUser) window.openRoleModal(); });
 
@@ -312,12 +316,12 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('adsales_logged_user');
             applyRolePermissions();
             renderAll();
-            alert('🔒 تم تسجيل الخروج والعودة لوضع الزائر (Read-Only).');
+            alert('\ud83d\udd12 \u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c \u0648\u0627\u0644\u0639\u0648\u062f\u0629 \u0644\u0648\u0636\u0639 \u0627\u0644\u0632\u0627\u0626\u0631 (Read-Only).');
         });
     }
 
     if (closeRoleModalBtn) closeRoleModalBtn.addEventListener('click', () => adModal ? adModal.classList.add('hidden') : null);
-    if (cancelRoleModalBtn) cancelRoleModalBtn.addEventListener('click', () => roleModal ? roleModal.classList.add('hidden') : null);
+    if (cancelRoleModalBtn) cancelRoleModalBtn.addEventListener('click', () => adModal ? adModal.classList.add('hidden') : null);
 
     if (roleForm) {
         roleForm.addEventListener('submit', (e) => {
@@ -329,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const match = registeredUsers.find(u => u.username.toLowerCase() === uInput && u.password === pInput && u.active);
 
             if (!match) {
-                alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة!');
+                alert('\u274c \u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 \u0623\u0648 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u063a\u064a\u0631 \u0635\u062d\u064a\u062d\u0629!');
                 return;
             }
 
@@ -343,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
             applyRolePermissions();
             renderAll();
 
-            alert('✅ أهلاً بك يا ' + match.name + '! تم تسجيل الدخول بنجاح بصلاحية (' + ROLES_CONFIG[currentRole].name + ').');
+            alert('\u2705 \u0623\u0647\u0644\u0623\u064b \u0628\u0643 \u064a\u0627 ' + match.name + '! \u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0628\u0646\u062c\u0627\u062d \u0628\u0635\u0644\u0627\u062d\u064a\u0629 (' + ROLES_CONFIG[currentRole].name + ').');
         });
     }
 
@@ -351,9 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
         shareLinkBtn.addEventListener('click', () => {
             const finalUrl = window.location.href;
             navigator.clipboard.writeText(finalUrl).then(() => {
-                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:\n\n' + finalUrl);
+                alert('\u2705 \u062a\u0645 \u0646\u0633\u062e \u0631\u0627\u0628\u0637 AdSales Sync Enterprise \u0627\u0644\u0631\u0633\u0645\u064a:\n\n' + finalUrl);
             }).catch(() => {
-                prompt('رابط AdSales Sync الرسمي:', finalUrl);
+                prompt('\u0631\u0627\u0628\u0637 AdSales Sync \u0627\u0644\u0631\u0633\u0645\u064a:', finalUrl);
             });
         });
     }
@@ -381,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!filterSales) return;
         const salesReps = [...new Set(adsState.map(ad => ad.salesRep))];
         const currentVal = filterSales.value;
-        filterSales.innerHTML = '<option value="all">الجميع</option>';
+        filterSales.innerHTML = '<option value="all">\u0627\u0644\u062c\u0645\u064a\u0639</option>';
         salesReps.forEach(rep => {
             const opt = document.createElement('option');
             opt.value = rep;
@@ -425,19 +429,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getStatusBadgeHTML(status) {
         if (status === 'pause') {
-            return '<span class="status-badge badge-pause"><i class="fa-solid fa-circle-xmark"></i> 🔴 متوقف</span>';
+            return '<span class="status-badge badge-pause"><i class="fa-solid fa-circle-xmark"></i> \ud83d\udd34 \u0645\u062a\u0648\u0642\u0641</span>';
         }
-        return '<span class="status-badge badge-winning"><i class="fa-solid fa-circle-check"></i> 🟢 شغال</span>';
+        return '<span class="status-badge badge-winning"><i class="fa-solid fa-circle-check"></i> \ud83d\udfe2 \u0634\u063a\u0627\u0644</span>';
     }
 
     function getQualityBadgeHTML(quality) {
         switch(quality) {
-            case 'qualified': return '<span class="status-badge badge-winning" style="font-size:0.75rem;"><i class="fa-solid fa-star"></i> 🟢 عملاء ممتازين</span>';
-            case 'unqualified': return '<span class="status-badge badge-pause" style="font-size:0.75rem;"><i class="fa-solid fa-circle-exclamation"></i> 🔴 عملاء غير مهتمين / سيء</span>';
-            case 'mixed': default: return '<span class="status-badge badge-testing" style="font-size:0.75rem;"><i class="fa-solid fa-hourglass-half"></i> 🟡 متوسط / قيد المتابعة</span>';
+            case 'qualified': return '<span class="status-badge badge-winning" style="font-size:0.75rem;"><i class="fa-solid fa-star"></i> \ud83d\udfe2 \u0639\u0645\u0644\u0627\u0621 \u0645\u0645\u062a\u0627\u0632\u064a\u0646</span>';
+            case 'unqualified': return '<span class="status-badge badge-pause" style="font-size:0.75rem;"><i class="fa-solid fa-circle-exclamation"></i> \ud83d\udd34 \u0639\u0645\u0644\u0627\u0621 \u063a\u064a\u0631 \u0645\u0647\u062a\u0645\u064a\u0646 / \u0633\u064a\u0621</span>';
+            case 'mixed': default: return '<span class="status-badge badge-testing" style="font-size:0.75rem;"><i class="fa-solid fa-hourglass-half"></i> \ud83d\udfe1 \u0645\u062a\u0648\u0633\u0637 / \u0642\u064a\u062f \u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629</span>';
         }
     }
-
     function renderLiveBoard(filteredAds) {
         if (!liveAdsGrid) return;
         liveAdsGrid.innerHTML = '';
@@ -445,16 +448,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const liveBoardHeader = document.querySelector('#view-live-board .panel-header');
         if (liveBoardHeader) {
             if (currentRole === 'sales') {
-                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2><p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>';
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> \u0645\u062a\u0627\u0628\u0639\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u062a\u0648\u062c\u064a\u0647\u0627\u062a \u0627\u0644\u062d\u0645\u0644\u0627\u062a (\u062e\u0627\u0635 \u0628\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a)</h2><p>\u062a\u0627\u0628\u0639 \u062d\u0627\u0644\u0629 \u0625\u0639\u0644\u0627\u0646\u0627\u062a\u0643 \u0648\u0642\u0645 \u0628\u062a\u0642\u064a\u064a\u0645 \u062c\u0648\u062f\u0629 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a \u0648\u062a\u062f\u0648\u064a\u0640\u0646 \u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643 \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631 \u0645\u0628\u0627\u0634\u0631\u0629.</p>';
             } else if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة إعلان جديد</button></div>';
+                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> \u0642\u0631\u0627\u0631\u0627\u062a \u0627\u0644\u0640 Media Buyer \u0627\u0644\u0641\u0648\u0631\u064a\u0629</h2><p>\u0639\u0631\u0636 \u062a\u0641\u0627\u0639\u0644\u064a \u0645\u0628\u0627\u0634\u0631 \u0644\u0627\u062a\u062e\u0627\u0630 \u0642\u0631\u0627\u0631\u0627\u062a \u0625\u064a\u0642\u0627\u0641 \u0648\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0628\u0646\u0627\u0621\u064b \u0639\u0644\u0649 \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0627\u0644\u062d\u064a\u0629.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + \u0625\u0636\u0627\u0641\u0629 \u0625\u0639\u0644\u0627\u0646 \u062c\u062f\u064a\u062f</button></div>';
             } else {
-                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2><p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>';
+                liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> \u0627\u0644\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u0641\u0627\u0639\u0644\u064a\u0629 \u0627\u0644\u0639\u0627\u0645\u0629</h2><p>\u0639\u0631\u0636 \u062a\u0641\u0627\u0639\u0644\u064a \u0645\u0628\u0627\u0634\u0631 \u0644\u062d\u0627\u0644\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0648\u062a\u0642\u064a\u064a\u0645\u0627\u062a \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0639\u0625\u0631 \u0643\u0627\u0641\u0629 \u0627\u0644\u0645\u0646\u0635\u0627\u062a.</p>';
             }
         }
 
         if (filteredAds.length === 0) {
-            liveAdsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);"><i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>لا توجد إعلانات مطابقة.</div>';
+            liveAdsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);"><i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>\u0644\u0627 \u062a\u0648\u062c\u062f \u0625\u0639\u0644\u0627\u0646\u0627\u062a \u0645\u0637\u0627\u0628\u0642\u0629.</div>';
             return;
         }
 
@@ -469,34 +472,34 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentRole === 'mediabuyer' || currentRole === 'admin') {
                 cardActionHTML = '<div class="ad-card-actions">' + 
                     (!isPaused ? 
-                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان (Pause)</button>' : 
-                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال (Active)</button>'
+                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> \ud83d\udd34 \u0623\u0648\u0642\u0641 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 (Pause)</button>' : 
+                        '<button class="btn btn-secondary ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> \ud83d\udfe2 \u0625\u0639\u0644\u0627\u0646 \u0634\u063a\u0627\u0644 (Active)</button>'
                     ) + 
-                    '<button class="btn btn-secondary ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button></div>';
+                    '<button class="btn btn-secondary ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> \u062a\u0639\u062f\u064a\u0644</button></div>';
             } else if (currentRole === 'sales') {
                 cardActionHTML = '<div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 12px; padding: 12px; margin-top: 10px;">' +
-                    '<label style="font-size:0.8rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:6px;"><i class="fa-solid fa-headset"></i> حدد تقييمك لجودة المحادثات:</label>' +
+                    '<label style="font-size:0.8rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:6px;"><i class="fa-solid fa-headset"></i> \u062d\u062f\u062f \u062a\u0642\u064a\u064a\u0645\u0643 \u0644\u062c\u0648\u062f\u0629 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a:</label>' +
                     '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.85rem; padding:6px 10px; margin-bottom:8px;">' +
-                    '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
-                    '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
-                    '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' +
-                    '<label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;"><i class="fa-solid fa-comment-dots"></i> ملاحظاتك للميديا باير:</label>' +
-                    '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف أي ملاحظة تهم الميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:6px 10px;"></div>';
+                    '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>\ud83d\udfe2 \u0639\u0645\u0644\u0627\u0621 \u0645\u0645\u062a\u0627\u0627\u0632\u064a\u0646 (Qualified)</option>' +
+                    '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>\ud83d\udfe1 \u0639\u0645\u0644\u0627\u0621 \u0645\u062a\u0648\u0633\u0637\u064a\u0646 / \u0645\u062a\u0627\u0628\u0639\u0629</option>' +
+                    '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>\ud83d\udd34 \u063a\u064a\u0631 \u0645\u0647\u062a\u0645\u064a\u0646 / \u0633\u064a\u0621 (\u0637\u0644\u0628 \u0625\u064a\u0642\u0627\u0641)</option></select>' +
+                    '<label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;"><i class="fa-solid fa-comment-dots"></i> \u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643 \u0644\u0644\u0645\u064a\u062f\u062a\u0627 \u0628\u0627\u064a\u0631:</label>' +
+                    '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="\u0623\u0636\u0641 \u0623\u064a \u0645\u0644\u0627\u062d\u0638\u0629 \u062a\u0647\u0645 \u0627\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:6px 10px;"></div>';
             } else {
-                cardActionHTML = '<div style="text-align:center; padding:6px; font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> كارت للعرض فقط (سجّل دخول للتقييم)</div>';
+                cardActionHTML = '<div style="text-align:center; padding:6px; font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> \u0643\u0627\u0631\u062a \u0644\u0644\u0639\u0631\u0636 \u0641\u0642\u0637 (\u0633\u062c\u0651\u0644 \u062f\u062e\u0648\u0644 \u0644\u0644\u062a\u0642\u064a\u064a\u0645)</div>';
             }
 
             card.innerHTML = '<div class="ad-card-header"><div class="ad-card-top-bar"><div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">' +
                 getPlatformBadgeHTML(ad.platform) +
                 '<span class="campaign-tag"><i class="fa-solid fa-layer-group"></i> ' + ad.campaign + '</span></div>' +
                 getStatusBadgeHTML(ad.status) + '</div><div class="ad-title-area"><h4>' + ad.name + '</h4>' +
-                (ad.objective ? '<span style="font-size:0.8rem; color:var(--primary-color); display:block; margin-top:3px;"><i class="fa-solid fa-bullseye"></i> الهدف: ' + ad.objective + '</span>' : '') +
-                '</div></div><div class="ad-meta-list"><div class="meta-item"><span class="meta-label">المجموعة الإعلانية:</span><span class="meta-val">' + ad.adset + '</span></div>' +
-                '<div class="meta-item"><span class="meta-label">مسؤول الـ Sales:</span><span class="meta-val"><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</span></div>' +
-                '<div class="meta-item"><span class="meta-label">تقييم الـ Sales للجودة:</span><span class="meta-val">' + getQualityBadgeHTML(ad.quality) + '</span></div>' +
-                '<div class="meta-item"><span class="meta-label">التحديث:</span><span class="meta-val" style="font-size:0.78rem;">' + ad.updatedAt + '</span></div></div>' +
-                ((currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? '<div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; color: #fca5a5; font-size: 0.85rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: المبيعات تقيم هذا الإعلان بـ (غير مهتمين/سيء) وتطلب إيقافه!</div>' : '') +
-                (currentRole !== 'sales' ? '<div class="sales-note-box"><strong><i class="fa-solid fa-comment-dots"></i> ملاحظات الـ Sales للميديا باير:</strong> ' + (ad.salesNotes ? ad.salesNotes : 'لا توجد ملاحظات مدونة بعد.') + '</div>' : '') +
+                (ad.objective ? '<span style="font-size:0.8rem; color:var(--primary-color); display:block; margin-top:3px;"><i class="fa-solid fa-bullseye"></i> \u0627\u0644\u0647\u062f\u0641: ' + ad.objective + '</span>' : '') +
+                '</div></div><div class="ad-meta-list"><div class="meta-item"><span class="meta-label">\u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u064a\u0629:</span><span class="meta-val">' + ad.adset + '</span></div>' +
+                '<div class="meta-item"><span class="meta-label">\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u0640 Sales:</span><span class="meta-val"><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</span></div>' +
+                '<div class="meta-item"><span class="meta-label">\u062a\u0642\u064a\u064a\u0645 \u0627\u0644\u0640 Sales \u0644\u0644\u062c\u0648\u062f\u0629:</span><span class="meta-val">' + getQualityBadgeHTML(ad.quality) + '</span></div>' +
+                '<div class="meta-item"><span class="meta-label">\u0627\u0644\u062a\u062d\u062f\u064a\u062b:</span><span class="meta-val" style="font-size:0.78rem;">' + ad.updatedAt + '</span></div></div>' +
+                ((currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? '<div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; color: #fca5a5; font-size: 0.85rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation"></i> \u062a\u0646\u0628\u064a\u0647: \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u062a\u0642\u064a\u0645 \u0647\u0630\u0627 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0628\u0640 (\u063a\u064a\u0631 \u0645\u0647\u062a\u0645\u064a\u0646/\u0633\u064a\u0621) \u0648\u062a\u0637\u0644\u0628 \u0625\u064a\u0642\u0627\u0641\u0647!</div>' : '') +
+                (currentRole !== 'sales' ? '<div class="sales-note-box"><strong><i class="fa-solid fa-comment-dots"></i> \u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u0640 Sales \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631:</strong> ' + (ad.salesNotes ? ad.salesNotes : '\u0644\u0627 \u062a\u0648\u062c\u062f \u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0645\u062f\u0648\u0646\u0629 \u0628\u0639\u062f.') + '</div>' : '') +
                 cardActionHTML;
             liveAdsGrid.appendChild(card);
         });
@@ -514,16 +517,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const qualityCellHTML = canEditQuality ? 
                 '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)">' +
-                '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
-                '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
-                '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' :
-                getQualityBadgeHTML(ad.quality) + '<small style="display:block; color:var(--text-muted); font-size:0.75rem; margin-top:2px;"><i class="fa-solid fa-lock"></i> تقييم خاص بالمبيعات والمدير</small>';
+                '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>\ud83d\udfe2 \u0639\u0645\u0644\u0627\u0621 \u0645\u0645\u062a\u0627\u0632\u064a\u0646 (Qualified)</option>' +
+                '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>\ud83d\udfe1 \u0639\u0645\u0644\u0627\u0621 \u0645\u062a\u0648\u0633\u0637\u064a\u0646 / \u0645\u062a\u0627\u0628\u0639\u0629</option>' +
+                '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>\ud83d\udd34 \u063a\u064a\u0631 \u0645\u0647\u062a\u0645\u064a\u0646 / \u0633\u064a\u0621 (\u0637\u0644\u0628 \u0625\u064a\u0642\u0627\u0641)</option></select>' :
+                getQualityBadgeHTML(ad.quality) + '<small style="display:block; color:var(--text-muted); font-size:0.75rem; margin-top:2px;"><i class="fa-solid fa-lock"></i> \u062a\u0642\u064a\u064a\u0645 \u062e\u0627\u0635 \u0628\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0648\u0627\u0644\u0645\u062f\u064a\u0631</small>';
 
             tr.innerHTML = '<td>' + getPlatformBadgeHTML(ad.platform) + '</td><td><strong>' + ad.name + '</strong>' +
                 (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') +
                 '</td><td>' + ad.campaign + '<br><small style="color:var(--text-muted);">' + ad.adset + '</small></td>' +
                 '<td><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</td><td>' + qualityCellHTML + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
-                '<td><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></td>' +
+                '<td><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? '\u0623\u0636\u0641 \u0645\u0644\u0627\u062d\u0638\u0629 \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631...' : '\u0645\u0634\u0627\u0647\u062f \u0641\u0642\u0637') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></td>' +
                 '<td style="font-size:0.78rem; color: var(--text-muted);">' + ad.updatedAt + '</td>';
             salesTableBody.appendChild(tr);
 
@@ -532,8 +535,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mCard.innerHTML = '<div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;"><div>' +
                 getPlatformBadgeHTML(ad.platform) + '<h4 style="display:inline-block; margin-right:6px;">' + ad.name + '</h4></div>' +
                 getStatusBadgeHTML(ad.status) + '</div>' + (ad.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); display:block; margin-bottom:4px;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</span>' : '') +
-                '<span class="meta-sub">' + ad.campaign + ' | ' + ad.salesRep + '</span></div><div class="form-group" style="margin-top: 10px;"><label>تقييم جودة الـ Leads:</label>' + qualityCellHTML +
-                '</div><div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></div>';
+                '<span class="meta-sub">' + ad.campaign + ' | ' + ad.salesRep + '</span></div><div class="form-group" style="margin-top: 10px;"><label>\u062a\u0642\u064a\u064a\u0645 \u062c\u0648\u062f\u0629 \u0627\u0644\u0640 Leads:</label>' + qualityCellHTML +
+                '</div><div class="form-group"><label>\u0645\u0644\u0627\u062d\u0638\u0629 \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? '\u0623\u0636\u0641 \u0645\u0644\u0627\u062d\u0638\u0629 \u0644\u0644\u0645\u064a\u062f\u064a\u0627 \u0628\u0627\u064a\u0631...' : '\u0645\u0634\u0627\u0647\u062f \u0641\u0642\u0637') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></div>';
             salesMobileCards.appendChild(mCard);
         });
     }
@@ -552,9 +555,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') +
                 '</td><td>' + ad.adset + '</td><td>' + ad.campaign + '</td><td>' + ad.salesRep + '</td><td>' + getQualityBadgeHTML(ad.quality) + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
                 '<td>' + (!isPaused ? 
-                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل الإعلان</button>' : 
-                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل الإعلان</button>'
-                ) +
+                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> \u062a\u0639\u0637\u064a\u0644 \u0627\u0644\u0625\u0639\u0644\u0627\u0646</button>' : 
+                    '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> \u062a\u0634\u063a\u064a\u0644 \u0627\u0644\u0625\u0639\u0644\u0627\u0646</button>'
+                ) + 
                 '<button class="btn btn-secondary btn-sm" onclick="editAdModal(\'' + ad.id + '\')" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
                 '<button class="btn btn-secondary btn-sm" onclick="deleteAd(\'' + ad.id + '\')" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></td>';
             mediaBuyerTableBody.appendChild(tr);
@@ -585,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.updateAdQuality = function(id, newQuality) {
         if (!ROLES_CONFIG[currentRole].canEditQuality) {
-            alert('⚠️ تنبيه: تقييم جودة المحادثات خاص بمسؤولي المبيعات (Sales Rep) والمدير العام فقط!');
+            alert('\u26a0\ufe0f \u062a\u0646\u0628\u064a\u0647: \u062a\u0642\u064a\u064a\u0645 \u062c\u0648\u062f\u0629 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a \u062e\u0627\u0635 \u0628\u0645\u0633\u0624\u0648\u0644\u064a \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a (Sales Rep) \u0648\u0627\u0644\u0645\u062f\u064a\u0631 \u0627\u0644\u0639\u0627\u0645 \u0641\u0642\u0637!');
             renderAll();
             return;
         }
@@ -605,7 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.deleteAd = function(id) {
         if (!ROLES_CONFIG[currentRole].canDelete) return window.openRoleModal();
-        if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) {
+        if (confirm('\u0647\u0644 \u0623\u0646\u062a \u062a\u0623\u064a\u064f\u062f \u0645\u0646 \u0631\u063a\u0628\u062a\u0643 \u0641\u064a \u062d\u0630\u0641 \u0647\u0630\u0627 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\uff1f')) {
             adsState = adsState.filter(a => a.id !== id);
             saveToCloud();
         }
@@ -623,24 +626,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ad-adset').value = ad.adset;
             populateAdSalesSelect(ad.salesRep);
             document.getElementById('ad-notes').value = ad.salesNotes || '';
-            modalTitle.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات الإعلان';
+            modalTitle.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> \u062a\u0639\u062f\u064a\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0625\u0639\u0644\u0627\u0646';
             adModal.classList.remove('hidden');
         }
     };
 
-    document.querySelectorAll('.open-add-ad-modal-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (!ROLES_CONFIG[currentRole].canAdd) return window.openRoleModal();
-            adForm.reset();
-            adIdInput.value = '';
-            populateAdSalesSelect();
-            modalTitle.innerHTML = '<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد';
-            adModal.classList.remove('hidden');
-        });
-    });
-
     if (closeModalBtn) closeModalBtn.addEventListener('click', () => adModal ? adModal.classList.add('hidden') : null);
-    if (cancelModalBtn) cancelModalBtn.addEventListener('click', () => roleModal ? roleModal.classList.add('hidden') : null);
+    if (cancelModalBtn) cancelModalBtn.addEventListener('click', () => adModal ? adModal.classList.add('hidden') : null);
 
     if (adForm) {
         adForm.addEventListener('submit', (e) => {
@@ -655,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const salesNotes = document.getElementById('ad-notes').value.trim();
 
             if (!salesRep) {
-                alert('⚠️ يرجى اختيار مسؤول المبيعات المتابع للإعلان من القائمة.');
+                alert('\u26a0\ufe0f \u064a\u0631\u062c\u0649 \u0627\u062e\u062a\u064a\u0627\u0631 \u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a \u0627\u0644\u0645\u062a\u0627\u0628\u0639 \u0644\u0644\u0625\u0639\u0644\u0627\u0646 \u0645\u0646 \u0627\u0644\u0642\u0627\u0626\u0645\u0629.');
                 return;
             }
 
