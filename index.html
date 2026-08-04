@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=5.2">
+    <link rel="stylesheet" href="style.css?v=6.0">
 </head>
 <body class="dark-mode role-viewer">
     <div class="app-container">
@@ -17,8 +17,8 @@
                 <div class="brand-section">
                     <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="brand-text">
-                        <h1>AdSales Sync <span class="version-tag">v5.0 Enterprise</span></h1>
-                        <p>نظام التنسيق المباشر وإدارة صلاحيات الإعلانات والمبيعات</p>
+                        <h1>AdSales Sync <span class="version-tag">v6.0 Workflow</span></h1>
+                        <p>نظام التنسيق الفوري بين المبيعات والـ Media Buyer</p>
                     </div>
                 </div>
 
@@ -60,21 +60,21 @@
             <div class="metric-card card-winning">
                 <div class="metric-icon"><i class="fa-solid fa-circle-check"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">إعلانات شغال تمام 🟢</span>
+                    <span class="metric-label">إعلانات شغالة 🟢</span>
                     <h3 id="stat-winning-ads">0</h3>
                 </div>
             </div>
             <div class="metric-card card-pause">
                 <div class="metric-icon"><i class="fa-solid fa-circle-xmark"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">مطلوبة إيقافها 🔴</span>
+                    <span class="metric-label">إعلانات متوقفة 🔴</span>
                     <h3 id="stat-pause-ads">0</h3>
                 </div>
             </div>
             <div class="metric-card card-testing">
-                <div class="metric-icon"><i class="fa-solid fa-vial"></i></div>
+                <div class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 <div class="metric-info">
-                    <span class="metric-label">قيد الاختبار 🟡</span>
+                    <span class="metric-label">تنبيهات إيقاف من المبيعات ⚠️</span>
                     <h3 id="stat-testing-ads">0</h3>
                 </div>
             </div>
@@ -88,12 +88,11 @@
 
             <div class="filter-group">
                 <div class="filter-item">
-                    <label for="filter-status"><i class="fa-solid fa-filter"></i> الحالة:</label>
+                    <label for="filter-status"><i class="fa-solid fa-filter"></i> حالة الإعلان:</label>
                     <select id="filter-status">
                         <option value="all">جميع الحالات</option>
-                        <option value="pause">🔴 أوقف الإعلان (Pause)</option>
-                        <option value="winning">🟢 شغال تمام (Scale)</option>
-                        <option value="testing">🟡 قيد الاختبار (Testing)</option>
+                        <option value="active">🟢 شغال (Active)</option>
+                        <option value="pause">🔴 متوقف (Paused)</option>
                     </select>
                 </div>
 
@@ -112,15 +111,15 @@
             <section id="view-live-board" class="view-panel active">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2>
-                    <p>عرض تفاعلي مباشر لحالة الإعلانات المحدثة فورياً من المبيعات.</p>
+                    <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات الحية.</p>
                 </div>
                 <div id="live-ads-grid" class="ads-grid"></div>
             </section>
 
             <section id="view-sales-view" class="view-panel">
                 <div class="panel-header">
-                    <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تحديث الجودة والملاحظات)</h2>
-                    <p>قم بتحديث حالة الإعلانات مباشرة (يتطلب تسجيل الدخول بحساب Sales أو Admin).</p>
+                    <h2><i class="fa-solid fa-headset"></i> شاشة الـ Sales (تقييم جودة الـ Leads والتوجيه)</h2>
+                    <p>قم بتحديد جودة المحادثات لكل إعلان وكتابة ملاحظاتك للميديا باير (يتطلب حساب Sales أو Admin).</p>
                 </div>
 
                 <div class="table-responsive desktop-only">
@@ -131,9 +130,9 @@
                                 <th>الحملة</th>
                                 <th>المجموعة</th>
                                 <th>الـ Sales</th>
-                                <th>جودة الـ Leads</th>
-                                <th>حالة الإعلان</th>
-                                <th>الملاحظات</th>
+                                <th>جودة الـ Leads (تقييمك)</th>
+                                <th>حالة الإعلان (تنفيذ الميديا باير)</th>
+                                <th>ملاحظاتك للميديا باير</th>
                                 <th>التحديث</th>
                             </tr>
                         </thead>
@@ -147,7 +146,7 @@
             <section id="view-media-buyer-view" class="view-panel">
                 <div class="panel-header">
                     <h2><i class="fa-solid fa-sliders"></i> إدارة وتعيين الإعلانات (Media Buyer & Admin Desk)</h2>
-                    <p>إضافة وتعديل بيانات الإعلانات وتعيين الـ Sales.</p>
+                    <p>إضافة وتعديل بيانات الإعلانات وتعيين الـ Sales وتفعيل/تعطيل الإعلانات.</p>
                 </div>
 
                 <div class="table-responsive">
@@ -159,8 +158,9 @@
                                 <th>المجموعة الإعلانية</th>
                                 <th>الحملة</th>
                                 <th>الـ Sales</th>
-                                <th>الحالة الحالية</th>
-                                <th>إجراءات</th>
+                                <th>تقييم المبيعات</th>
+                                <th>حالة الإعلان</th>
+                                <th>إجراءات الإيقاف/التشغيل</th>
                             </tr>
                         </thead>
                         <tbody id="media-buyer-table-body"></tbody>
@@ -242,6 +242,6 @@
         </footer>
     </div>
 
-    <script src="app.js?v=5.2"></script>
+    <script src="app.js?v=6.0"></script>
 </body>
 </html>
