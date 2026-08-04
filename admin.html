@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لوحة التحكم وإدارة الصلاحيات والشركاء | AdSales Sync Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=4.5">
+    <style>
+        .admin-auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
+            z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;
+        }
+        .admin-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .badge-role { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+        .badge-admin { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+        .badge-mediabuyer { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-sales { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .pin-display { font-family: 'Inter', monospace; background: var(--surface-bg); padding: 0.2rem 0.6rem; border-radius: 6px; border: 1px dashed var(--border-color); letter-spacing: 2px; font-weight: bold; color: var(--accent-gold); }
+    </style>
+</head>
+<body class="dark-mode">
+    <div id="admin-auth-gate" class="admin-auth-overlay">
+        <div class="modal-content" style="max-width: 420px; text-align: center; border: 1px solid rgba(168, 85, 247, 0.4);">
+            <div style="font-size: 3rem; color: var(--accent-purple); margin-bottom: 1rem;">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h2 style="margin-bottom: 0.5rem; font-weight: 800;">لوحة إدارة الأعضاء والصلاحيات</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                هذه الصفحة خاصة لمدير النظام فقط لتوليد وتعيين حسابات الـ PINs والأقسام للشركة.
+            </p>
+            <form id="admin-login-form">
+                <div class="form-group" style="text-align: right;">
+                    <label for="admin-pin-input">أدخل رمز دخول المدير العام (Master PIN) <span class="required">*</span></label>
+                    <input type="password" id="admin-pin-input" placeholder="رمز الدخول Master (الافتراضي: 1234)" style="text-align: center; font-size: 1.2rem; letter-spacing: 4px;" required autofocus>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.8rem; margin-top: 1rem;">
+                    <i class="fa-solid fa-lock-open"></i> دخول لوحة التحكم
+                </button>
+            </form>
+            <div style="margin-top: 1.5rem;">
+                <a href="/" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;"><i class="fa-solid fa-arrow-right"></i> العودة للمنصة الرئيسية</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="admin-main-dashboard" style="display: none;">
+        <header class="main-header">
+            <div class="header-top-row">
+                <div class="brand-section">
+                    <div class="logo-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="brand-text">
+                        <h1>AdSales Sync <span class="version-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">Admin Desk</span></h1>
+                        <p>إدارة حسابات الأعضاء ورؤوس الأقسام والرمز السري (PINs)</p>
+                    </div>
+                </div>
+
+                <div class="header-actions-row">
+                    <button id="add-user-btn" class="btn btn-primary btn-sm"><i class="fa-solid fa-user-plus"></i> إنشاء حساب جديد</button>
+                    <a href="/" class="btn btn-secondary btn-sm"><i class="fa-solid fa-house"></i> المنصة الرئيسية</a>
+                    <button id="admin-logout-btn" class="btn btn-icon btn-sm" title="خروج"><i class="fa-solid fa-power-off"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <section class="metrics-bar">
+            <div class="metric-card card-total">
+                <div class="metric-icon" style="color: #c084fc;"><i class="fa-solid fa-users"></i></div>
+                <div class="metric-info"><span class="metric-label">إجمالي الأعضاء</span><h3 id="stat-users-count">0</h3></div>
+            </div>
+            <div class="metric-card card-winning">
+                <div class="metric-icon" style="color: #60a5fa;"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="metric-info"><span class="metric-label">Media Buyers</span><h3 id="stat-mb-count">0</h3></div>
+            </div>
+            <div class="metric-card card-testing">
+                <div class="metric-icon" style="color: #34d399;"><i class="fa-solid fa-headset"></i></div>
+                <div class="metric-info"><span class="metric-label">فريق المبيعات (Sales)</span><h3 id="stat-sales-count">0</h3></div>
+            </div>
+            <div class="metric-card card-pause">
+                <div class="metric-icon" style="color: #f472b6;"><i class="fa-solid fa-building"></i></div>
+                <div class="metric-info"><span class="metric-label">الأقسام المفعّلة</span><h3 id="stat-depts-count">4</h3></div>
+            </div>
+        </section>
+
+        <main class="main-content">
+            <section class="view-panel active">
+                <div class="admin-card-header">
+                    <div>
+                        <h2><i class="fa-solid fa-users-gear"></i> جدول الحسابات والأذونات (Team Directory)</h2>
+                        <p style="color: var(--text-muted);">تحكم في رموز الـ PIN والأنشطة والأقسام لكل موظف في الشركة.</p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الموظف</th><th>القسم المخصص</th><th>الصلاحية (Role)</th><th>رمز الدخول (PIN Code)</th><th>الحالة</th><th>تاريخ الإنشاء</th><th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AdSales Sync Enterprise Admin &copy; 2026 - لوحة التحكم المركزية للحسابات والصلاحيات</p>
+        </footer>
+    </div>
+
+    <div id="user-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="user-modal-title"><i class="fa-solid fa-user-plus"></i> إضافة حساب عضو جديد</h3>
+                <button id="close-user-modal-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="user-form">
+                <input type="hidden" id="user-id">
+
+                <div class="form-group">
+                    <label for="user-name">اسم الموظف / العضو <span class="required">*</span></label>
+                    <input type="text" id="user-name" placeholder="مثال: أحمد محمود (مبيعات العقارات)" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user-dept">القسم التابع له <span class="required">*</span></label>
+                        <select id="user-dept" required>
+                            <option value="realestate">قسم العقارات</option>
+                            <option value="clinics">قسم العيادات والخدمات الطبية</option>
+                            <option value="ecommerce">قسم التجارة الإلكترونية</option>
+                            <option value="general">قسم المبيعات العامة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-role">الصلاحية (Role) <span class="required">*</span></label>
+                        <select id="user-role" required>
+                            <option value="sales">🎧 مسؤول مبيعات (Sales Rep)</option>
+                            <option value="mediabuyer">📊 Media Buyer (إدارة الحملات)</option>
+                            <option value="admin">👑 المدير العام (Admin)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="user-pin">رمز الدخول الخاص به (PIN Code) <span class="required">*</span></label>
+                    <input type="text" id="user-pin" placeholder="أدخل رمز سرّي من 4 أرقام (مثال: 5544)" required pattern="[0-9]{4,8}" title="أرقام فقط من 4 إلى 8 أرقام">
+                    <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
+                        💡 هذا الرمز هو الذي سيعطيه الموظف ليتعرف عليه النظام في الصفحة الرئيسية والتعديل بناءً على صلاحيته.
+                    </small>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="cancel-user-modal-btn" class="btn btn-secondary">إلغاء</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الحساب</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js?v=4.5"></script>
+</body>
+</html>
