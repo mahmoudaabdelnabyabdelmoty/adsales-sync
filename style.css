@@ -610,6 +610,7 @@ body {
     gap: 6px !important;
     white-space: nowrap !important;
     flex-wrap: nowrap !important;
+    margin-left: 12px !important;
 }
 
 .quality-select,
