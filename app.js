@@ -204,8 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (closeRoleModalBtn) closeRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
-    if (cancelRoleModalBtn) cancelRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
+    if (closeRoleModalBtn) closeRoleModalBtn.addEventListener('click', () => adModal ? adModal.classList.add('hidden') : null);
+    if (cancelRoleModalBtn) cancelRoleModalBtn.addEventListener('click', () => roleModal ? roleModal.classList.add('hidden') : null);
 
     if (roleForm) {
         roleForm.addEventListener('submit', (e) => {
@@ -499,7 +499,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ad-campaign').value = ad.campaign;
             document.getElementById('ad-adset').value = ad.adset;
             document.getElementById('ad-sales').value = ad.salesRep;
-            document.getElementById('ad-status').value = ad.status;
             document.getElementById('ad-notes').value = ad.salesNotes || '';
             modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات الإعلان`;
             adModal.classList.remove('hidden');
@@ -527,20 +526,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const campaign = document.getElementById('ad-campaign').value.trim();
             const adset = document.getElementById('ad-adset').value.trim();
             const salesRep = document.getElementById('ad-sales').value.trim();
-            const status = document.getElementById('ad-status').value;
             const salesNotes = document.getElementById('ad-notes').value.trim();
 
             if (id) {
                 const ad = adsState.find(a => a.id === id);
                 if (ad) {
                     ad.name = name; ad.campaign = campaign; ad.adset = adset;
-                    ad.salesRep = salesRep; ad.status = status; ad.salesNotes = salesNotes;
+                    ad.salesRep = salesRep; ad.salesNotes = salesNotes;
                     ad.updatedAt = new Date().toLocaleString('ar-EG');
                 }
             } else {
                 const newAd = {
-                    id: 'ad-' + Date.now(), name, campaign, adset, salesRep, status,
-                    quality: 'mixed', salesNotes, updatedAt: new Date().toLocaleString('ar-EG')
+                    id: 'ad-' + Date.now(),
+                    name, campaign, adset, salesRep,
+                    status: 'testing', // Always automatically 'testing' (قيد الاختبار) for new ads!
+                    quality: 'mixed',
+                    salesNotes,
+                    updatedAt: new Date().toLocaleString('ar-EG')
                 };
                 adsState.unshift(newAd);
             }
