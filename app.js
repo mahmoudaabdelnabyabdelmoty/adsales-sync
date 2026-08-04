@@ -2,11 +2,17 @@
    ADSALES SYNC ENTERPRISE - RBAC PERMISSIONS & DEPARTMENTS ENGINE
    ========================================================================== */
 
+window.openRoleModal = function() {
+    const modal = document.getElementById('role-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     const SHARED_DEFAULT_BLOB = '019fcb65-44a7-725c-bb3f-39c8cc55649a';
     const CLOUD_API_BASE = 'https://jsonblob.com/api/jsonBlob';
     let cloudBlobId = getQueryParam('blob') || localStorage.getItem('adsales_blob_id') || SHARED_DEFAULT_BLOB;
-    let cachedShortUrl = 'https://clck.ru/3V6AHT';
 
     const ROLES_CONFIG = {
         viewer: { name: 'زائر (عرض فقط - Read Only)', icon: 'fa-eye', pin: null, canAdd: false, canDelete: false, canEditStructure: false, canEditQuality: false, canEditNotes: false },
@@ -74,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewPanels = document.querySelectorAll('.view-panel');
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const shareLinkBtn = document.getElementById('share-link-btn');
-    const cloudStatusText = document.getElementById('cloud-status-text');
 
     const roleBadge = document.getElementById('role-badge');
     const roleText = document.getElementById('role-text');
@@ -143,11 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('adsales_sync_data', JSON.stringify(adsState));
                     renderAll();
                 }
-                updateCloudUIStatus(true);
             }
-        } catch (e) {
-            updateCloudUIStatus(false);
-        }
+        } catch (e) {}
     }
 
     async function saveToCloud() {
@@ -161,14 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify(adsState)
             });
-            updateCloudUIStatus(true);
-        } catch (e) {
-            updateCloudUIStatus(false);
-        }
-    }
-
-    function updateCloudUIStatus(connected) {
-        cloudStatusText.textContent = connected ? '🟢 متصل أونلاين' : '🟡 حفظ محلي';
+        } catch (e) {}
     }
 
     function applyRolePermissions() {
@@ -176,62 +171,62 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.className = document.body.className.replace(/role-\w+/g, '');
         document.body.classList.add(`role-${currentRole}`);
 
-        roleBadge.innerHTML = `<i class="fa-solid ${config.icon}"></i> ${config.name}`;
-        roleText.textContent = config.name;
-        readOnlyBanner.style.display = (currentRole === 'viewer') ? 'flex' : 'none';
+        roleBadge.innerHTML = `<i class="fa-solid ${config.icon}"></i> <span id="role-text">${config.name}</span>`;
+        if (readOnlyBanner) {
+            readOnlyBanner.style.display = (currentRole === 'viewer') ? 'flex' : 'none';
+        }
     }
 
-    function openRoleModal() {
-        roleSelect.value = currentRole;
-        rolePinInput.value = '';
-        roleModal.classList.remove('hidden');
-    }
+    if (loginRoleBtn) loginRoleBtn.addEventListener('click', window.openRoleModal);
+    if (roleBadge) roleBadge.addEventListener('click', window.openRoleModal);
+    if (bannerLoginLink) bannerLoginLink.addEventListener('click', (e) => { e.preventDefault(); window.openRoleModal(); });
+    if (readOnlyBanner) readOnlyBanner.addEventListener('click', (e) => { if (e.target.tagName !== 'A') window.openRoleModal(); });
 
-    loginRoleBtn.addEventListener('click', openRoleModal);
-    roleBadge.addEventListener('click', openRoleModal);
-    bannerLoginLink.addEventListener('click', (e) => { e.preventDefault(); openRoleModal(); });
+    if (closeRoleModalBtn) closeRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
+    if (cancelRoleModalBtn) cancelRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
 
-    closeRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
-    cancelRoleModalBtn.addEventListener('click', () => roleModal.classList.add('hidden'));
+    if (roleForm) {
+        roleForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const selected = roleSelect.value;
+            const enteredPin = rolePinInput.value.trim();
+            const config = ROLES_CONFIG[selected];
 
-    roleForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const selected = roleSelect.value;
-        const enteredPin = rolePinInput.value.trim();
-        const config = ROLES_CONFIG[selected];
+            if (selected === 'viewer') {
+                currentRole = 'viewer';
+                localStorage.setItem('adsales_user_role', currentRole);
+                applyRolePermissions();
+                renderAll();
+                roleModal.classList.add('hidden');
+                return;
+            }
 
-        if (selected === 'viewer') {
-            currentRole = 'viewer';
+            if (config.pin && enteredPin !== config.pin) {
+                alert(`❌ رمز الـ PIN غير صحيح لصلاحية "${config.name}". يرجى المحاولة مرة أخرى.`);
+                return;
+            }
+
+            currentRole = selected;
             localStorage.setItem('adsales_user_role', currentRole);
             applyRolePermissions();
             renderAll();
             roleModal.classList.add('hidden');
-            return;
-        }
+            alert(`✅ تم تسجيل الدخول بنجاح بصلاحية "${config.name}".`);
+        });
+    }
 
-        if (config.pin && enteredPin !== config.pin) {
-            alert(`❌ رمز الـ PIN غير صحيح لصلاحية "${config.name}". يرجى المحاولة مرة أخرى.`);
-            return;
-        }
-
-        currentRole = selected;
-        localStorage.setItem('adsales_user_role', currentRole);
-        applyRolePermissions();
-        renderAll();
-        roleModal.classList.add('hidden');
-        alert(`✅ تم تسجيل الدخول بنجاح بصلاحية "${config.name}".`);
-    });
-
-    shareLinkBtn.addEventListener('click', () => {
-        const finalUrl = window.location.href;
-        navigator.clipboard.writeText(finalUrl).then(() => {
-            alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:
+    if (shareLinkBtn) {
+        shareLinkBtn.addEventListener('click', () => {
+            const finalUrl = window.location.href;
+            navigator.clipboard.writeText(finalUrl).then(() => {
+                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:
 
 ' + finalUrl);
-        }).catch(() => {
-            prompt('رابط AdSales Sync الرسمى:', finalUrl);
+            }).catch(() => {
+                prompt('رابط AdSales Sync الرسمي:', finalUrl);
+            });
         });
-    });
+    }
 
     viewButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -239,17 +234,21 @@ document.addEventListener('DOMContentLoaded', () => {
             viewPanels.forEach(p => p.classList.remove('active'));
             btn.classList.add('active');
             const targetView = btn.getAttribute('data-view');
-            document.getElementById(`view-${targetView}`).classList.add('active');
+            const targetEl = document.getElementById(`view-${targetView}`);
+            if (targetEl) targetEl.classList.add('active');
         });
     });
 
-    themeToggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-mode');
-        const isLight = document.body.classList.contains('light-mode');
-        themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
-    });
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+        });
+    }
 
     function updateSalesFilterOptions() {
+        if (!filterSales) return;
         const salesReps = [...new Set(adsState.map(ad => ad.salesRep))];
         const currentVal = filterSales.value;
         filterSales.innerHTML = '<option value="all">الجميع</option>';
@@ -263,17 +262,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMetrics() {
-        statTotal.textContent = adsState.length;
-        statWinning.textContent = adsState.filter(a => a.status === 'winning').length;
-        statPause.textContent = adsState.filter(a => a.status === 'pause').length;
-        statTesting.textContent = adsState.filter(a => a.status === 'testing').length;
+        if (statTotal) statTotal.textContent = adsState.length;
+        if (statWinning) statWinning.textContent = adsState.filter(a => a.status === 'winning').length;
+        if (statPause) statPause.textContent = adsState.filter(a => a.status === 'pause').length;
+        if (statTesting) statTesting.textContent = adsState.filter(a => a.status === 'testing').length;
     }
 
     function getFilteredAds() {
-        const query = searchInput.value.trim().toLowerCase();
-        const deptVal = filterDept.value;
-        const statusVal = filterStatus.value;
-        const salesVal = filterSales.value;
+        const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+        const deptVal = filterDept ? filterDept.value : 'all';
+        const statusVal = filterStatus ? filterStatus.value : 'all';
+        const salesVal = filterSales ? filterSales.value : 'all';
 
         return adsState.filter(ad => {
             const matchesQuery = ad.name.toLowerCase().includes(query) ||
@@ -297,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderLiveBoard(filteredAds) {
+        if (!liveAdsGrid) return;
         liveAdsGrid.innerHTML = '';
         if (filteredAds.length === 0) {
             liveAdsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);"><i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>لا توجد إعلانات مطابقة.</div>`;
@@ -340,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderSalesView(filteredAds) {
+        if (!salesTableBody || !salesMobileCards) return;
         salesTableBody.innerHTML = '';
         salesMobileCards.innerHTML = '';
         const canEditQuality = ROLES_CONFIG[currentRole].canEditQuality;
@@ -407,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderMediaBuyerTable(filteredAds) {
+        if (!mediaBuyerTableBody) return;
         mediaBuyerTableBody.innerHTML = '';
         const canDelete = ROLES_CONFIG[currentRole].canDelete;
         const canEditStructure = ROLES_CONFIG[currentRole].canEditStructure;
@@ -441,19 +443,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.quickToggleStatus = function(id, newStatus) {
-        if (!ROLES_CONFIG[currentRole].canEditStructure) return alert('🔒 تتطلب صلاحية Media Buyer أو Admin.');
+        if (!ROLES_CONFIG[currentRole].canEditStructure) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
         if (ad) { ad.status = newStatus; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
     window.updateAdStatus = function(id, newStatus) {
-        if (!ROLES_CONFIG[currentRole].canEditQuality) return alert('🔒 تتطلب صلاحية Sales أو Media Buyer أو Admin.');
+        if (!ROLES_CONFIG[currentRole].canEditQuality) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
         if (ad) { ad.status = newStatus; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
     window.updateAdQuality = function(id, newQuality) {
-        if (!ROLES_CONFIG[currentRole].canEditQuality) return alert('🔒 تتطلب صلاحية Sales أو Media Buyer أو Admin.');
+        if (!ROLES_CONFIG[currentRole].canEditQuality) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
         if (ad) {
             ad.quality = newQuality;
@@ -465,13 +467,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.updateAdNote = function(id, newNote) {
-        if (!ROLES_CONFIG[currentRole].canEditNotes) return alert('🔒 تتطلب صلاحية Sales أو Media Buyer أو Admin.');
+        if (!ROLES_CONFIG[currentRole].canEditNotes) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
         if (ad) { ad.salesNotes = newNote; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
     window.deleteAd = function(id) {
-        if (!ROLES_CONFIG[currentRole].canDelete) return alert('🔒 متاح فقط لمدير النظام و Media Buyer.');
+        if (!ROLES_CONFIG[currentRole].canDelete) return window.openRoleModal();
         if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) {
             adsState = adsState.filter(a => a.id !== id);
             saveToCloud();
@@ -479,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.editAdModal = function(id) {
-        if (!ROLES_CONFIG[currentRole].canEditStructure) return alert('🔒 متاح فقط لـ Media Buyer و Admin.');
+        if (!ROLES_CONFIG[currentRole].canEditStructure) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
         if (ad) {
             adIdInput.value = ad.id;
@@ -495,55 +497,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    addAdBtn.addEventListener('click', () => {
-        if (!ROLES_CONFIG[currentRole].canAdd) return alert('🔒 متاح فقط لـ Media Buyer و Admin.');
-        adForm.reset();
-        adIdInput.value = '';
-        modalTitle.innerHTML = `<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد`;
-        adModal.classList.remove('hidden');
-    });
+    if (addAdBtn) {
+        addAdBtn.addEventListener('click', () => {
+            if (!ROLES_CONFIG[currentRole].canAdd) return window.openRoleModal();
+            adForm.reset();
+            adIdInput.value = '';
+            modalTitle.innerHTML = `<i class="fa-solid fa-plus-circle"></i> إضافة إعلان جديد`;
+            adModal.classList.remove('hidden');
+        });
+    }
 
-    closeModalBtn.addEventListener('click', () => adModal.classList.add('hidden'));
-    cancelModalBtn.addEventListener('click', () => adModal.classList.add('hidden'));
+    if (closeModalBtn) closeModalBtn.addEventListener('click', () => adModal.classList.add('hidden'));
+    if (cancelModalBtn) cancelModalBtn.addEventListener('click', () => adModal.classList.add('hidden'));
 
-    adForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const id = adIdInput.value;
-        const name = document.getElementById('ad-name').value.trim();
-        const dept = document.getElementById('ad-dept').value;
-        const campaign = document.getElementById('ad-campaign').value.trim();
-        const adset = document.getElementById('ad-adset').value.trim();
-        const salesRep = document.getElementById('ad-sales').value.trim();
-        const status = document.getElementById('ad-status').value;
-        const salesNotes = document.getElementById('ad-notes').value.trim();
+    if (adForm) {
+        adForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = adIdInput.value;
+            const name = document.getElementById('ad-name').value.trim();
+            const dept = document.getElementById('ad-dept').value;
+            const campaign = document.getElementById('ad-campaign').value.trim();
+            const adset = document.getElementById('ad-adset').value.trim();
+            const salesRep = document.getElementById('ad-sales').value.trim();
+            const status = document.getElementById('ad-status').value;
+            const salesNotes = document.getElementById('ad-notes').value.trim();
 
-        if (id) {
-            const ad = adsState.find(a => a.id === id);
-            if (ad) {
-                ad.name = name; ad.dept = dept; ad.campaign = campaign; ad.adset = adset;
-                ad.salesRep = salesRep; ad.status = status; ad.salesNotes = salesNotes;
-                ad.updatedAt = new Date().toLocaleString('ar-EG');
+            if (id) {
+                const ad = adsState.find(a => a.id === id);
+                if (ad) {
+                    ad.name = name; ad.dept = dept; ad.campaign = campaign; ad.adset = adset;
+                    ad.salesRep = salesRep; ad.status = status; ad.salesNotes = salesNotes;
+                    ad.updatedAt = new Date().toLocaleString('ar-EG');
+                }
+            } else {
+                const newAd = {
+                    id: 'ad-' + Date.now(), name, dept, campaign, adset, salesRep, status,
+                    quality: 'mixed', salesNotes, updatedAt: new Date().toLocaleString('ar-EG')
+                };
+                adsState.unshift(newAd);
             }
-        } else {
-            const newAd = {
-                id: 'ad-' + Date.now(), name, dept, campaign, adset, salesRep, status,
-                quality: 'mixed', salesNotes, updatedAt: new Date().toLocaleString('ar-EG')
-            };
-            adsState.unshift(newAd);
-        }
 
-        adModal.classList.add('hidden');
-        saveToCloud();
-    });
+            adModal.classList.add('hidden');
+            saveToCloud();
+        });
+    }
 
-    searchInput.addEventListener('input', renderAll);
-    filterDept.addEventListener('change', renderAll);
-    filterStatus.addEventListener('change', renderAll);
-    filterSales.addEventListener('change', renderAll);
+    if (searchInput) searchInput.addEventListener('input', renderAll);
+    if (filterDept) filterDept.addEventListener('change', renderAll);
+    if (filterStatus) filterStatus.value = 'all';
+    if (filterSales) filterSales.addEventListener('change', renderAll);
 
-    resetFiltersBtn.addEventListener('click', () => {
-        searchInput.value = ''; filterDept.value = 'all'; filterStatus.value = 'all'; filterSales.value = 'all'; renderAll();
-    });
+    if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener('click', () => {
+            if (searchInput) searchInput.value = '';
+            if (filterDept) filterDept.value = 'all';
+            if (filterStatus) filterStatus.value = 'all';
+            if (filterSales) filterSales.value = 'all';
+            renderAll();
+        });
+    }
 
     applyRolePermissions();
     renderAll();
