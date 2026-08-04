@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function initCloudSync() {
         localStorage.setItem('adsales_blob_id', cloudBlobId);
         await fetchFromCloud();
-        setInterval(fetchFromCloud, 4000);
+        setInterval(fetchFromCloud, 3000);
     }
 
     async function fetchFromCloud() {
@@ -140,10 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${CLOUD_API_BASE}/${cloudBlobId}`);
             if (res.ok) {
                 const cloudData = await res.json();
-                if (Array.isArray(cloudData) && JSON.stringify(cloudData) !== JSON.stringify(adsState)) {
-                    adsState = cloudData;
+                
+                let remoteAds = Array.isArray(cloudData) ? cloudData : (cloudData.ads || adsState);
+                let remoteUsers = Array.isArray(cloudData) ? null : cloudData.users;
+
+                if (Array.isArray(remoteAds) && JSON.stringify(remoteAds) !== JSON.stringify(adsState)) {
+                    adsState = remoteAds;
                     localStorage.setItem('adsales_sync_data', JSON.stringify(adsState));
                     renderAll();
+                }
+
+                if (Array.isArray(remoteUsers) && remoteUsers.length > 0) {
+                    localStorage.setItem('adsales_registered_users', JSON.stringify(remoteUsers));
                 }
             }
         } catch (e) {}
@@ -155,10 +163,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!cloudBlobId) return;
         try {
+            const registeredUsers = JSON.parse(localStorage.getItem('adsales_registered_users')) || defaultUsers;
+            const newPayload = { ads: adsState, users: registeredUsers };
+
             await fetch(`${CLOUD_API_BASE}/${cloudBlobId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify(adsState)
+                body: JSON.stringify(newPayload)
             });
         } catch (e) {}
     }
@@ -206,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const match = registeredUsers.find(u => u.username.toLowerCase() === uInput && u.password === pInput && u.active);
 
             if (!match) {
-                alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة! يرجى التواصل مع المدير العام للحصول على بيانات حسابك.');
+                alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة! يرجى التأكد من اسم المستخدم وكلمة المرور المسجلة في لوحة التحكم.');
                 return;
             }
 
