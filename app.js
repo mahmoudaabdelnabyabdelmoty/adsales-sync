@@ -806,7 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     '</div>';
             }).join('');
 
-            cCard.innerHTML = '<div class="campaign-header-bar" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
+            cCard.innerHTML = '<div class="campaign-header-bar" onclick="this.nextElementSibling.classList.toggle(\'hidden\'); const ic=this.querySelector(\'i.fa-chevron-down, i.fa-chevron-up\'); if(ic){ic.classList.toggle(\'fa-chevron-down\'); ic.classList.toggle(\'fa-chevron-up\');}">' +
                 '<div class="campaign-header-title">' +
                 getPlatformBadgeHTML(cGroup.platform) +
                 '<h3 style="font-size:1.1rem; font-weight:800; color:var(--text-primary); display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
@@ -816,7 +816,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
                 '<span style="font-size:0.82rem; font-weight:700; color:var(--text-secondary);"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + '</span>' +
                 '<span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;"><i class="fa-solid fa-cubes"></i> ' + cGroup.totalAdsCount + ' إعلانات • ' + cGroup.activeAdsCount + ' 🟢 نشط</span>' +
-                '<i class="fa-solid fa-chevron-down" style="color:var(--text-muted);"></i>' +
+                '<i class="fa-solid fa-chevron-down" style="color:var(--text-muted); cursor:pointer;"></i>' +
                 '</div>' +
                 '</div>' +
                 '<div>' + adsetsHTML + '</div>';
