@@ -1027,6 +1027,205 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMediaBuyerTable(filtered);
     }
 
+    let activeHistoryAdId = null;
+    let activeHistoryPreset = 'all';
+
+    window.openHistoryModal = function(adId) {
+        activeHistoryAdId = adId;
+        activeHistoryPreset = 'all';
+
+        document.querySelectorAll('.history-preset-btn').forEach(b => {
+            if (b.getAttribute('data-preset') === 'all') b.classList.add('active');
+            else b.classList.remove('active');
+        });
+
+        const startInput = document.getElementById('history-start-date');
+        const endInput = document.getElementById('history-end-date');
+        if (startInput) startInput.value = '';
+        if (endInput) endInput.value = '';
+
+        renderHistoryModalAnalytics();
+        historyModal.classList.remove('hidden');
+    };
+
+    function renderHistoryModalAnalytics(customStart = null, customEnd = null) {
+        if (!activeHistoryAdId) return;
+        const ad = adsState.find(a => a.id === activeHistoryAdId);
+        if (!ad) return;
+
+        historyModalTitle.innerHTML = '<div style="display:flex; flex-direction:column; gap:2px;">' +
+            '<div><i class="fa-solid fa-chart-line" style="color:var(--accent-blue);"></i> تقرير وسجل نتائج الإعلان: <strong>' + ad.name + '</strong></div>' +
+            '<div style="font-size:0.78rem; font-weight:600; color:var(--text-secondary);">' + getPlatformBadgeHTML(ad.platform) + ' • 💼 العميل: <strong>' + (ad.clientAccount || 'عميل عام') + '</strong> • 🎯 الحملة: <strong>' + ad.campaign + '</strong></div>' +
+            '</div>';
+
+        const allDates = Object.keys(ad.dailyResults || {}).sort();
+        let filteredDates = [...allDates];
+        const todayObj = new Date();
+        
+        if (customStart && customEnd) {
+            filteredDates = filteredDates.filter(d => d >= customStart && d <= customEnd);
+        } else if (activeHistoryPreset === '7days') {
+            const minDate = new Date();
+            minDate.setDate(todayObj.getDate() - 6);
+            const minStr = minDate.toISOString().split('T')[0];
+            filteredDates = filteredDates.filter(d => d >= minStr);
+        } else if (activeHistoryPreset === '30days') {
+            const minDate = new Date();
+            minDate.setDate(todayObj.getDate() - 29);
+            const minStr = minDate.toISOString().split('T')[0];
+            filteredDates = filteredDates.filter(d => d >= minStr);
+        } else if (activeHistoryPreset === 'thisMonth') {
+            const yearMonth = todayObj.toISOString().slice(0, 7);
+            filteredDates = filteredDates.filter(d => d.startsWith(yearMonth));
+        }
+
+        let totalResults = 0;
+        let activeDaysCount = filteredDates.length;
+        let peakDay = null;
+        let peakValue = -1;
+
+        filteredDates.forEach(d => {
+            const val = Number((ad.dailyResults[d] && ad.dailyResults[d].results) || 0);
+            totalResults += val;
+            if (val > peakValue) {
+                peakValue = val;
+                peakDay = d;
+            }
+        });
+
+        const avgDaily = activeDaysCount > 0 ? (Math.round((totalResults / activeDaysCount) * 10) / 10) : 0;
+
+        const kpiContainer = document.getElementById('history-kpi-cards');
+        if (kpiContainer) {
+            kpiContainer.innerHTML = '<div class="metric-card" style="padding:10px 14px; margin:0;">' +
+                '<div class="metric-icon" style="width:38px; height:38px; font-size:1.1rem; background:rgba(99,102,241,0.15); color:var(--primary-color);"><i class="fa-solid fa-comments"></i></div>' +
+                '<div class="metric-info"><span class="metric-label" style="font-size:0.75rem;">إجمالي الرسائل (الفترة)</span>' +
+                '<h3 style="font-size:1.3rem; color:var(--status-winning-text);">' + totalResults + ' <small style="font-size:0.75rem; color:var(--text-secondary);">رسالة</small></h3></div></div>' +
+                '<div class="metric-card" style="padding:10px 14px; margin:0;">' +
+                '<div class="metric-icon" style="width:38px; height:38px; font-size:1.1rem; background:rgba(56,189,248,0.15); color:var(--accent-blue);"><i class="fa-solid fa-calculator"></i></div>' +
+                '<div class="metric-info"><span class="metric-label" style="font-size:0.75rem;">المتوسط اليومي</span>' +
+                '<h3 style="font-size:1.3rem; color:var(--accent-blue);">' + avgDaily + ' <small style="font-size:0.75rem; color:var(--text-secondary);">رسالة/يوم</small></h3></div></div>' +
+                '<div class="metric-card" style="padding:10px 14px; margin:0;">' +
+                '<div class="metric-icon" style="width:38px; height:38px; font-size:1.1rem; background:rgba(245,158,11,0.15); color:var(--accent-amber);"><i class="fa-solid fa-crown"></i></div>' +
+                '<div class="metric-info"><span class="metric-label" style="font-size:0.75rem;">أفضل يوم أداء</span>' +
+                '<h3 style="font-size:1.05rem; color:#facc15;">' + (peakDay ? (peakDay + ' (' + peakValue + ')') : 'لا يوجد') + '</h3></div></div>' +
+                '<div class="metric-card" style="padding:10px 14px; margin:0;">' +
+                '<div class="metric-icon" style="width:38px; height:38px; font-size:1.1rem; background:rgba(168,85,247,0.15); color:var(--accent-purple);"><i class="fa-solid fa-calendar-check"></i></div>' +
+                '<div class="metric-info"><span class="metric-label" style="font-size:0.75rem;">الأيام النشطة</span>' +
+                '<h3 style="font-size:1.3rem; color:var(--accent-purple);">' + activeDaysCount + ' <small style="font-size:0.75rem; color:var(--text-secondary);">يوم</small></h3></div></div>';
+        }
+
+        const chartContainer = document.getElementById('history-bar-chart');
+        const rangeLabel = document.getElementById('history-chart-range-label');
+        if (rangeLabel) {
+            rangeLabel.textContent = filteredDates.length > 0 ? ('من ' + filteredDates[0] + ' إلى ' + filteredDates[filteredDates.length - 1]) : 'لا توجد بيانات لهذا النطاق';
+        }
+
+        if (chartContainer) {
+            chartContainer.innerHTML = '';
+            if (filteredDates.length === 0) {
+                chartContainer.innerHTML = '<div style="width:100%; text-align:center; color:var(--text-muted); font-size:0.8rem; padding: 2rem 0;">لا توجد نتائج مسجلة بالفترة المختارة.</div>';
+            } else {
+                const maxVal = Math.max(...filteredDates.map(d => Number((ad.dailyResults[d] && ad.dailyResults[d].results) || 0)), 1);
+                filteredDates.forEach(d => {
+                    const val = Number((ad.dailyResults[d] && ad.dailyResults[d].results) || 0);
+                    const heightPercent = Math.max(Math.round((val / maxVal) * 100), 8);
+                    const col = document.createElement('div');
+                    col.className = 'chart-bar-column';
+                    col.title = 'تاريخ: ' + d + ' | الرسائل: ' + val;
+                    col.innerHTML = '<span class="chart-bar-value">' + val + '</span>' +
+                        '<div class="chart-bar-fill" style="height: ' + heightPercent + '%;"></div>' +
+                        '<span class="chart-bar-label">' + d.slice(5) + '</span>';
+                    chartContainer.appendChild(col);
+                });
+            }
+        }
+
+        const displayDates = [...filteredDates].reverse();
+        historyTableBody.innerHTML = '';
+
+        let customHeadersHTML = '';
+        if (ad.metricsConfig && ad.metricsConfig.length > 1) {
+            customHeadersHTML = ad.metricsConfig.slice(1).map(m => '<th>' + m.label + '</th>').join('');
+        }
+        historyTableHeader.innerHTML = '<th>التاريخ (Date)</th><th>عدد الرسائل (النتيجة الرئيسية)</th>' + customHeadersHTML;
+
+        if (displayDates.length === 0) {
+            historyTableBody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--text-muted); padding:2rem;">لا يوجد سجل نتائج بالفترة المختارة.</td></tr>';
+        } else {
+            displayDates.forEach(d => {
+                const day = ad.dailyResults[d] || {};
+                let customColsHTML = '';
+                if (ad.metricsConfig && ad.metricsConfig.length > 1) {
+                    customColsHTML = ad.metricsConfig.slice(1).map(m => '<td>' + (day[m.id] !== undefined ? day[m.id] : 0) + ' ' + (m.unit || '') + '</td>').join('');
+                }
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td><span class="date-badge"><i class="fa-solid fa-calendar-day"></i> ' + d + '</span></td>' +
+                    '<td><strong style="color:var(--status-winning-text); font-size:1.05rem;">' + (day.results || 0) + ' رسالة</strong></td>' +
+                    customColsHTML;
+                historyTableBody.appendChild(tr);
+            });
+        }
+    }
+
+    document.addEventListener('click', (e) => {
+        const presetBtn = e.target.closest('.history-preset-btn');
+        if (presetBtn) {
+            document.querySelectorAll('.history-preset-btn').forEach(b => b.classList.remove('active'));
+            presetBtn.classList.add('active');
+            activeHistoryPreset = presetBtn.getAttribute('data-preset');
+            const startInput = document.getElementById('history-start-date');
+            const endInput = document.getElementById('history-end-date');
+            if (startInput) startInput.value = '';
+            if (endInput) endInput.value = '';
+            renderHistoryModalAnalytics();
+            return;
+        }
+
+        const applyCustomBtn = e.target.closest('#apply-custom-history-date-btn');
+        if (applyCustomBtn) {
+            const startVal = document.getElementById('history-start-date').value;
+            const endVal = document.getElementById('history-end-date').value;
+            if (!startVal || !endVal) {
+                alert('⚠️ يرجى اختيار تاريخ بداية ونهاية معاً لمسح أو تخصيص الفترة.');
+                return;
+            }
+            document.querySelectorAll('.history-preset-btn').forEach(b => b.classList.remove('active'));
+            renderHistoryModalAnalytics(startVal, endVal);
+            return;
+        }
+
+        const copyReportBtn = e.target.closest('#copy-history-report-btn');
+        if (copyReportBtn && activeHistoryAdId) {
+            const ad = adsState.find(a => a.id === activeHistoryAdId);
+            if (!ad) return;
+            const allDates = Object.keys(ad.dailyResults || {}).sort();
+            if (allDates.length === 0) {
+                alert('⚠️ لا توجد نتائج مسجلة للإعلان بعد للتصدير.');
+                return;
+            }
+            let totalResults = 0;
+            let peakDay = null;
+            let peakValue = -1;
+            allDates.forEach(d => {
+                const val = Number((ad.dailyResults[d] && ad.dailyResults[d].results) || 0);
+                totalResults += val;
+                if (val > peakValue) {
+                    peakValue = val;
+                    peakDay = d;
+                }
+            });
+            const avgDaily = Math.round((totalResults / allDates.length) * 10) / 10;
+            const reportText = '📊 تقرير أداء وسجل الإعلان الرسمي:\nالإعلان: ' + ad.name + '\n💼 العميل: ' + (ad.clientAccount || 'عميل عام') + '\n🎯 الحملة: ' + ad.campaign + '\n📱 المنصة: ' + (ad.platform || 'meta').toUpperCase() + '\n----------------------------------------\n✉️ إجمالي المحادثات/الرسائل: ' + totalResults + ' رسالة\n📅 النطاق الزمني المسجل: من ' + allDates[0] + ' إلى ' + allDates[allDates.length - 1] + ' (' + allDates.length + ' يوم)\n📈 المتوسط اليومي: ' + avgDaily + ' رسالة/يوم\n👑 اليوم الأعلى أداءً: ' + (peakDay || 'N/A') + ' (بواقع ' + peakValue + ' رسالة)\n----------------------------------------\nتم استخراج التقرير عبر منصة AdSales Sync Enterprise 🚀';
+            navigator.clipboard.writeText(reportText).then(() => {
+                alert('✅ تم نسخ التقرير الشامل بنجاح إلى الحافظة! يمكنك الآن لصقه مباشرة على واتساب العميل.');
+            }).catch(() => {
+                prompt('تقرير الأداء التجميعي:', reportText);
+            });
+            return;
+        }
+    });
+
     window.deleteCustomMetric = function(adId, metricId) {
         const config = ROLES_CONFIG[normalizeRole(currentRole)] || ROLES_CONFIG.viewer;
         if (!config.canEditResults) return window.openRoleModal();
@@ -1076,55 +1275,6 @@ document.addEventListener('DOMContentLoaded', () => {
         metricLabelInput.value = '';
         metricUnitInput.value = '';
         customMetricModal.classList.remove('hidden');
-    };
-
-    window.openHistoryModal = function(adId) {
-        const ad = adsState.find(a => a.id === adId);
-        if (!ad) return;
-        
-        const dates = Object.keys(ad.dailyResults || {}).sort().reverse();
-        let totalMessages = 0;
-        dates.forEach(d => {
-            if (ad.dailyResults[d] && ad.dailyResults[d].results) {
-                totalMessages += Number(ad.dailyResults[d].results) || 0;
-            }
-        });
-        const activeDaysCount = dates.length;
-        const avgDaily = activeDaysCount > 0 ? Math.round((totalMessages / activeDaysCount) * 10) / 10 : 0;
-
-        historyModalTitle.innerHTML = '<div style="display:flex; flex-direction:column; gap:4px;"><div><i class="fa-solid fa-clock-rotate-left"></i> سجل نتائج الإعلان بالتقويم: <strong>' + ad.name + '</strong></div>' +
-            '<div style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); display:flex; gap:12px; margin-top:4px; flex-wrap:wrap;">' +
-            '<span><i class="fa-solid fa-chart-simple" style="color:var(--accent-blue);"></i> إجمالي الرسائل: <strong style="color:var(--status-winning-text);">' + totalMessages + ' رسالة</strong></span>' +
-            '<span><i class="fa-solid fa-calendar-days" style="color:var(--accent-purple);"></i> أيام التسجيل: <strong>' + activeDaysCount + ' يوم</strong></span>' +
-            '<span><i class="fa-solid fa-calculator" style="color:var(--accent-amber);"></i> المتوسط اليومي: <strong>' + avgDaily + ' رسالة/يوم</strong></span>' +
-            '</div></div>';
-        
-        let customHeadersHTML = '';
-        if (ad.metricsConfig && ad.metricsConfig.length > 1) {
-            customHeadersHTML = ad.metricsConfig.slice(1).map(m => '<th>' + m.label + '</th>').join('');
-        }
-        historyTableHeader.innerHTML = '<th>التاريخ (Date)</th><th>عدد الرسائل</th>' + customHeadersHTML;
-
-        historyTableBody.innerHTML = '';
-
-        if (dates.length === 0) {
-            historyTableBody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--text-muted); padding:2rem;">لا يوجد سجل نتائج مسجل لهذا الإعلان بعد.</td></tr>';
-        } else {
-            dates.forEach(d => {
-                const day = ad.dailyResults[d] || {};
-                let customColsHTML = '';
-                if (ad.metricsConfig && ad.metricsConfig.length > 1) {
-                    customColsHTML = ad.metricsConfig.slice(1).map(m => '<td>' + (day[m.id] !== undefined ? day[m.id] : 0) + ' ' + (m.unit || '') + '</td>').join('');
-                }
-                const tr = document.createElement('tr');
-                tr.innerHTML = '<td><span class="date-badge"><i class="fa-solid fa-calendar-day"></i> ' + d + '</span></td>' +
-                    '<td><strong style="color:var(--status-winning-text); font-size:1.05rem;">' + (day.results || 0) + ' رسالة</strong></td>' +
-                    customColsHTML;
-                historyTableBody.appendChild(tr);
-            });
-        }
-
-        historyModal.classList.remove('hidden');
     };
 
     if (dailyResultForm) {
