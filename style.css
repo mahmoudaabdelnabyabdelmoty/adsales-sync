@@ -420,3 +420,11 @@ body {
 .ticker-item .ticker-action {
     color: #34d399;
 }
+
+/* FULL-WIDTH CAMPAIGNS STACK CONTAINER */
+.campaigns-stack-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
