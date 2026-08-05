@@ -1,3 +1,19 @@
+/* DISABLE BROWSER LIGHT/GRAY HIGHLIGHT ON DISABLED INPUTS */
+input:disabled,
+select:disabled,
+textarea:disabled,
+.note-input:disabled,
+.form-group input:disabled,
+.form-group select:disabled {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: var(--text-muted) !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    -webkit-text-fill-color: var(--text-muted) !important;
+}
+
 /* SLEEK DARK GLASS DATE BADGE STYLING */
 .date-badge,
 button.date-badge,
