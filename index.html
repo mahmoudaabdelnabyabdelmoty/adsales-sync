@@ -160,7 +160,7 @@
                     <p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات الحية عبر كل المنصات.</p>
                 </div>
                 
-                <div id="live-ads-grid" class="ads-grid">
+                <div id="live-ads-grid" class="campaigns-stack-container">
                     <!-- Dynamic Cards -->
                 </div>
             </section>
@@ -353,16 +353,29 @@
                         </div>
                         <div class="form-group" style="margin-top: 8px;">
                             <label for="ad-adset">المجموعة الإعلانية (Ad Set) <span class="required">*</span></label>
+                            <input type="text" id="ad-adset" placeholder="مثال: AdSet_Business_Owners">
+                        </div>
                     </div>
 
-                    <div class="form-group">
+                    <!-- Multi AdSet & Multi Ad Builder Wrapper -->
+                    <div id="multi-adset-builder-wrapper" style="margin-top: 14px; background: rgba(0,0,0,0.2); padding: 14px; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 style="font-size: 0.92rem; font-weight: 800; color: var(--accent-blue);"><i class="fa-solid fa-cubes"></i> هيكل المجموعات الإعلانية والإعلانات (AdSets & Ads Builder)</h4>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="addAdSetToBuilder()" style="font-size: 0.78rem; color: var(--accent-green);"><i class="fa-solid fa-plus"></i> + إضافة مجموعة (AdSet) جديدة</button>
+                        </div>
+                        <div id="adset-builder-container" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Dynamic AdSet Builder Cards -->
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 14px;">
                         <label for="ad-notes">توجيهات/ملاحظات أولية للـ Sales (اختياري)</label>
                         <textarea id="ad-notes" rows="3" placeholder="أضف أي تفاصيل تهم الـ Sales (مثال: الإعلان ده موجه لأصحاب المصانع، ركزوا على عروض الأسعار)..."></textarea>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" id="cancel-modal-btn" class="btn btn-secondary" onclick="document.getElementById('ad-modal').classList.add('hidden');">إلغاء</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعلان</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> <span id="submit-ad-btn-text">حفظ الإعلان</span></button>
                     </div>
                 </form>
             </div>
@@ -449,7 +462,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('history-modal').classList.add('hidden');">إإغلاق السجل</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('history-modal').classList.add('hidden');">إغلاق السجل</button>
                 </div>
             </div>
         </div>
