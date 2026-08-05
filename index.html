@@ -27,6 +27,11 @@
                     </div>
                 </div>
                 <div class="header-actions-row">
+                    <!-- NOTIFICATION BELL -->
+                    <div id="notification-bell-btn" class="notification-bell-container" title="مركز الإشعارات والتنبيهات الحية">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="unread-count-badge" class="unread-badge hidden">0</span>
+                    </div>
                     <!-- ROLE INDICATOR / LOGIN STATUS -->
                     <div id="role-badge" class="role-indicator-badge" title="انقر لتغيير أو تسجيل الدخول بصلاحيتك">
                         <i class="fa-solid fa-eye"></i> <span id="role-text">زائر (عرض فقط - Read Only)</span>
@@ -160,6 +165,16 @@
                 <div class="modal-footer"><button type="button" class="btn btn-secondary" onclick="document.getElementById('history-modal').classList.add('hidden');">إغلاق السجل</button></div>
             </div>
         </div>
+        <!-- NOTIFICATION DRAWER DROPDOWN -->
+        <div id="notification-drawer" class="notification-drawer hidden">
+            <div class="drawer-header">
+                <h4><i class="fa-solid fa-bell" style="color:var(--accent-blue);"></i> مركز الإشعارات الحية</h4>
+                <button id="mark-all-read-btn" class="btn btn-secondary btn-sm" style="font-size:0.75rem; padding:2px 8px;"><i class="fa-solid fa-check-double"></i> تم قراءة الكل</button>
+            </div>
+            <div id="notifications-list" class="drawer-body"></div>
+        </div>
+        <!-- FLOATING TOAST NOTIFICATIONS CONTAINER -->
+        <div id="toast-container" class="toast-container"></div>
         <footer class="app-footer"><p>AdSales Sync Enterprise &copy; 2026 - نظام إدارة صلاحيات الإعلانات والمبيعات الموحد</p></footer>
     </div>
     <script src="app.js?v=13.0"></script>
