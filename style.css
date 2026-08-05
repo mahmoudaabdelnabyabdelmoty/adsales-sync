@@ -1,3 +1,31 @@
+/* SLEEK DARK GLASS DATE BADGE STYLING */
+.date-badge,
+button.date-badge,
+input[type="date"].date-badge {
+    background: rgba(99, 102, 241, 0.15) !important;
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.35) !important;
+    padding: 4px 10px !important;
+    border-radius: 8px !important;
+    font-size: 0.83rem !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.date-badge:hover,
+button.date-badge:hover {
+    background: rgba(99, 102, 241, 0.32) !important;
+    border-color: var(--accent-blue) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
 /* UTILITY CLASSES */
 .hidden {
     display: none !important;
