@@ -1231,6 +1231,109 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('✅ تم تصدير ملف الإكسيل بنجاح باسم ( ' + filename + ' )!');
     };
 
+    // REAL-TIME NOTIFICATION SYSTEM & AUDIO CHIME
+    let notificationsState = JSON.parse(localStorage.getItem('adsales_notifications')) || [
+        {
+            id: 'n-1',
+            type: 'info',
+            title: '👋 مرحباً بك في AdSales Sync Enterprise v13.0',
+            message: 'تم تفعيل نظام التنبيهات الفورية والمزامنة السحابية المباشرة بين المبيعات والـ Media Buyer.',
+            time: 'الآن',
+            read: false
+        }
+    ];
+
+    function playAudioChime(isUrgent = false) {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = isUrgent ? 'sawtooth' : 'sine';
+            osc.frequency.setValueAtTime(isUrgent ? 587.33 : 523.25, ctx.currentTime);
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.35);
+        } catch (e) {}
+    }
+
+    function requestBrowserNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    }
+    requestBrowserNotificationPermission();
+
+    window.pushNotification = function({ type = 'info', title, message, isUrgent = false, roleTarget = 'all' }) {
+        const notif = {
+            id: 'notif-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            type, title, message, isUrgent, roleTarget,
+            time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+            read: false
+        };
+        notificationsState.unshift(notif);
+        if (notificationsState.length > 30) notificationsState.pop();
+        localStorage.setItem('adsales_notifications', JSON.stringify(notificationsState));
+        updateNotificationUI();
+        playAudioChime(isUrgent);
+        if ('Notification' in window && Notification.permission === 'granted') {
+            try { new Notification(title, { body: message, icon: 'https://cdn-icons-png.flaticon.com/512/3602/3602145.png' }); } catch (e) {}
+        }
+        showToastPopup(notif);
+    };
+
+    function showToastPopup(notif) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast-item ' + (notif.isUrgent ? 'toast-urgent' : 'toast-success');
+        let iconHTML = '<i class="fa-solid fa-circle-info" style="color:var(--accent-blue);"></i>';
+        if (notif.isUrgent) iconHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:1.3rem;"></i>';
+        else if (notif.type === 'success') iconHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent-green); font-size:1.2rem;"></i>';
+        toast.innerHTML = '<div style="margin-top:2px;">' + iconHTML + '</div><div style="flex:1;"><div style="font-size:0.85rem; font-weight:800; margin-bottom:2px;">' + notif.title + '</div><div style="font-size:0.78rem; opacity:0.9; line-height:1.3;">' + notif.message + '</div></div><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
+        container.appendChild(toast);
+        setTimeout(() => { if (toast && toast.parentElement) toast.remove(); }, 5000);
+    }
+
+    function updateNotificationUI() {
+        const badge = document.getElementById('unread-count-badge');
+        const list = document.getElementById('notifications-list');
+        const unreadCount = notificationsState.filter(n => !n.read).length;
+        if (badge) {
+            if (unreadCount > 0) { badge.textContent = unreadCount; badge.classList.remove('hidden'); }
+            else { badge.classList.add('hidden'); }
+        }
+        if (list) {
+            list.innerHTML = '';
+            if (notificationsState.length === 0) { list.innerHTML = '<div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.8rem;">لا توجد إشعارات حالياً</div>'; return; }
+            notificationsState.forEach(n => {
+                const item = document.createElement('div');
+                item.className = 'notification-item ' + (!n.read ? 'unread' : '') + ' ' + (n.isUrgent ? 'urgent' : '');
+                let iconHTML = '<i class="fa-solid fa-bell notification-icon" style="color:var(--accent-blue);"></i>';
+                if (n.isUrgent) iconHTML = '<i class="fa-solid fa-circle-exclamation notification-icon" style="color:#ef4444;"></i>';
+                item.innerHTML = iconHTML + '<div class="notification-content"><div class="notification-title">' + n.title + '</div><div class="notification-msg">' + n.message + '</div><div class="notification-time">' + n.time + '</div></div>';
+                item.addEventListener('click', () => { n.read = true; localStorage.setItem('adsales_notifications', JSON.stringify(notificationsState)); updateNotificationUI(); });
+                list.appendChild(item);
+            });
+        }
+    }
+
+    const bellBtn = document.getElementById('notification-bell-btn');
+    const drawer = document.getElementById('notification-drawer');
+    const markAllReadBtn = document.getElementById('mark-all-read-btn');
+    if (bellBtn && drawer) {
+        bellBtn.addEventListener('click', (e) => { e.stopPropagation(); drawer.classList.toggle('hidden'); });
+        document.addEventListener('click', (e) => { if (!drawer.contains(e.target) && !bellBtn.contains(e.target)) drawer.classList.add('hidden'); });
+    }
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', () => { notificationsState.forEach(n => n.read = true); localStorage.setItem('adsales_notifications', JSON.stringify(notificationsState)); updateNotificationUI(); });
+    }
+    updateNotificationUI();
+
     document.addEventListener('click', (e) => {
         const presetBtn = e.target.closest('.history-preset-btn');
         if (presetBtn) {
@@ -1368,7 +1471,18 @@ document.addEventListener('DOMContentLoaded', () => {
     window.quickToggleStatus = function(id, newStatus) {
         if (!ROLES_CONFIG[currentRole].canEditStructure) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (ad) { ad.status = newStatus; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
+        if (ad) {
+            ad.status = newStatus;
+            ad.updatedAt = new Date().toLocaleString('ar-EG');
+            saveToCloud();
+            const statusText = newStatus === 'pause' ? 'تعطيل/إيقاف 🔴' : 'تشغيل 🟢';
+            window.pushNotification({
+                type: 'info',
+                title: '⚡ تحديث حالة الإعلان من Media Buyer',
+                message: 'قام الـ Media Buyer بتغيير حالة إعلان (' + ad.name + ') إلى ' + statusText,
+                roleTarget: 'sales'
+            });
+        }
     };
 
     window.updateAdStatus = function(id, newStatus) {
@@ -1380,7 +1494,27 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateAdQuality = function(id, newQuality) {
         if (!ROLES_CONFIG[currentRole].canEditQuality) { alert('⚠️ تنبيه: تقييم جودة المحادثات خاص بمسؤولي المبيعات (Sales Rep) والمدير العام فقط!'); renderAll(); return; }
         const ad = adsState.find(a => a.id === id);
-        if (ad) { ad.quality = newQuality; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
+        if (ad) {
+            ad.quality = newQuality;
+            ad.updatedAt = new Date().toLocaleString('ar-EG');
+            saveToCloud();
+            if (newQuality === 'unqualified') {
+                window.pushNotification({
+                    type: 'urgent',
+                    isUrgent: true,
+                    title: '🚨 تنبيه عاجل من قسم المبيعات (Sales Alert)',
+                    message: 'طلب إيقاف عاجل: إعلان (' + ad.name + ') حصل على تقييم غير مهتمين / سيء من الـ Sales!',
+                    roleTarget: 'mediabuyer'
+                });
+            } else if (newQuality === 'qualified') {
+                window.pushNotification({
+                    type: 'success',
+                    title: '🟢 تقييم ممتاز من المبيعات',
+                    message: 'إعلان (' + ad.name + ') حصل على تقييم عملاء ممتازين (Qualified) من الـ Sales!',
+                    roleTarget: 'mediabuyer'
+                });
+            }
+        }
     };
 
     window.updateAdNote = function(id, newNote) {
