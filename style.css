@@ -1,3 +1,136 @@
+/* PERFECTED LIGHT MODE DESIGN SYSTEM (v13.0) */
+body.light-mode {
+    --bg-main: #f1f5f9;
+    --bg-card: #ffffff;
+    --bg-header: rgba(255, 255, 255, 0.94);
+    --border-color: rgba(203, 213, 225, 0.7);
+    --border-hover: rgba(99, 102, 241, 0.5);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --shadow-card: 0 10px 25px -5px rgba(148, 163, 184, 0.18), 0 0 0 1px rgba(203, 213, 225, 0.4);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.06) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.06) 0px, transparent 50%) !important;
+}
+
+body.light-mode .view-switcher {
+    background: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+}
+
+body.light-mode .search-box input,
+body.light-mode .filter-item select,
+body.light-mode .form-group input,
+body.light-mode .form-group select,
+body.light-mode .form-group textarea {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+
+body.light-mode .search-box input:focus,
+body.light-mode .filter-item select:focus,
+body.light-mode .form-group input:focus,
+body.light-mode .form-group select:focus,
+body.light-mode .form-group textarea:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.25) !important;
+}
+
+body.light-mode .campaign-group-card {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+
+body.light-mode .campaign-header-bar {
+    background: linear-gradient(90deg, #f8fafc, #f1f5f9) !important;
+    border-bottom-color: #e2e8f0 !important;
+}
+
+body.light-mode .campaign-header-bar:hover {
+    background: linear-gradient(90deg, #f1f5f9, #e2e8f0) !important;
+}
+
+body.light-mode .campaign-header-bar h3 {
+    color: #0f172a !important;
+}
+
+body.light-mode .adset-title-bar {
+    background: #f8fafc !important;
+    border-right-color: var(--accent-blue) !important;
+    color: #0284c7 !important;
+}
+
+body.light-mode .ad-card {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .table-responsive {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+
+body.light-mode tr.table-campaign-row {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.12), #e2e8f0) !important;
+    color: #0f172a !important;
+    border-bottom-color: var(--primary-color) !important;
+}
+
+body.light-mode tr.table-campaign-row td {
+    color: #0f172a !important;
+}
+
+body.light-mode tr.table-adset-row {
+    background: #f1f5f9 !important;
+    color: #0284c7 !important;
+}
+
+body.light-mode .data-table th {
+    background: #f8fafc !important;
+    color: #475569 !important;
+    border-bottom-color: #e2e8f0 !important;
+}
+
+body.light-mode tr.table-ad-child-row:hover {
+    background: #f8fafc !important;
+}
+
+body.light-mode .modal-content {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+}
+
+body.light-mode .modal-header h3 {
+    color: #0f172a !important;
+}
+
+body.light-mode .history-filter-bar,
+body.light-mode #history-chart-container {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
+body.light-mode .metrics-slider-container::-webkit-scrollbar-track {
+    background: #e2e8f0 !important;
+}
+
+body.light-mode .metric-pill {
+    background: rgba(99, 102, 241, 0.08) !important;
+    border-color: rgba(99, 102, 241, 0.25) !important;
+    color: #1e1b4b !important;
+}
+
+body.light-mode .sales-note-box {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #334155 !important;
+}
+
 /* SLEEK HORIZONTAL GLASS SLIDER FOR CUSTOM METRICS PILLS */
 .metrics-slider-container {
     display: flex !important;
