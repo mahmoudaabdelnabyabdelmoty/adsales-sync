@@ -153,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let adsState = JSON.parse(localStorage.getItem('adsales_sync_data')) || initialAds;
 
-    // Ensure all ads have default metricsConfig, dailyResults, and clientAccount
     adsState.forEach(ad => {
         if (!ad.metricsConfig || !Array.isArray(ad.metricsConfig) || ad.metricsConfig.length === 0) {
             ad.metricsConfig = JSON.parse(JSON.stringify(defaultMetricsConfig));
@@ -382,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // MULTI-ADSET & MULTI-AD HIERARCHY BUILDER LOGIC
     let builderAdSets = [];
 
     window.initBuilderState = function() {
@@ -491,7 +489,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (entryDateInput.onchange) entryDateInput.onchange();
     };
 
-    // Global Event Delegation for Add Ad, Daily Entry, Custom Metric, & History Modals
     document.addEventListener('click', (e) => {
         const addAdBtn = e.target.closest('.open-add-ad-modal-btn');
         if (addAdBtn) {
@@ -922,12 +919,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     let customMetricsHTML = '';
 
                     if (customFields.length > 0) {
-                        customMetricsHTML = customFields.map(m => {
+                        customMetricsHTML = '<div class="metrics-slider-container">' + customFields.map(m => {
                             const val = dayEntry[m.id] !== undefined ? dayEntry[m.id] : 0;
                             const deleteBtnHTML = canEditResults ? 
                                 '<button class="delete-metric-btn" onclick="deleteCustomMetric(\'' + ad.id + '\', \'' + m.id + '\')" title="حذف مؤشر ' + m.label + '">&times;</button>' : '';
                             return '<span class="metric-pill" title="' + m.label + '">' + deleteBtnHTML + m.label + ': ' + val + ' ' + (m.unit || '') + '</span>';
-                        }).join(' ');
+                        }).join('') + '</div>';
                     } else {
                         customMetricsHTML = '<small style="color:var(--text-muted); font-size:0.75rem;">لا توجد مؤشرات إضافية (انقر + لإضافة مؤشر)</small>';
                     }
