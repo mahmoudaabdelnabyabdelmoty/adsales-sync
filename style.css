@@ -1,3 +1,50 @@
+/* SLEEK HORIZONTAL GLASS SLIDER FOR CUSTOM METRICS PILLS */
+.metrics-slider-container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    max-width: 280px !important;
+    padding: 4px 2px !important;
+    white-space: nowrap !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(56, 189, 248, 0.5) rgba(0, 0, 0, 0.2) !important;
+}
+
+.metrics-slider-container::-webkit-scrollbar {
+    height: 5px !important;
+}
+
+.metrics-slider-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 4px !important;
+}
+
+.metrics-slider-container::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.4) !important;
+    border-radius: 4px !important;
+}
+
+.metrics-slider-container::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue) !important;
+}
+
+.metric-pill {
+    background: rgba(99, 102, 241, 0.14) !important;
+    border: 1px solid rgba(99, 102, 241, 0.35) !important;
+    color: var(--text-primary) !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+}
+
 /* HISTORY BAR CHART STYLING */
 .history-preset-btn.active {
     background: var(--primary-color) !important;
