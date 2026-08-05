@@ -855,8 +855,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 return '<div class="adset-group-section">' +
                     '<div class="adset-title-bar">' +
-                    '<i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): ' + asGroup.name +
-                    ' <span style="font-size:0.75rem; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:12px; color:var(--text-secondary); margin-right:auto;">' + asGroup.ads.length + ' إعلانات</span>' +
+                    '<div><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong></div>' +
+                    '<span style="font-size:0.75rem; background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:12px; color:var(--accent-blue); font-weight:700;">' + asGroup.ads.length + ' إعلانات</span>' +
                     '</div>' +
                     '<div class="hierarchical-ads-grid">' + adsCardsHTML + '</div>' +
                     '</div>';
@@ -865,13 +865,13 @@ document.addEventListener('DOMContentLoaded', () => {
             cCard.innerHTML = '<div class="campaign-header-bar" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
                 '<div class="campaign-header-title">' +
                 getPlatformBadgeHTML(cGroup.platform) +
-                '<h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); display:inline-block;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
-                '<span style="font-size:0.78rem; color:var(--accent-amber); background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:12px; font-weight:700;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
+                '<h3 style="font-size:1.1rem; font-weight:800; color:var(--text-primary); display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
+                '<span style="font-size:0.78rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:12px; font-weight:700;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); background:rgba(99,102,241,0.12); padding:2px 8px; border-radius:12px;"><i class="fa-solid fa-bullseye"></i> ' + cGroup.objective + '</span>' : '') +
                 '</div>' +
-                '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
+                '<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">' +
                 '<span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);"><i class="fa-solid fa-user-tag"></i> ' + cGroup.salesRep + '</span>' +
-                '<span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-cubes"></i> ' + cGroup.totalAdsCount + ' إعلانات • ' + cGroup.activeAdsCount + ' 🟢 نشط</span>' +
+                '<span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;"><i class="fa-solid fa-cubes"></i> ' + cGroup.totalAdsCount + ' إعلانات • ' + cGroup.activeAdsCount + ' 🟢 نشط</span>' +
                 '<i class="fa-solid fa-chevron-down" style="color:var(--text-muted);"></i>' +
                 '</div>' +
                 '</div>' +
