@@ -5,29 +5,30 @@
     gap: 6px !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
-    max-width: 280px !important;
-    padding: 4px 2px !important;
+    max-width: 210px !important;
+    padding: 6px 4px 8px 4px !important;
     white-space: nowrap !important;
     scrollbar-width: thin !important;
-    scrollbar-color: rgba(56, 189, 248, 0.5) rgba(0, 0, 0, 0.2) !important;
+    scrollbar-color: #38bdf8 rgba(0, 0, 0, 0.5) !important;
 }
 
 .metrics-slider-container::-webkit-scrollbar {
-    height: 5px !important;
+    height: 7px !important;
 }
 
 .metrics-slider-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
     border-radius: 4px !important;
 }
 
 .metrics-slider-container::-webkit-scrollbar-thumb {
-    background: rgba(56, 189, 248, 0.4) !important;
+    background: #38bdf8 !important;
     border-radius: 4px !important;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.8) !important;
 }
 
 .metrics-slider-container::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-blue) !important;
+    background: #60a5fa !important;
 }
 
 .metric-pill {
