@@ -151,54 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    const defaultActivities = [
-        { id: 'act-1', user: 'أحمد محمود', time: '11:05 م', text: 'قام بتشغيل إعلان (Ad 01) لعميل (شركة الفارس للأمن والسلامة)', icon: 'fa-play' },
-        { id: 'act-2', user: 'سارة علي', time: '10:48 م', text: 'قيمت جودة رسائل الإعلان (Ad 01) كـ 🟢 عملاء ممتازين', icon: 'fa-star' },
-        { id: 'act-3', user: 'محمود حسن', time: '10:12 م', text: 'حدث أرقام النتائج اليومية بالتقويم', icon: 'fa-chart-column' },
-        { id: 'act-4', user: 'أحمد محمود', time: '09:30 م', text: 'أنشأ حملة إعلانية جديدة لعميل (مستشفى السلام الدولي)', icon: 'fa-layer-group' }
-    ];
-
-    let activityState = JSON.parse(localStorage.getItem('adsales_activity_log')) || defaultActivities;
-
-    function logActivity(actionText, iconClass = 'fa-bolt') {
-        const d = new Date();
-        const timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-        const userName = loggedUser ? loggedUser.name : 'زائر (عرض فقط)';
-        
-        const newAct = {
-            id: 'act-' + Date.now(),
-            user: userName,
-            time: timeStr,
-            text: actionText,
-            icon: iconClass
-        };
-        
-        activityState.unshift(newAct);
-        if (activityState.length > 25) activityState = activityState.slice(0, 25);
-        localStorage.setItem('adsales_activity_log', JSON.stringify(activityState));
-    }
-
-    function renderTicker() {
-        const track = document.getElementById('live-ticker-track');
-        if (!track) return;
-        
-        if (!activityState || activityState.length === 0) {
-            track.innerHTML = '<span class="ticker-item"><i class="fa-solid fa-info-circle"></i> لا توجد تنبيهات حية حالياً.</span>';
-            return;
-        }
-        
-        const displayList = [...activityState, ...activityState];
-        const itemsHTML = displayList.map(act => `
-            <span class="ticker-item">
-                <span class="ticker-time"><i class="fa-solid fa-clock"></i> ${act.time}</span>
-                <span class="ticker-user"><i class="fa-solid fa-user"></i> ${act.user}:</span>
-                <span class="ticker-action"><i class="fa-solid ${act.icon || 'fa-circle-dot'}"></i> ${act.text}</span>
-            </span>
-        `).join('');
-        
-        track.innerHTML = itemsHTML;
-    }
-
     let adsState = JSON.parse(localStorage.getItem('adsales_sync_data')) || initialAds;
 
     // Ensure all ads have default metricsConfig, dailyResults, and clientAccount
@@ -338,13 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let remoteAds = Array.isArray(cloudData) ? cloudData : (cloudData.ads || adsState);
                 let remoteUsers = Array.isArray(cloudData) ? null : cloudData.users;
-                let remoteActivities = Array.isArray(cloudData) ? null : cloudData.activities;
-
-                if (Array.isArray(remoteActivities) && JSON.stringify(remoteActivities) !== JSON.stringify(activityState)) {
-                    activityState = remoteActivities;
-                    localStorage.setItem('adsales_activity_log', JSON.stringify(activityState));
-                    renderTicker();
-                }
 
                 if (Array.isArray(remoteAds) && JSON.stringify(remoteAds) !== JSON.stringify(adsState)) {
                     adsState = remoteAds;
@@ -372,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cloudBlobId) return;
         try {
             const registeredUsers = JSON.parse(localStorage.getItem('adsales_registered_users')) || defaultUsers;
-            const newPayload = { ads: adsState, users: registeredUsers, activities: activityState };
+            const newPayload = { ads: adsState, users: registeredUsers };
 
             await fetch(CLOUD_API_BASE + '/' + cloudBlobId, {
                 method: 'PUT',
@@ -807,77 +752,46 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const hierarchicalCampaigns = getHierarchicalCampaigns(filteredAds);
+        filteredAds.forEach(ad => {
+            const isPaused = ad.status === 'pause';
+            const isBadQuality = ad.quality === 'unqualified';
+            const clientName = ad.clientAccount || 'عميل عام';
 
-        hierarchicalCampaigns.forEach(cGroup => {
-            const cCard = document.createElement('div');
-            cCard.className = 'campaign-group-card';
+            let cardActionHTML = '';
+            if (currentRole === 'mediabuyer' || currentRole === 'admin') {
+                cardActionHTML = '<div class="ad-card-actions" style="margin-top: auto; padding-top: 8px;">' + 
+                    (!isPaused ? 
+                        '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان</button>' : 
+                        '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال</button>'
+                    ) + 
+                    '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button></div>';
+            } else if (currentRole === 'sales') {
+                cardActionHTML = '<div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 8px; padding: 8px; margin-top: auto;">' +
+                    '<label style="font-size:0.75rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:4px;"><i class="fa-solid fa-headset"></i> تقييم الجودة:</label>' +
+                    '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:4px 8px; margin-bottom:6px;">' +
+                    '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
+                    '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
+                    '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' +
+                    '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="ملاحظتك للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.78rem; padding:4px 8px;"></div>';
+            } else {
+                cardActionHTML = '<div style="text-align:center; padding:4px; font-size:0.75rem; color:var(--text-muted); margin-top: auto;"><i class="fa-solid fa-lock"></i> للعرض فقط</div>';
+            }
 
-            const adsetsList = Object.values(cGroup.adsetsMap);
+            const card = document.createElement('div');
+            card.className = 'ad-card ' + (isPaused ? 'status-pause' : 'status-winning');
+            card.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;"><div style="display:flex; flex-direction:column; gap:4px;">' +
+                getPlatformBadgeHTML(ad.platform) + '<h3 style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-top:2px;"><i class="fa-solid fa-rectangle-ad" style="color:var(--primary-color);"></i> ' + ad.name + '</h3></div>' +
+                getStatusBadgeHTML(ad.status) + '</div>' +
+                '<div style="display:flex; flex-direction:column; gap:4px; font-size:0.78rem; background:rgba(0,0,0,0.2); padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:#facc15; font-weight:700;"><i class="fa-solid fa-briefcase"></i> العميل: ' + clientName + '</span><span style="color:var(--text-secondary);"><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</span></div>' +
+                '<div style="color:var(--text-muted); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;"><i class="fa-solid fa-layer-group"></i> ' + ad.campaign + ' | <i class="fa-solid fa-cubes"></i> ' + ad.adset + '</div>' +
+                (ad.objective ? '<div style="color:var(--primary-color); font-weight:600;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</div>' : '') + '</div>' +
+                '<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;"><span style="color:var(--text-secondary); font-weight:700;">جودة المحادثات:</span>' + getQualityBadgeHTML(ad.quality) + '</div>' +
+                ((currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? '<div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 6px; padding: 6px 10px; color: #fca5a5; font-size: 0.78rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: طلب إيقاف من المبيعات!</div>' : '') +
+                (currentRole !== 'sales' && ad.salesNotes ? '<div class="sales-note-box" style="padding:8px; font-size:0.8rem;"><strong>ملاحظة الـ Sales:</strong> ' + ad.salesNotes + '</div>' : '') +
+                cardActionHTML;
 
-            let adsetsHTML = adsetsList.map(asGroup => {
-                let adsCardsHTML = asGroup.ads.map(ad => {
-                    const isPaused = ad.status === 'pause';
-                    const isBadQuality = ad.quality === 'unqualified';
-
-                    let cardActionHTML = '';
-                    if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                        cardActionHTML = '<div class="ad-card-actions" style="margin-top:8px;">' + 
-                            (!isPaused ? 
-                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان</button>' : 
-                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال</button>'
-                            ) + 
-                            '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button></div>';
-                    } else if (currentRole === 'sales') {
-                        cardActionHTML = '<div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 8px; padding: 8px; margin-top: 8px;">' +
-                            '<label style="font-size:0.75rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:4px;"><i class="fa-solid fa-headset"></i> تقييم الجودة:</label>' +
-                            '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:4px 8px; margin-bottom:6px;">' +
-                            '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
-                            '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
-                            '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' +
-                            '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="ملاحظتك للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.78rem; padding:4px 8px;"></div>';
-                    } else {
-                        cardActionHTML = '<div style="text-align:center; padding:4px; font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> للعرض فقط</div>';
-                    }
-
-                    return '<div class="ad-card ' + (isPaused ? 'status-pause' : 'status-winning') + '" style="margin:0;">' +
-                        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">' +
-                        '<span style="font-weight:800; font-size:0.92rem; color:var(--text-primary);"><i class="fa-solid fa-rectangle-ad" style="color:var(--primary-color);"></i> ' + ad.name + '</span>' +
-                        getStatusBadgeHTML(ad.status) + '</div>' +
-                        '<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; color:var(--text-muted); margin-bottom:6px;">' +
-                        '<span>جودة الـ Leads: ' + getQualityBadgeHTML(ad.quality) + '</span>' +
-                        '</div>' +
-                        ((currentRole === 'mediabuyer' || currentRole === 'admin') && isBadQuality && !isPaused ? '<div style="background: rgba(239,68,68,0.18); border: 1px solid #ef4444; border-radius: 6px; padding: 4px 8px; margin-bottom: 6px; color: #fca5a5; font-size: 0.78rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: طلب إيقاف من المبيعات!</div>' : '') +
-                        (currentRole !== 'sales' && ad.salesNotes ? '<div class="sales-note-box" style="padding:6px; margin-bottom:6px; font-size:0.78rem;"><strong>ملاحظة الـ Sales:</strong> ' + ad.salesNotes + '</div>' : '') +
-                        cardActionHTML +
-                        '</div>';
-                }).join('');
-
-                return '<div class="adset-group-section">' +
-                    '<div class="adset-title-bar">' +
-                    '<div><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong></div>' +
-                    '<span style="font-size:0.75rem; background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:12px; color:var(--accent-blue); font-weight:700;">' + asGroup.ads.length + ' إعلانات</span>' +
-                    '</div>' +
-                    '<div class="hierarchical-ads-grid">' + adsCardsHTML + '</div>' +
-                    '</div>';
-            }).join('');
-
-            cCard.innerHTML = '<div class="campaign-header-bar" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
-                '<div class="campaign-header-title">' +
-                getPlatformBadgeHTML(cGroup.platform) +
-                '<h3 style="font-size:1.1rem; font-weight:800; color:var(--text-primary); display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
-                '<span style="font-size:0.78rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:12px; font-weight:700;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
-                (cGroup.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); background:rgba(99,102,241,0.12); padding:2px 8px; border-radius:12px;"><i class="fa-solid fa-bullseye"></i> ' + cGroup.objective + '</span>' : '') +
-                '</div>' +
-                '<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">' +
-                '<span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);"><i class="fa-solid fa-user-tag"></i> ' + cGroup.salesRep + '</span>' +
-                '<span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;"><i class="fa-solid fa-cubes"></i> ' + cGroup.totalAdsCount + ' إعلانات • ' + cGroup.activeAdsCount + ' 🟢 نشط</span>' +
-                '<i class="fa-solid fa-chevron-down" style="color:var(--text-muted);"></i>' +
-                '</div>' +
-                '</div>' +
-                '<div>' + adsetsHTML + '</div>';
-
-            liveAdsGrid.appendChild(cCard);
+            liveAdsGrid.appendChild(card);
         });
     }
     function renderSalesView(filteredAds) {
@@ -1076,7 +990,6 @@ document.addEventListener('DOMContentLoaded', () => {
         applyRolePermissions();
         updateSalesFilterOptions();
         updateMetrics();
-        renderTicker();
         const filtered = getFilteredAds();
         renderLiveBoard(filtered);
         renderSalesView(filtered);
@@ -1093,7 +1006,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const metricName = metricObj ? metricObj.label : 'المؤشر';
         if (confirm('هل أنت تأكد من رغبتك في حذف مؤشر (' + metricName + ') من هذا الإعلان؟')) {
             ad.metricsConfig = (ad.metricsConfig || []).filter(m => m.id !== metricId);
-            logActivity('حذف مؤشر (' + metricName + ') من الإعلان (' + ad.name + ')', 'fa-trash');
             saveToCloud();
         }
     };
@@ -1205,7 +1117,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ad.updatedAt = new Date().toLocaleString('ar-EG');
             dailyResultModal.classList.add('hidden');
-            logActivity('سجّل/حدّث نتائج تاريخ (' + dateVal + ') للإعلان (' + ad.name + ')', 'fa-pen-to-square');
             saveToCloud();
             alert('✅ تم حفظ وتحديث نتائج تاريخ (' + dateVal + ') للإعلان بنجاح!');
         });
@@ -1225,7 +1136,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ad.metricsConfig.push({ id: metricId, label, unit });
 
             customMetricModal.classList.add('hidden');
-            logActivity('إضافة مؤشر مخصص جديد (' + label + ') للإعلان (' + ad.name + ')', 'fa-plus-square');
             saveToCloud();
             alert('✅ تم إضافة المؤشر المخصص (' + label + ') للإعلان بنجاح!');
         });
@@ -1241,7 +1151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ad) {
             ad.status = newStatus;
             ad.updatedAt = new Date().toLocaleString('ar-EG');
-            logActivity('قام بتغيير حالة الإعلان (' + ad.name + ') إلى ' + (newStatus === 'pause' ? '🔴 متوقف' : '🟢 شغال'), newStatus === 'pause' ? 'fa-pause' : 'fa-play');
             saveToCloud();
         }
     };
@@ -1252,7 +1161,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ad) {
             ad.status = newStatus;
             ad.updatedAt = new Date().toLocaleString('ar-EG');
-            logActivity('قام بتغيير حالة الإعلان (' + ad.name + ') إلى ' + (newStatus === 'pause' ? '🔴 متوقف' : '🟢 شغال'), newStatus === 'pause' ? 'fa-pause' : 'fa-play');
             saveToCloud();
         }
     };
@@ -1267,8 +1175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ad) {
             ad.quality = newQuality;
             ad.updatedAt = new Date().toLocaleString('ar-EG');
-            const qLabel = newQuality === 'qualified' ? '🟢 عملاء ممتازين' : newQuality === 'unqualified' ? '🔴 غير مهتمين / طلب إيقاف' : '🟡 متوسط';
-            logActivity('قام بتقييم جودة محادثات الإعلان (' + ad.name + ') كـ (' + qLabel + ')', 'fa-headset');
             saveToCloud();
         }
     };
@@ -1279,7 +1185,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ad) {
             ad.salesNotes = newNote;
             ad.updatedAt = new Date().toLocaleString('ar-EG');
-            logActivity('أضاف ملاحظة جديدة للإعلان (' + ad.name + ')', 'fa-comment-dots');
             saveToCloud();
         }
     };
@@ -1287,10 +1192,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteAd = function(id) {
         if (!ROLES_CONFIG[currentRole].canDelete) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        const adName = ad ? ad.name : 'الإعلان';
         if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) {
             adsState = adsState.filter(a => a.id !== id);
-            logActivity('حذف الإعلان (' + adName + ') من النظام', 'fa-trash');
             saveToCloud();
         }
     };
@@ -1350,7 +1253,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     ad.campaign = campaign; ad.clientAccount = clientAccount; ad.adset = adset;
                     ad.salesRep = salesRep; ad.salesNotes = salesNotes;
                     ad.updatedAt = new Date().toLocaleString('ar-EG');
-                    logActivity('قام بتحديث بيانات الإعلان (' + name + ')', 'fa-pen');
                 }
             } else {
                 let totalCreated = 0;
@@ -1381,7 +1283,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
-                logActivity('أنشأ حملة إعلانية جديدة (' + campaign + ') للعميل (' + clientAccount + ') إجمالي (' + totalCreated + ') إعلانات', 'fa-plus-circle');
                 alert('🚀 تم بنجاح إنشاء حملة (' + campaign + ') للعميل (' + clientAccount + ') وتحتوي على (' + builderAdSets.length + ') مجموعات إعلانية و إجمالي (' + totalCreated + ') إعلانات!');
             }
 
