@@ -1,3 +1,23 @@
+/* HIDE MOBILE CARDS CONTAINERS ON DESKTOP SCREENS */
+.mobile-only,
+#sales-mobile-cards,
+#results-mobile-cards {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none !important;
+    }
+    .mobile-only,
+    #sales-mobile-cards,
+    #results-mobile-cards {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+}
+
 /* DISABLE BROWSER LIGHT/GRAY HIGHLIGHT ON DISABLED INPUTS */
 input:disabled,
 select:disabled,
