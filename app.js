@@ -867,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         '<td><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</td>' +
                         '<td>' + qualityCellHTML + '</td>' +
                         '<td>' + getStatusBadgeHTML(ad.status) + '</td>' +
-                        '<td><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></td>' +
+                        '<td>' + (canEditNotes ? '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف ملاحظة للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)">' : (ad.salesNotes ? '<span style="font-size:0.82rem; color:var(--text-secondary);"><i class="fa-solid fa-comment-dots" style="color:var(--accent-blue);"></i> ' + ad.salesNotes + '</span>' : '<span style="color:var(--text-muted); font-size:0.78rem;">لا توجد ملاحظات</span>')) + '</td>' +
                         '<td style="font-size:0.78rem; color: var(--text-muted);">' + ad.updatedAt + '</td>';
                     salesTableBody.appendChild(tr);
 
@@ -877,7 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         getPlatformBadgeHTML(ad.platform) + '<h4 style="display:inline-block; margin-right:6px;">' + ad.name + '</h4></div>' +
                         getStatusBadgeHTML(ad.status) + '</div>' + (ad.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); display:block; margin-bottom:4px;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</span>' : '') +
                         '<span class="meta-sub">' + ad.campaign + ' | ' + ad.salesRep + '</span></div><div class="form-group" style="margin-top: 10px;"><label>تقييم جودة الـ Leads:</label>' + qualityCellHTML +
-                        '</div><div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="' + (canEditNotes ? 'أضف ملاحظة للميديا باير...' : 'مشاهد فقط') + '" onchange="updateAdNote(\'' + ad.id + '\', this.value)" ' + (!canEditNotes ? 'disabled' : '') + '></div>';
+                        '</div>' + (canEditNotes ? '<div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف ملاحظة للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)"></div>' : (ad.salesNotes ? '<div class="sales-note-box" style="margin-top:8px;"><strong>ملاحظة الـ Sales:</strong> ' + ad.salesNotes + '</div>' : ''));
                     salesMobileCards.appendChild(mCard);
                 });
             });
