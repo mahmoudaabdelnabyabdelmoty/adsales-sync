@@ -1169,6 +1169,68 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    window.exportToExcel = function(type, customAdId = null) {
+        let headers = [];
+        let rows = [];
+        let filename = 'AdSales_Report_' + todayStr + '.csv';
+        const filteredAds = getFilteredAds();
+
+        if (type === 'ad-history' && (customAdId || activeHistoryAdId)) {
+            const targetAdId = customAdId || activeHistoryAdId;
+            const ad = adsState.find(a => a.id === targetAdId);
+            if (!ad) return alert('⚠️ لم يتم العثور على الإعلان للتصدير.');
+
+            filename = 'Ad_History_' + (ad.name.replace(/[^a-zA-Z0-9_\u0600-\u06FF]/g, '_')) + '_' + todayStr + '.csv';
+            headers = ['التاريخ (Date)', 'العميل', 'اسم الإعلان', 'الحملة', 'AdSet', 'عدد الرسائل'];
+            const customFields = (ad.metricsConfig || []).filter(m => m.id !== 'results');
+            customFields.forEach(m => headers.push(m.label + (m.unit ? ' (' + m.unit + ')' : '')));
+
+            const dates = Object.keys(ad.dailyResults || {}).sort().reverse();
+            dates.forEach(d => {
+                const day = ad.dailyResults[d] || {};
+                const row = [d, ad.clientAccount || 'عميل عام', ad.name, ad.campaign, ad.adset, day.results !== undefined ? day.results : 0];
+                customFields.forEach(m => row.push(day[m.id] !== undefined ? day[m.id] : 0));
+                rows.push(row);
+            });
+        } else {
+            const activeNav = document.querySelector('.nav-btn.active');
+            const viewName = activeNav ? activeNav.getAttribute('data-view') : 'live-board';
+            filename = 'AdSales_Export_' + viewName + '_' + todayStr + '.csv';
+            headers = ['العميل', 'المنصة', 'اسم الإعلان', 'نوع/هدف الحملة', 'اسم الحملة', 'المجموعة الإعلانية (AdSet)', 'Sales المتابع', 'حالة الإعلان', 'تقييم الجودة', 'نتائج التاريخ المحدد', 'ملاحظات المبيعات', 'تاريخ التحديث'];
+            const selDate = resultsDatePicker ? (resultsDatePicker.value || todayStr) : todayStr;
+
+            filteredAds.forEach(ad => {
+                const dayEntry = (ad.dailyResults && ad.dailyResults[selDate]) ? ad.dailyResults[selDate] : {};
+                const resultsVal = dayEntry.results !== undefined ? dayEntry.results : 0;
+                const statusText = ad.status === 'pause' ? 'متوقف 🔴' : 'شغال 🟢';
+                let qualityText = 'متوسط 🟡';
+                if (ad.quality === 'qualified') qualityText = 'عملاء ممتازين 🟢';
+                else if (ad.quality === 'unqualified') qualityText = 'غير مهتمين / سيء 🔴';
+
+                rows.push([ad.clientAccount || 'عميل عام', (ad.platform || 'meta').toUpperCase(), ad.name, ad.objective || 'عام', ad.campaign, ad.adset, ad.salesRep, statusText, qualityText, resultsVal, ad.salesNotes || '', ad.updatedAt || '']);
+            });
+        }
+
+        if (rows.length === 0) return alert('⚠️ لا توجد بيانات مطابقة للتصدير إلى Excel.');
+
+        function escapeCSVCell(val) {
+            if (val === null || val === undefined) return '""';
+            return '"' + String(val).replace(/"/g, '""') + '"';
+        }
+
+        let csvContent = headers.map(escapeCSVCell).join(',') + '\n';
+        rows.forEach(row => { csvContent += row.map(escapeCSVCell).join(',') + '\n'; });
+
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        alert('✅ تم تصدير ملف الإكسيل بنجاح باسم ( ' + filename + ' )!');
+    };
+
     document.addEventListener('click', (e) => {
         const presetBtn = e.target.closest('.history-preset-btn');
         if (presetBtn) {
@@ -1187,10 +1249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (applyCustomBtn) {
             const startVal = document.getElementById('history-start-date').value;
             const endVal = document.getElementById('history-end-date').value;
-            if (!startVal || !endVal) {
-                alert('⚠️ يرجى اختيار تاريخ بداية ونهاية معاً لمسح أو تخصيص الفترة.');
-                return;
-            }
+            if (!startVal || !endVal) return alert('⚠️ يرجى اختيار تاريخ بداية ونهاية معاً لمسح أو تخصيص الفترة.');
             document.querySelectorAll('.history-preset-btn').forEach(b => b.classList.remove('active'));
             renderHistoryModalAnalytics(startVal, endVal);
             return;
@@ -1201,28 +1260,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const ad = adsState.find(a => a.id === activeHistoryAdId);
             if (!ad) return;
             const allDates = Object.keys(ad.dailyResults || {}).sort();
-            if (allDates.length === 0) {
-                alert('⚠️ لا توجد نتائج مسجلة للإعلان بعد للتصدير.');
-                return;
-            }
-            let totalResults = 0;
-            let peakDay = null;
-            let peakValue = -1;
+            if (allDates.length === 0) return alert('⚠️ لا توجد نتائج مسجلة للإعلان بعد للتصدير.');
+            let totalResults = 0; let peakDay = null; let peakValue = -1;
             allDates.forEach(d => {
                 const val = Number((ad.dailyResults[d] && ad.dailyResults[d].results) || 0);
                 totalResults += val;
-                if (val > peakValue) {
-                    peakValue = val;
-                    peakDay = d;
-                }
+                if (val > peakValue) { peakValue = val; peakDay = d; }
             });
             const avgDaily = Math.round((totalResults / allDates.length) * 10) / 10;
             const reportText = '📊 تقرير أداء وسجل الإعلان الرسمي:\nالإعلان: ' + ad.name + '\n💼 العميل: ' + (ad.clientAccount || 'عميل عام') + '\n🎯 الحملة: ' + ad.campaign + '\n📱 المنصة: ' + (ad.platform || 'meta').toUpperCase() + '\n----------------------------------------\n✉️ إجمالي المحادثات/الرسائل: ' + totalResults + ' رسالة\n📅 النطاق الزمني المسجل: من ' + allDates[0] + ' إلى ' + allDates[allDates.length - 1] + ' (' + allDates.length + ' يوم)\n📈 المتوسط اليومي: ' + avgDaily + ' رسالة/يوم\n👑 اليوم الأعلى أداءً: ' + (peakDay || 'N/A') + ' (بواقع ' + peakValue + ' رسالة)\n----------------------------------------\nتم استخراج التقرير عبر منصة AdSales Sync Enterprise 🚀';
-            navigator.clipboard.writeText(reportText).then(() => {
-                alert('✅ تم نسخ التقرير الشامل بنجاح إلى الحافظة! يمكنك الآن لصقه مباشرة على واتساب العميل.');
-            }).catch(() => {
-                prompt('تقرير الأداء التجميعي:', reportText);
-            });
+            navigator.clipboard.writeText(reportText).then(() => { alert('✅ تم نسخ التقرير الشامل بنجاح إلى الحافظة! يمكنك الآن لصقه مباشرة على واتساب العميل.'); }).catch(() => { prompt('تقرير الأداء التجميعي:', reportText); });
             return;
         }
     });
@@ -1265,7 +1312,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         entryDateInput.onchange = refreshInputsForSelectedDate;
         refreshInputsForSelectedDate();
-
         dailyResultModal.classList.remove('hidden');
     };
 
@@ -1285,17 +1331,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateVal = entryDateInput.value;
             const ad = adsState.find(a => a.id === adId);
             if (!ad) return;
-
             if (!ad.dailyResults) ad.dailyResults = {};
             if (!ad.dailyResults[dateVal]) ad.dailyResults[dateVal] = {};
-
             const fields = dynamicMetricsInputsContainer.querySelectorAll('.metric-input-field');
             fields.forEach(field => {
                 const metricId = field.getAttribute('data-metric-id');
                 const val = Number(field.value) || 0;
                 ad.dailyResults[dateVal][metricId] = val;
             });
-
             ad.updatedAt = new Date().toLocaleString('ar-EG');
             dailyResultModal.classList.add('hidden');
             saveToCloud();
@@ -1311,72 +1354,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const unit = metricUnitInput.value.trim();
             const ad = adsState.find(a => a.id === adId);
             if (!ad) return;
-
             const metricId = 'm_' + Date.now();
             if (!ad.metricsConfig) ad.metricsConfig = JSON.parse(JSON.stringify(defaultMetricsConfig));
             ad.metricsConfig.push({ id: metricId, label, unit });
-
             customMetricModal.classList.add('hidden');
             saveToCloud();
             alert('✅ تم إضافة المؤشر المخصص (' + label + ') للإعلان بنجاح!');
         });
     }
 
-    if (resultsDatePicker) {
-        resultsDatePicker.addEventListener('change', renderAll);
-    }
+    if (resultsDatePicker) resultsDatePicker.addEventListener('change', renderAll);
 
     window.quickToggleStatus = function(id, newStatus) {
         if (!ROLES_CONFIG[currentRole].canEditStructure) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (ad) {
-            ad.status = newStatus;
-            ad.updatedAt = new Date().toLocaleString('ar-EG');
-            saveToCloud();
-        }
+        if (ad) { ad.status = newStatus; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
     window.updateAdStatus = function(id, newStatus) {
         if (!ROLES_CONFIG[currentRole].canEditQuality) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (ad) {
-            ad.status = newStatus;
-            ad.updatedAt = new Date().toLocaleString('ar-EG');
-            saveToCloud();
-        }
+        if (ad) { ad.status = newStatus; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
     window.updateAdQuality = function(id, newQuality) {
-        if (!ROLES_CONFIG[currentRole].canEditQuality) {
-            alert('⚠️ تنبيه: تقييم جودة المحادثات خاص بمسؤولي المبيعات (Sales Rep) والمدير العام فقط!');
-            renderAll();
-            return;
-        }
+        if (!ROLES_CONFIG[currentRole].canEditQuality) { alert('⚠️ تنبيه: تقييم جودة المحادثات خاص بمسؤولي المبيعات (Sales Rep) والمدير العام فقط!'); renderAll(); return; }
         const ad = adsState.find(a => a.id === id);
-        if (ad) {
-            ad.quality = newQuality;
-            ad.updatedAt = new Date().toLocaleString('ar-EG');
-            saveToCloud();
-        }
+        if (ad) { ad.quality = newQuality; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
     window.updateAdNote = function(id, newNote) {
         if (!ROLES_CONFIG[currentRole].canEditNotes) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (ad) {
-            ad.salesNotes = newNote;
-            ad.updatedAt = new Date().toLocaleString('ar-EG');
-            saveToCloud();
-        }
+        if (ad) { ad.salesNotes = newNote; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
     window.deleteAd = function(id) {
         if (!ROLES_CONFIG[currentRole].canDelete) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
-        if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) {
-            adsState = adsState.filter(a => a.id !== id);
-            saveToCloud();
-        }
+        if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) { adsState = adsState.filter(a => a.id !== id); saveToCloud(); }
     };
 
     window.editAdModal = function(id) {
@@ -1400,7 +1416,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (singleFields) singleFields.classList.remove('hidden');
             if (multiWrapper) multiWrapper.classList.add('hidden');
             if (submitText) submitText.textContent = 'حفظ تعديلات الإعلان';
-
             modalTitle.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات الإعلان';
             adModal.classList.remove('hidden');
         }
@@ -1420,10 +1435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const salesRep = document.getElementById('ad-sales').value;
             const salesNotes = document.getElementById('ad-notes').value.trim();
 
-            if (!salesRep) {
-                alert('⚠️ يرجى اختيار مسؤول المبيعات المتابع للحملة من القائمة.');
-                return;
-            }
+            if (!salesRep) return alert('⚠️ يرجى اختيار مسؤول المبيعات المتابع للحملة من القائمة.');
 
             if (id) {
                 const name = document.getElementById('ad-name').value.trim();
@@ -1455,18 +1467,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             salesNotes: salesNotes,
                             updatedAt: new Date().toLocaleString('ar-EG'),
                             metricsConfig: JSON.parse(JSON.stringify(defaultMetricsConfig)),
-                            dailyResults: {
-                                [todayStr]: { results: 0 }
-                            }
+                            dailyResults: { [todayStr]: { results: 0 } }
                         };
                         adsState.unshift(newAd);
                         totalCreated++;
                     });
                 });
-
                 alert('🚀 تم بنجاح إنشاء حملة (' + campaign + ') للعميل (' + clientAccount + ') وتحتوي على (' + builderAdSets.length + ') مجموعات إعلانية و إجمالي (' + totalCreated + ') إعلانات!');
             }
-
             adModal.classList.add('hidden');
             saveToCloud();
         });
@@ -1488,6 +1496,15 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAll();
         });
     }
+
+    const mainExportBtn = document.getElementById('export-excel-btn');
+    if (mainExportBtn) mainExportBtn.addEventListener('click', () => window.exportToExcel('current-view'));
+
+    const resultsExportBtn = document.getElementById('export-results-excel-btn');
+    if (resultsExportBtn) resultsExportBtn.addEventListener('click', () => window.exportToExcel('current-view'));
+
+    const historyExportBtn = document.getElementById('export-history-excel-btn');
+    if (historyExportBtn) historyExportBtn.addEventListener('click', () => window.exportToExcel('ad-history'));
 
     applyRolePermissions();
     renderAll();
