@@ -79,11 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
             salesNotes: 'إعلان ممتاز جداً، معظم المحادثات عملاء جادين بيطلبوا عروض أسعار للمصانع.',
             updatedAt: new Date(Date.now() - 3600000).toLocaleString('ar-EG'),
             metricsConfig: [
-                { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' }
+                { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' },
+                { id: 'cpr', label: 'تكلفة الرسالة (CPR)', unit: 'ج.م' },
+                { id: 'ctr', label: 'معدل النقر (CTR)', unit: '%' },
+                { id: 'freq', label: 'التكرار (Frequency)', unit: 'مرة' },
+                { id: 'sales_count', label: 'المبيعات الفعلية', unit: 'عميل' }
             ],
             dailyResults: {
-                [todayStr]: { results: 15 },
-                [yesterdayStr]: { results: 18 }
+                [todayStr]: { results: 15, cpr: 18.5, ctr: 4.2, freq: 1.3, sales_count: 5 },
+                [yesterdayStr]: { results: 18, cpr: 16.0, ctr: 4.8, freq: 1.2, sales_count: 7 }
             }
         },
         {
