@@ -943,7 +943,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         inlineEditHTML = '<div class="action-btn-group"><button class="btn btn-secondary btn-sm open-history-btn" data-ad-id="' + ad.id + '"><i class="fa-solid fa-eye"></i> عرض السجل</button></div>';
                     }
 
-                    const clickableDateBadge = '<button class="date-badge open-daily-entry-btn" data-ad-id="' + ad.id + '" title="انقر لتعديل أرقام هذا التاريخ أو تغيير التقويم"><i class="fa-solid fa-calendar-days"></i> ' + selDate + '</button>';
+                    const clickableDateBadge = '<button class="date-badge open-history-btn" data-ad-id="' + ad.id + '" title="انقر لعرض سجل نتائج التقويم والتواريخ"><i class="fa-solid fa-calendar-days"></i> ' + selDate + '</button>';
 
                     tr.innerHTML = '<td class="tree-indented-cell">' + getPlatformBadgeHTML(ad.platform) + '</td>' +
                         '<td><strong>' + ad.name + '</strong>' + (ad.objective ? '<br><small style="color:var(--primary-color); font-size:0.75rem;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</small>' : '') + '</td>' +
