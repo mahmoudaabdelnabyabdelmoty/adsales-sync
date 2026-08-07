@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return year + '-' + month + '-' + day;
     }
 
     function normalizeRole(role) {
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const todayStr = getTodayISODate();
     const yesterdayDate = new Date();
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth()+1).padStart(2,'0')}-${String(yesterdayDate.getDate()).padStart(2,'0')}`;
+    const yesterdayStr = yesterdayDate.getFullYear() + '-' + String(yesterdayDate.getMonth()+1).padStart(2,'0') + '-' + String(yesterdayDate.getDate()).padStart(2,'0');
 
     const defaultMetricsConfig = [
         { id: 'results', label: 'عدد الرسائل', unit: 'رسالة' }
@@ -237,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyModalTitle = document.getElementById('history-modal-title');
     const historyTableHeader = document.getElementById('history-table-header');
     const historyTableBody = document.getElementById('history-table-body');
+
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
@@ -341,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentRole === 'sales') {
                 liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-headset"></i> متابعة الإعلانات وتوجيهات الحملات (خاص بالمبيعات)</h2><p>تابع حالة إعلاناتك وقم بتقييم جودة المحادثات وتدويـن ملاحظاتك للميديا باير مباشرة.</p>';
             } else if (currentRole === 'mediabuyer' || currentRole === 'admin') {
-                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة حملة إعلانية جديدة</button></div>';
+                liveBoardHeader.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; width: 100%;"><div><h2><i class="fa-solid fa-fire-flame-curved"></i> قرارات الـ Media Buyer الفورية</h2><p>عرض تفاعلي مباشر لاتخاذ قرارات إيقاف وتعديل وحذف الإعلانات بناءً على تنبيهات المبيعات الحية.</p></div><button class="btn btn-primary btn-md open-add-ad-modal-btn"><i class="fa-solid fa-plus-circle"></i> + إضافة حملة إعلانية جديدة</button></div>';
             } else {
                 liveBoardHeader.innerHTML = '<h2><i class="fa-solid fa-border-all"></i> اللوحة التفاعلية العامة</h2><p>عرض تفاعلي مباشر لحالة الإعلانات وتقييمات المبيعات عبر كافة المنصات.</p>';
             }
@@ -409,27 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'adset-builder-card';
 
-            let adsListHTML = (adset.ads || []).map((ad, adIndex) => `
-                <div class="ad-builder-item">
-                    <i class="fa-solid fa-rectangle-ad" style="color: var(--primary-color);"></i>
-                    <input type="text" class="ad-name-input" data-as-idx="${asIndex}" data-ad-idx="${adIndex}" value="${ad.name}" placeholder="اسم الإعلان / الكود" style="flex: 1; font-size: 0.84rem; padding: 4px 8px;" required>
-                    ${adset.ads.length > 1 ? `<button type="button" class="btn btn-secondary btn-sm" onclick="removeAdFromBuilder(${asIndex}, ${adIndex})" style="color:#ef4444; padding:2px 8px;" title="حذف الإعلان">&times;</button>` : ''}
-                </div>
-            `).join('');
+            let adsListHTML = (adset.ads || []).map((ad, adIndex) => '<div class="ad-builder-item"><i class="fa-solid fa-rectangle-ad" style="color: var(--primary-color);"></i><input type="text" class="ad-name-input" data-as-idx="' + asIndex + '" data-ad-idx="' + adIndex + '" value="' + ad.name + '" placeholder="اسم الإعلان / الكود" style="flex: 1; font-size: 0.84rem; padding: 4px 8px;" required>' + (adset.ads.length > 1 ? '<button type="button" class="btn btn-secondary btn-sm" onclick="removeAdFromBuilder(' + asIndex + ', ' + adIndex + ')" style="color:#ef4444; padding:2px 8px;" title="حذف الإعلان">&times;</button>' : '') + '</div>').join('');
 
-            card.innerHTML = `
-                <div class="adset-builder-header">
-                    <div style="display:flex; align-items:center; gap:8px; flex:1;">
-                        <i class="fa-solid fa-cubes" style="color: var(--accent-blue);"></i>
-                        <input type="text" class="adset-name-input" data-as-idx="${asIndex}" value="${adset.name}" placeholder="اسم المجموعة الإعلانية (AdSet Name)" style="flex: 1; font-weight:700; font-size:0.88rem; padding: 5px 10px;" required>
-                    </div>
-                    ${builderAdSets.length > 1 ? `<button type="button" class="btn btn-secondary btn-sm" onclick="removeAdSetFromBuilder(${asIndex})" style="color:#ef4444; padding: 4px 10px;" title="حذف هذه المجموعة"><i class="fa-solid fa-trash"></i> حذف AdSet</button>` : ''}
-                </div>
-                <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px; padding-right:12px; border-right:2px solid var(--primary-color);">
-                    ${adsListHTML}
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addAdToBuilder(${asIndex})" style="align-self:flex-start; margin-top:4px; font-size:0.78rem; color:var(--accent-blue); padding: 3px 8px;"><i class="fa-solid fa-plus"></i> + إضافة إعلان آخر لهذه المجموعة</button>
-                </div>
-            `;
+            card.innerHTML = '<div class="adset-builder-header"><div style="display:flex; align-items:center; gap:8px; flex:1;"><i class="fa-solid fa-cubes" style="color: var(--accent-blue);"></i><input type="text" class="adset-name-input" data-as-idx="' + asIndex + '" value="' + adset.name + '" placeholder="اسم المجموعة الإعلانية (AdSet Name)" style="flex: 1; font-weight:700; font-size:0.88rem; padding: 5px 10px;" required></div>' + (builderAdSets.length > 1 ? '<button type="button" class="btn btn-secondary btn-sm" onclick="removeAdSetFromBuilder(' + asIndex + ')" style="color:#ef4444; padding: 4px 10px;" title="حذف هذه المجموعة"><i class="fa-solid fa-trash"></i> حذف AdSet</button>' : '') + '</div><div style="display:flex; flex-direction:column; gap:6px; margin-top:4px; padding-right:12px; border-right:2px solid var(--primary-color);">' + adsListHTML + '<button type="button" class="btn btn-secondary btn-sm" onclick="addAdToBuilder(' + asIndex + ')" style="align-self:flex-start; margin-top:4px; font-size:0.78rem; color:var(--accent-blue); padding: 3px 8px;"><i class="fa-solid fa-plus"></i> + إضافة إعلان آخر لهذه المجموعة</button></div>';
             container.appendChild(card);
         });
 
@@ -549,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     });
+
     if (loginRoleBtn) loginRoleBtn.addEventListener('click', window.openRoleModal);
     if (roleBadge) roleBadge.addEventListener('click', () => { if (!loggedUser) window.openRoleModal(); });
 
@@ -598,7 +582,9 @@ document.addEventListener('DOMContentLoaded', () => {
         shareLinkBtn.addEventListener('click', () => {
             const finalUrl = window.location.href;
             navigator.clipboard.writeText(finalUrl).then(() => {
-                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:\n\n' + finalUrl);
+                alert('✅ تم نسخ رابط AdSales Sync Enterprise الرسمي:
+
+' + finalUrl);
             }).catch(() => {
                 prompt('رابط AdSales Sync الرسمي:', finalUrl);
             });
@@ -749,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
         liveAdsGrid.innerHTML = '';
 
         if (filteredAds.length === 0) {
-            liveAdsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);"><i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>لا توجد إعلانات مطابقة.</div>';
+            liveAdsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);"><i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>لا توجد إعلانات حالياً (يمكنك إنشاء حملة جديدة من زر + بحرية).</div>';
             return;
         }
 
@@ -770,18 +756,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (currentRole === 'mediabuyer' || currentRole === 'admin') {
                         cardActionHTML = '<div class="ad-card-actions" style="margin-top:auto; padding-top:8px;">' + 
                             (!isPaused ? 
-                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان</button>' : 
-                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال</button>'
+                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus('' + ad.id + '', 'pause')" style="color: var(--status-pause-text); border-color: var(--status-pause-border); background: rgba(239,68,68,0.12);"><i class="fa-solid fa-pause"></i> 🔴 أوقف الإعلان</button>' : 
+                                '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="quickToggleStatus('' + ad.id + '', 'active')" style="color: var(--status-winning-text); border-color: var(--status-winning-border); background: rgba(16,185,129,0.12);"><i class="fa-solid fa-play"></i> 🟢 إعلان شغال</button>'
                             ) + 
-                            '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="editAdModal(\'' + ad.id + '\')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button></div>';
+                            '<button class="btn btn-secondary btn-sm ad-action-btn" onclick="editAdModal('' + ad.id + '')"><i class="fa-solid fa-pen-to-square"></i> تعديل</button><button class="btn btn-secondary btn-sm ad-action-btn" onclick="deleteAd('' + ad.id + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" title="حذف الإعلان"><i class="fa-solid fa-trash"></i></button></div>';
                     } else if (currentRole === 'sales') {
                         cardActionHTML = '<div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 8px; padding: 8px; margin-top: auto;">' +
                             '<label style="font-size:0.75rem; font-weight:800; color:var(--accent-blue); display:block; margin-bottom:4px;"><i class="fa-solid fa-headset"></i> تقييم الجودة:</label>' +
-                            '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.8rem; padding:4px 8px; margin-bottom:6px;">' +
+                            '<select class="quality-select" onchange="updateAdQuality('' + ad.id + '', this.value)" style="width:100%; font-size:0.8rem; padding:4px 8px; margin-bottom:6px;">' +
                             '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
                             '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
                             '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' +
-                            '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="ملاحظتك للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)" style="width:100%; font-size:0.78rem; padding:4px 8px;"></div>';
+                            '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="ملاحظتك للميديا باير..." onchange="updateAdNote('' + ad.id + '', this.value)" style="width:100%; font-size:0.78rem; padding:4px 8px;"></div>';
                     } else {
                         cardActionHTML = '<div style="text-align:center; padding:4px; font-size:0.75rem; color:var(--text-muted); margin-top: auto;"><i class="fa-solid fa-lock"></i> للعرض فقط</div>';
                     }
@@ -801,13 +787,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return '<div class="adset-group-section">' +
                     '<div class="adset-title-bar">' +
                     '<div><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong></div>' +
-                    '<span style="font-size:0.75rem; background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:12px; color:var(--accent-blue); font-weight:700;">' + asGroup.ads.length + ' إعلانات</span>' +
+                    '<div style="display:flex; align-items:center; gap:8px;"><span style="font-size:0.75rem; background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:12px; color:var(--accent-blue); font-weight:700;">' + asGroup.ads.length + ' إعلانات</span>' + ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="event.stopPropagation(); deleteAdSet('' + cGroup.name + '', '' + asGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:2px 8px; font-size:0.75rem; display:inline-flex !important;" title="حذف المجموعة الإعلانية"><i class="fa-solid fa-trash"></i> حذف AdSet</button>' : '') + '</div>' +
                     '</div>' +
                     '<div class="hierarchical-ads-grid">' + adsCardsHTML + '</div>' +
                     '</div>';
             }).join('');
 
-            cCard.innerHTML = '<div class="campaign-header-bar" onclick="this.nextElementSibling.classList.toggle(\'hidden\'); const ic=this.querySelector(\'i.fa-chevron-down, i.fa-chevron-up\'); if(ic){ic.classList.toggle(\'fa-chevron-down\'); ic.classList.toggle(\'fa-chevron-up\');}">' +
+            cCard.innerHTML = '<div class="campaign-header-bar" onclick="this.nextElementSibling.classList.toggle('hidden'); const ic=this.querySelector('i.fa-chevron-down, i.fa-chevron-up'); if(ic){ic.classList.toggle('fa-chevron-down'); ic.classList.toggle('fa-chevron-up');}">' +
                 '<div class="campaign-header-title">' +
                 getPlatformBadgeHTML(cGroup.platform) +
                 '<h3 style="font-size:1.1rem; font-weight:800; color:var(--text-primary); display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> ' + cGroup.name + '</h3>' +
@@ -816,7 +802,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 '</div>' +
                 '<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
                 '<span style="font-size:0.82rem; font-weight:700; color:var(--text-secondary);"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + '</span>' +
-                '<span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;"><i class="fa-solid fa-cubes"></i> ' + cGroup.totalAdsCount + ' إعلانات • ' + cGroup.activeAdsCount + ' 🟢 نشط</span>' +
+                '<span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;"><i class="fa-solid fa-cubes"></i> ' + cGroup.totalAdsCount + ' إعلانات</span>' +
+                ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="event.stopPropagation(); deleteCampaign('' + cGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:3px 10px; font-size:0.78rem; display:inline-flex !important;" title="حذف الحملة بالكامل"><i class="fa-solid fa-trash"></i> حذف الحملة</button>' : '') +
                 '<i class="fa-solid fa-chevron-down" style="color:var(--text-muted); cursor:pointer;"></i>' +
                 '</div>' +
                 '</div>' +
@@ -825,6 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
             liveAdsGrid.appendChild(cCard);
         });
     }
+
     function renderSalesView(filteredAds) {
         if (!salesTableBody || !salesMobileCards) return;
         salesTableBody.innerHTML = '';
@@ -841,14 +829,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong> <span style="font-size:0.75rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:10px; font-weight:700; margin-right:6px;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
+                '<div style="display:flex; align-items:center; gap:8px;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span>' + ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="deleteCampaign('' + cGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:3px 10px; font-size:0.78rem; display:inline-flex !important;" title="حذف الحملة بالكامل"><i class="fa-solid fa-trash"></i> حذف الحملة</button>' : '') + '</div>' +
                 '</div></td>';
             salesTableBody.appendChild(cTr);
 
             Object.values(cGroup.adsetsMap).forEach(asGroup => {
                 const asTr = document.createElement('tr');
                 asTr.className = 'table-adset-row';
-                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 1.5rem !important;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 1.5rem !important;"><div style="display:flex; justify-content:space-between; align-items:center;"><div><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</div>' + ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="deleteAdSet('' + cGroup.name + '', '' + asGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:2px 8px; font-size:0.75rem; display:inline-flex !important;" title="حذف المجموعة الإعلانية"><i class="fa-solid fa-trash"></i> حذف AdSet</button>' : '') + '</div></td>';
                 salesTableBody.appendChild(asTr);
 
                 asGroup.ads.forEach(ad => {
@@ -856,7 +844,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     tr.className = 'table-ad-child-row';
 
                     const qualityCellHTML = canEditQuality ? 
-                        '<select class="quality-select" onchange="updateAdQuality(\'' + ad.id + '\', this.value)">' +
+                        '<select class="quality-select" onchange="updateAdQuality('' + ad.id + '', this.value)">' +
                         '<option value="qualified" ' + (ad.quality === 'qualified' ? 'selected' : '') + '>🟢 عملاء ممتازين (Qualified)</option>' +
                         '<option value="mixed" ' + (ad.quality === 'mixed' ? 'selected' : '') + '>🟡 عملاء متوسطين / متابعة</option>' +
                         '<option value="unqualified" ' + (ad.quality === 'unqualified' ? 'selected' : '') + '>🔴 غير مهتمين / سيء (طلب إيقاف)</option></select>' :
@@ -868,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         '<td><i class="fa-solid fa-user-tag"></i> ' + ad.salesRep + '</td>' +
                         '<td>' + qualityCellHTML + '</td>' +
                         '<td>' + getStatusBadgeHTML(ad.status) + '</td>' +
-                        '<td>' + (canEditNotes ? '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف ملاحظة للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)">' : (ad.salesNotes ? '<span style="font-size:0.82rem; color:var(--text-secondary);"><i class="fa-solid fa-comment-dots" style="color:var(--accent-blue);"></i> ' + ad.salesNotes + '</span>' : '<span style="color:var(--text-muted); font-size:0.78rem;">لا توجد ملاحظات</span>')) + '</td>' +
+                        '<td>' + (canEditNotes ? '<input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف ملاحظة للميديا باير..." onchange="updateAdNote('' + ad.id + '', this.value)">' : (ad.salesNotes ? '<span style="font-size:0.82rem; color:var(--text-secondary);"><i class="fa-solid fa-comment-dots" style="color:var(--accent-blue);"></i> ' + ad.salesNotes + '</span>' : '<span style="color:var(--text-muted); font-size:0.78rem;">لا توجد ملاحظات</span>')) + '</td>' +
                         '<td style="font-size:0.78rem; color: var(--text-muted);">' + ad.updatedAt + '</td>';
                     salesTableBody.appendChild(tr);
 
@@ -878,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         getPlatformBadgeHTML(ad.platform) + '<h4 style="display:inline-block; margin-right:6px;">' + ad.name + '</h4></div>' +
                         getStatusBadgeHTML(ad.status) + '</div>' + (ad.objective ? '<span style="font-size:0.78rem; color:var(--primary-color); display:block; margin-bottom:4px;"><i class="fa-solid fa-bullseye"></i> ' + ad.objective + '</span>' : '') +
                         '<span class="meta-sub">' + ad.campaign + ' | ' + ad.salesRep + '</span></div><div class="form-group" style="margin-top: 10px;"><label>تقييم جودة الـ Leads:</label>' + qualityCellHTML +
-                        '</div>' + (canEditNotes ? '<div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف ملاحظة للميديا باير..." onchange="updateAdNote(\'' + ad.id + '\', this.value)"></div>' : (ad.salesNotes ? '<div class="sales-note-box" style="margin-top:8px;"><strong>ملاحظة الـ Sales:</strong> ' + ad.salesNotes + '</div>' : ''));
+                        '</div>' + (canEditNotes ? '<div class="form-group"><label>ملاحظة للميديا باير:</label><input type="text" class="note-input" value="' + (ad.salesNotes || '') + '" placeholder="أضف ملاحظة للميديا باير..." onchange="updateAdNote('' + ad.id + '', this.value)"></div>' : (ad.salesNotes ? '<div class="sales-note-box" style="margin-top:8px;"><strong>ملاحظة الـ Sales:</strong> ' + ad.salesNotes + '</div>' : ''));
                     salesMobileCards.appendChild(mCard);
                 });
             });
@@ -902,14 +890,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong> <span style="font-size:0.75rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:10px; font-weight:700; margin-right:6px;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
+                '<div style="display:flex; align-items:center; gap:8px;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span>' + ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="deleteCampaign('' + cGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:3px 10px; font-size:0.78rem; display:inline-flex !important;" title="حذف الحملة بالكامل"><i class="fa-solid fa-trash"></i> حذف الحملة</button>' : '') + '</div>' +
                 '</div></td>';
             resultsTableBody.appendChild(cTr);
 
             Object.values(cGroup.adsetsMap).forEach(asGroup => {
                 const asTr = document.createElement('tr');
                 asTr.className = 'table-adset-row';
-                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 1.5rem !important;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 1.5rem !important;"><div style="display:flex; justify-content:space-between; align-items:center;"><div><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</div>' + ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="deleteAdSet('' + cGroup.name + '', '' + asGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:2px 8px; font-size:0.75rem; display:inline-flex !important;" title="حذف المجموعة الإعلانية"><i class="fa-solid fa-trash"></i> حذف AdSet</button>' : '') + '</div></td>';
                 resultsTableBody.appendChild(asTr);
 
                 asGroup.ads.forEach(ad => {
@@ -926,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         customMetricsHTML = '<div class="metrics-slider-container">' + customFields.map(m => {
                             const val = dayEntry[m.id] !== undefined ? dayEntry[m.id] : 0;
                             const deleteBtnHTML = canEditResults ? 
-                                '<button class="delete-metric-btn" onclick="deleteCustomMetric(\'' + ad.id + '\', \'' + m.id + '\')" title="حذف مؤشر ' + m.label + '">&times;</button>' : '';
+                                '<button class="delete-metric-btn" onclick="deleteCustomMetric('' + ad.id + '', '' + m.id + '')" title="حذف مؤشر ' + m.label + '">&times;</button>' : '';
                             return '<span class="metric-pill" title="' + m.label + '">' + deleteBtnHTML + m.label + ': ' + val + ' ' + (m.unit || '') + '</span>';
                         }).join('') + '</div>';
                     } else {
@@ -987,14 +975,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
                 '<div>' + getPlatformBadgeHTML(cGroup.platform) + ' <strong style="font-size:1rem; margin-right:6px;"><i class="fa-solid fa-layer-group"></i> ' + cGroup.name + '</strong> <span style="font-size:0.75rem; color:#facc15; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:10px; font-weight:700; margin-right:6px;"><i class="fa-solid fa-briefcase"></i> العميل: ' + cGroup.clientAccount + '</span>' +
                 (cGroup.objective ? ' <span style="font-size:0.75rem; opacity:0.9;"><i class="fa-solid fa-bullseye"></i> (' + cGroup.objective + ')</span>' : '') + '</div>' +
-                '<div style="padding-left:1.5rem;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px; margin-left:1rem;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span></div>' +
+                '<div style="display:flex; align-items:center; gap:8px;"><span class="campaign-tag" style="background:var(--primary-color); color:white; padding:4px 12px; border-radius:12px;"><i class="fa-solid fa-user-tag"></i> المبيعات: ' + cGroup.salesRep + ' • ' + cGroup.totalAdsCount + ' إعلانات</span>' + ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="deleteCampaign('' + cGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:3px 10px; font-size:0.78rem; display:inline-flex !important;" title="حذف الحملة بالكامل"><i class="fa-solid fa-trash"></i> حذف الحملة</button>' : '') + '</div>' +
                 '</div></td>';
             mediaBuyerTableBody.appendChild(cTr);
 
             Object.values(cGroup.adsetsMap).forEach(asGroup => {
                 const asTr = document.createElement('tr');
                 asTr.className = 'table-adset-row';
-                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 1.5rem !important;"><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</td>';
+                asTr.innerHTML = '<td colspan="8" style="padding: 0.6rem 1.5rem !important;"><div style="display:flex; justify-content:space-between; align-items:center;"><div><i class="fa-solid fa-cubes"></i> المجموعة الإعلانية (AdSet): <strong>' + asGroup.name + '</strong> (' + asGroup.ads.length + ' إعلانات)</div>' + ((currentRole === 'mediabuyer' || currentRole === 'admin') ? '<button class="btn btn-secondary btn-sm admin-mb-only" onclick="deleteAdSet('' + cGroup.name + '', '' + asGroup.name + '')" style="color:#ef4444; border-color:rgba(239,68,68,0.4); padding:2px 8px; font-size:0.75rem; display:inline-flex !important;" title="حذف المجموعة الإعلانية"><i class="fa-solid fa-trash"></i> حذف AdSet</button>' : '') + '</div></td>';
                 mediaBuyerTableBody.appendChild(asTr);
 
                 asGroup.ads.forEach(ad => {
@@ -1006,11 +994,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         '<td><strong>' + ad.name + '</strong></td>' +
                         '<td>' + ad.adset + '</td><td>' + ad.campaign + '</td><td>' + ad.salesRep + '</td><td>' + getQualityBadgeHTML(ad.quality) + '</td><td>' + getStatusBadgeHTML(ad.status) + '</td>' +
                         '<td><div class="action-btn-group">' + (!isPaused ? 
-                            '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'pause\')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل</button>' : 
-                            '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus(\'' + ad.id + '\', \'active\')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل</button>'
+                            '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus('' + ad.id + '', 'pause')" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pause"></i> تعطيل</button>' : 
+                            '<button class="btn btn-secondary btn-sm" onclick="quickToggleStatus('' + ad.id + '', 'active')" style="color:#10b981; border-color:rgba(16,185,129,0.4);" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-play"></i> تشغيل</button>'
                         ) +
-                        '<button class="btn btn-secondary btn-sm" onclick="editAdModal(\'' + ad.id + '\')" title="تعديل الإعلان" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
-                        '<button class="btn btn-secondary btn-sm" onclick="deleteAd(\'' + ad.id + '\')" title="حذف الإعلان" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></div></td>';
+                        '<button class="btn btn-secondary btn-sm" onclick="editAdModal('' + ad.id + '')" title="تعديل الإعلان" ' + (!canEditStructure ? 'disabled' : '') + '><i class="fa-solid fa-pen"></i></button>' +
+                        '<button class="btn btn-secondary btn-sm" onclick="deleteAd('' + ad.id + '')" title="حذف الإعلان" style="color:#ef4444;" ' + (!canDelete ? 'disabled' : '') + '><i class="fa-solid fa-trash"></i></button></div></td>';
                     mediaBuyerTableBody.appendChild(tr);
                 });
             });
@@ -1180,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const ad = adsState.find(a => a.id === targetAdId);
             if (!ad) return alert('⚠️ لم يتم العثور على الإعلان للتصدير.');
 
-            filename = 'Ad_History_' + (ad.name.replace(/[^a-zA-Z0-9_\u0600-\u06FF]/g, '_')) + '_' + todayStr + '.csv';
+            filename = 'Ad_History_' + (ad.name.replace(/[^a-zA-Z0-9_؀-ۿ]/g, '_')) + '_' + todayStr + '.csv';
             headers = ['التاريخ (Date)', 'العميل', 'اسم الإعلان', 'الحملة', 'AdSet', 'عدد الرسائل'];
             const customFields = (ad.metricsConfig || []).filter(m => m.id !== 'results');
             customFields.forEach(m => headers.push(m.label + (m.unit ? ' (' + m.unit + ')' : '')));
@@ -1218,10 +1206,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return '"' + String(val).replace(/"/g, '""') + '"';
         }
 
-        let csvContent = headers.map(escapeCSVCell).join(',') + '\n';
-        rows.forEach(row => { csvContent += row.map(escapeCSVCell).join(',') + '\n'; });
+        let csvContent = headers.map(escapeCSVCell).join(',') + '
+';
+        rows.forEach(row => { csvContent += row.map(escapeCSVCell).join(',') + '
+'; });
 
-        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = filename;
@@ -1371,7 +1361,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (val > peakValue) { peakValue = val; peakDay = d; }
             });
             const avgDaily = Math.round((totalResults / allDates.length) * 10) / 10;
-            const reportText = '📊 تقرير أداء وسجل الإعلان الرسمي:\nالإعلان: ' + ad.name + '\n💼 العميل: ' + (ad.clientAccount || 'عميل عام') + '\n🎯 الحملة: ' + ad.campaign + '\n📱 المنصة: ' + (ad.platform || 'meta').toUpperCase() + '\n----------------------------------------\n✉️ إجمالي المحادثات/الرسائل: ' + totalResults + ' رسالة\n📅 النطاق الزمني المسجل: من ' + allDates[0] + ' إلى ' + allDates[allDates.length - 1] + ' (' + allDates.length + ' يوم)\n📈 المتوسط اليومي: ' + avgDaily + ' رسالة/يوم\n👑 اليوم الأعلى أداءً: ' + (peakDay || 'N/A') + ' (بواقع ' + peakValue + ' رسالة)\n----------------------------------------\nتم استخراج التقرير عبر منصة AdSales Sync Enterprise 🚀';
+            const reportText = '📊 تقرير أداء وسجل الإعلان الرسمي:
+الإعلان: ' + ad.name + '
+💼 العميل: ' + (ad.clientAccount || 'عميل عام') + '
+🎯 الحملة: ' + ad.campaign + '
+📱 المنصة: ' + (ad.platform || 'meta').toUpperCase() + '
+----------------------------------------
+✉️ إجمالي المحادثات/الرسائل: ' + totalResults + ' رسالة
+📅 النطاق الزمني المسجل: من ' + allDates[0] + ' إلى ' + allDates[allDates.length - 1] + ' (' + allDates.length + ' يوم)
+📈 المتوسط اليومي: ' + avgDaily + ' رسالة/يوم
+👑 اليوم الأعلى أداءً: ' + (peakDay || 'N/A') + ' (بواقع ' + peakValue + ' رسالة)
+----------------------------------------
+تم استخراج التقرير عبر منصة AdSales Sync Enterprise 🚀';
             navigator.clipboard.writeText(reportText).then(() => { alert('✅ تم نسخ التقرير الشامل بنجاح إلى الحافظة! يمكنك الآن لصقه مباشرة على واتساب العميل.'); }).catch(() => { prompt('تقرير الأداء التجميعي:', reportText); });
             return;
         }
@@ -1386,6 +1387,66 @@ document.addEventListener('DOMContentLoaded', () => {
         const metricName = metricObj ? metricObj.label : 'المؤشر';
         if (confirm('هل أنت تأكد من رغبتك في حذف مؤشر (' + metricName + ') من هذا الإعلان؟')) {
             ad.metricsConfig = (ad.metricsConfig || []).filter(m => m.id !== metricId);
+            saveToCloud();
+        }
+    };
+
+    window.deleteCampaign = function(campaignName) {
+        const config = ROLES_CONFIG[normalizeRole(currentRole)] || ROLES_CONFIG.viewer;
+        if (!config.canDelete) return window.openRoleModal();
+        if (confirm('⚠️ هل أنت تأكد من رغبتك في حذف حملة (' + campaignName + ') بالكامل بجميع مجموعاتها وإعلاناتها؟')) {
+            const countBefore = adsState.length;
+            adsState = adsState.filter(a => a.campaign !== campaignName);
+            const deletedCount = countBefore - adsState.length;
+            saveToCloud();
+            window.pushNotification({
+                type: 'urgent',
+                isUrgent: true,
+                title: '🗑️ تم حذف حملة بالكامل',
+                message: 'قام الـ Media Buyer بحذف حملة (' + campaignName + ') وتحتوي على ' + deletedCount + ' إعلانات.',
+                roleTarget: 'all'
+            });
+            alert('✅ تم حذف حملة (' + campaignName + ') بالكامل وحذف (' + deletedCount + ') إعلانات مرتبطة بها!');
+        }
+    };
+
+    window.deleteAdSet = function(campaignName, adsetName) {
+        const config = ROLES_CONFIG[normalizeRole(currentRole)] || ROLES_CONFIG.viewer;
+        if (!config.canDelete) return window.openRoleModal();
+        if (confirm('⚠️ هل أنت تأكد من رغبتك في حذف المجموعة الإعلانية (' + adsetName + ') بجميع إعلاناتها؟')) {
+            const countBefore = adsState.length;
+            adsState = adsState.filter(a => !(a.campaign === campaignName && a.adset === adsetName));
+            const deletedCount = countBefore - adsState.length;
+            saveToCloud();
+            alert('✅ تم حذف المجموعة الإعلانية (' + adsetName + ') وتصفية (' + deletedCount + ') إعلانات!');
+        }
+    };
+
+    window.resetAllCampaigns = function() {
+        const config = ROLES_CONFIG[normalizeRole(currentRole)] || ROLES_CONFIG.viewer;
+        if (!config.canDelete) return window.openRoleModal();
+        if (confirm('🚨 تنبيه هام جداً:
+
+هل أنت تأكد 100% من رغبتك في مسح كافة الحملات والإعلانات الحالية وإعادة البدء من جديد لشاشة فارغة تماماً؟')) {
+            if (confirm('تأكيد أخير: هذا الإجراء سيمسح جميع الإعلانات الحالية لإعادة الإنشاء من جديد! هل تريد الاستمرار؟')) {
+                adsState = [];
+                saveToCloud();
+                window.pushNotification({
+                    type: 'urgent',
+                    isUrgent: true,
+                    title: '🔄 إعادة ضبط الشاشة بالكامل',
+                    message: 'تم مسح كافة الحملات والإعلانات للبدء من جديد.',
+                    roleTarget: 'all'
+                });
+                alert('✅ تم إعادة ضبط الشاشة ومسح كافة الحملات بنجاح. يمكنك الآن إضافة حملات جديدة من البداية!');
+            }
+        }
+    };
+
+    window.deleteAd = function(id) {
+        if (!ROLES_CONFIG[currentRole].canDelete) return window.openRoleModal();
+        if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) {
+            adsState = adsState.filter(a => a.id !== id);
             saveToCloud();
         }
     };
@@ -1523,12 +1584,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ad) { ad.salesNotes = newNote; ad.updatedAt = new Date().toLocaleString('ar-EG'); saveToCloud(); }
     };
 
-    window.deleteAd = function(id) {
-        if (!ROLES_CONFIG[currentRole].canDelete) return window.openRoleModal();
-        const ad = adsState.find(a => a.id === id);
-        if (confirm('هل أنت تأكد من رغبتك في حذف هذا الإعلان؟')) { adsState = adsState.filter(a => a.id !== id); saveToCloud(); }
-    };
-
     window.editAdModal = function(id) {
         if (!ROLES_CONFIG[currentRole].canEditStructure) return window.openRoleModal();
         const ad = adsState.find(a => a.id === id);
@@ -1630,6 +1685,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAll();
         });
     }
+
+    const resetAllAdsBtn = document.getElementById('reset-all-ads-btn');
+    if (resetAllAdsBtn) resetAllAdsBtn.addEventListener('click', window.resetAllCampaigns);
 
     const mainExportBtn = document.getElementById('export-excel-btn');
     if (mainExportBtn) mainExportBtn.addEventListener('click', () => window.exportToExcel('current-view'));
